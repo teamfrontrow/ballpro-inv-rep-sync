@@ -43,6 +43,7 @@ The connector is a Next.js 15 application with a separate durable worker. Both u
 - [`reference-data/`](reference-data/) - Shopify CSV and RepSpark XLSX snapshots used for reconciliation and verification; not needed at runtime.
 - [`BALLPRO_INVENTORY_PLAN.md`](BALLPRO_INVENTORY_PLAN.md) - architecture, data contracts, implementation phases, and acceptance criteria.
 - [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md) - completed work, measured verification, and remaining live-store gates.
+- [`DEVELOPER_HANDOFF.md`](DEVELOPER_HANDOFF.md) - peer-developer status, review map, access requirements, and recommended first deployment session.
 - [`connector/DEPLOY.md`](connector/DEPLOY.md) - Shopify Dev Dashboard and Coolify deployment runbook.
 
 ## Shopify Authentication
