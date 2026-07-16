@@ -2,7 +2,7 @@
 
 Updated: 2026-07-15
 
-Repository: https://github.com/teamfrontrow-james/ballpro-inv-rep-sync
+Repository: https://github.com/teamfrontrow/ballpro-inv-rep-sync
 
 ## Executive Status
 
@@ -168,7 +168,7 @@ Read these in order:
 ## Local Review
 
 ```sh
-git clone https://github.com/teamfrontrow-james/ballpro-inv-rep-sync.git
+git clone https://github.com/teamfrontrow/ballpro-inv-rep-sync.git
 cd ballpro-inv-rep-sync/connector
 npm ci
 npm run verify
