@@ -825,6 +825,20 @@
           "id": "show_below_product_media",
           "label": "t:sections.main-product.blocks.general.settings.show_below_product_media.label",
           "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "require_login_for_apparel",
+          "label": "Require login to view (Apparel only)",
+          "info": "When on, logged-out visitors do not see the inventory table on Apparel products. Non-apparel products stay visible to everyone.",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "apparel_product_types",
+          "label": "Apparel product types",
+          "info": "Comma-separated product types treated as Apparel. Products tagged 'Apparel' always count.",
+          "default": "Polos,Jackets,Pullovers,Hoodies,Vests,Sweatshirts,Sweaters,T-Shirts,Bottoms,Pants,Shorts,Outerwear,Performance Gear,Headwear,Apparel"
         }
       ]
     },

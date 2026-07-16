@@ -5,9 +5,38 @@
   if inventory.schema == 1 and inventory.styles != blank and inventory.styles.first != blank and inventory.colors != blank
     assign inventory_is_valid = true
   endif
+
+  # --- Login + Apparel visibility gate ----------------------------------------
+  # Logged-out visitors must not see inventory on Apparel products. Non-apparel
+  # (e.g. Golf Balls, Golf Accessories, Drinkware) stays visible to everyone.
+  # A product counts as Apparel when its type is in the block's apparel list or
+  # it carries the 'Apparel' tag. `customer` is truthy only for a logged-in shopper.
+  assign apparel_types = block.settings.apparel_product_types | default: 'Polos,Jackets,Pullovers,Hoodies,Vests,Sweatshirts,Sweaters,T-Shirts,Bottoms,Pants,Shorts,Outerwear,Performance Gear,Headwear,Apparel' | split: ','
+  assign is_apparel = false
+  if product.tags contains 'Apparel'
+    assign is_apparel = true
+  endif
+  assign product_type_key = product.type | downcase | strip
+  for apparel_type in apparel_types
+    assign apparel_type_key = apparel_type | downcase | strip
+    if product_type_key == apparel_type_key
+      assign is_apparel = true
+      break
+    endif
+  endfor
+
+  assign gate_hidden = false
+  if block.settings.require_login_for_apparel and is_apparel and customer == nil
+    assign gate_hidden = true
+  endif
+
+  assign can_show_inventory = false
+  if inventory_is_valid and gate_hidden == false
+    assign can_show_inventory = true
+  endif
 -%}
 
-{%- if inventory_is_valid -%}
+{%- if can_show_inventory -%}
   {%- capture inventory_tables -%}
     {%- for color in inventory.colors -%}
       {%- capture inventory_rows -%}
