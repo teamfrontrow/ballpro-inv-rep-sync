@@ -370,7 +370,7 @@ export async function runSyncWithDependencies(
       });
       if (!built.payload || !built.hash || !built.json) {
         items.push({
-          mappingId, ownerId: mapping.shopifyProductGid, status: "skipped", payloadHash: null,
+          mappingId, ownerId: mapping.shopifyProductGid, status: "failed", payloadHash: null,
           error: built.issues.map((issue) => `${issue.code}: ${issue.detail}`).join("; "), metafieldId: null,
         });
         continue;

@@ -45,7 +45,7 @@ export async function ingestCatalog(
 ): Promise<CatalogIngestReport> {
   const deps = dependencies(overrides);
   const readiness = await reportSourceReadiness(deps.repspark);
-  if (readiness.globalIssues.some((issue) => issue.code === "active_scrape")) {
+  if (readiness.globalIssues.some((issue) => ["active_scrape", "source_schema"].includes(issue.code))) {
     throw new CatalogSourceNotReadyError(readiness);
   }
 

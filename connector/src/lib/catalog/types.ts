@@ -56,8 +56,10 @@ export type SourceReadinessIssueCode =
   | "active_scrape"
   | "latest_run_not_completed"
   | "no_current_size_rows"
+  | "incomplete_current_size_coverage"
   | "null_color_coverage"
   | "invalid_dates"
+  | "source_freshness"
   | "source_schema";
 
 export interface SourceReadinessIssue {
@@ -68,10 +70,12 @@ export interface SourceReadinessIssue {
 
 export interface BrandSourceReadiness {
   brandName: string;
+  sourceEnabled: boolean;
   ready: boolean;
   latestRunStatus: string | null;
   currentSizeRows: number;
   variantRows: number;
+  variantsWithoutCurrentSizes: number;
   nullColorRows: number;
   invalidDateRows: number;
   issues: SourceReadinessIssue[];
@@ -79,9 +83,15 @@ export interface BrandSourceReadiness {
 
 export interface SourceReadinessReport {
   ready: boolean;
+  canSync: boolean;
   checkedAt: string;
   globalIssues: SourceReadinessIssue[];
   brands: BrandSourceReadiness[];
+  summary: {
+    totalBrands: number;
+    enabledBrands: number;
+    readyEnabledBrands: number;
+  };
 }
 
 export interface CatalogIngestReport {

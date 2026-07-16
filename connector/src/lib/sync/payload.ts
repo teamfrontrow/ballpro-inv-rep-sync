@@ -106,12 +106,26 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
   const future = input.future.filter((row) => requested.has(canonicalStyleKey(row.brandName, row.productNumber)));
   const issues: PayloadIssue[] = [];
 
+  const usableCurrent = current.filter((row) => row.variantId && row.color?.trim() && row.size?.trim());
+  const usableFuture = future.flatMap((row) => {
+    if (!row.variantId || !row.color?.trim() || !row.size?.trim()) return [];
+    const date = validIsoDate(row.availabilityDate);
+    if (!date) return [];
+    const dateValue = new Date(`${date}T00:00:00.000Z`);
+    return dateValue >= today && dateValue <= horizon ? [{ row, date }] : [];
+  });
+
   for (const style of input.styles) {
     const key = canonicalStyleKey(style.brandName, style.productNumber);
-    if (!current.some((row) => canonicalStyleKey(row.brandName, row.productNumber) === key)) {
+    const hasSourceRows = [...current, ...future]
+      .some((row) => canonicalStyleKey(row.brandName, row.productNumber) === key);
+    const hasUsableRows = usableCurrent
+      .some((row) => canonicalStyleKey(row.brandName, row.productNumber) === key)
+      || usableFuture.some(({ row }) => canonicalStyleKey(row.brandName, row.productNumber) === key);
+    if (!hasSourceRows) {
       issues.push({ code: "source_missing", detail: `${style.brandName}/${style.productNumber}` });
     }
-    if (!current.some((row) => canonicalStyleKey(row.brandName, row.productNumber) === key && row.color?.trim() && row.size?.trim())) {
+    if (!hasUsableRows) {
       issues.push({ code: "empty_sizes", detail: `${style.brandName}/${style.productNumber}` });
     }
   }
@@ -130,10 +144,10 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
 
   const colors = new Map<string, { color: string; colorCode?: string; sizes: Map<string, MutableSize> }>();
   const currentDedupe = new Map<string, RepSparkCurrentRow>();
-  for (const row of current) {
+  for (const row of usableCurrent) {
     const color = row.color?.trim();
     const size = row.size?.trim();
-    if (!row.variantId || !color || !size) continue;
+    if (!color || !size) continue;
     const dedupeKey = `${row.variantId}\0${normalizeMatchKey(size)}`;
     const duplicate = currentDedupe.get(dedupeKey);
     if (duplicate) {
@@ -152,21 +166,14 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     colorEntry.sizes.set(sizeKey, sizeEntry);
     colors.set(normalizeMatchKey(color), colorEntry);
   }
-  if (colors.size === 0) {
-    issues.push({ code: "empty_sizes", detail: "one or more mapped styles have no usable current sizes" });
-  }
-
   const futureDedupe = new Map<string, RepSparkFutureRow>();
   for (const row of future) {
-    if (!row.variantId) continue;
     const date = validIsoDate(row.availabilityDate);
     if (row.availabilityDate && !date) {
       issues.push({ code: "invalid_date", detail: String(row.availabilityDate) });
-      continue;
     }
-    if (!date) continue;
-    const dateValue = new Date(`${date}T00:00:00.000Z`);
-    if (dateValue < today || dateValue > horizon) continue;
+  }
+  for (const { row, date } of usableFuture) {
     const color = row.color?.trim();
     const size = row.size?.trim();
     if (!color || !size) continue;
@@ -174,11 +181,18 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     const duplicate = futureDedupe.get(dedupeKey);
     if (duplicate && finiteQuantity(row.quantity) <= finiteQuantity(duplicate.quantity)) continue;
     futureDedupe.set(dedupeKey, row);
-    const colorEntry = colors.get(normalizeMatchKey(color));
-    const sizeEntry = colorEntry?.sizes.get(normalizeMatchKey(size));
-    if (!sizeEntry) continue;
+    const colorKey = normalizeMatchKey(color);
+    const colorEntry = colors.get(colorKey) ?? { color, sizes: new Map<string, MutableSize>() };
+    const sizeKey = normalizeMatchKey(size);
+    const sizeEntry = colorEntry.sizes.get(sizeKey) ?? { size, sequence: null, current: 0, future: new Map<string, number>() };
     const previous = duplicate ? finiteQuantity(duplicate.quantity) : 0;
     sizeEntry.future.set(date, (sizeEntry.future.get(date) ?? 0) - previous + finiteQuantity(row.quantity));
+    colorEntry.sizes.set(sizeKey, sizeEntry);
+    colors.set(colorKey, colorEntry);
+  }
+
+  if (colors.size === 0 && !issues.some((issue) => issue.code === "empty_sizes")) {
+    issues.push({ code: "empty_sizes", detail: "one or more mapped styles have no usable sizes" });
   }
 
   if (issues.length > 0) return { payload: null, json: null, hash: null, issues };

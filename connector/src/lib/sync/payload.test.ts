@@ -123,6 +123,48 @@ describe("buildInventoryPayload", () => {
     ]);
   });
 
+  it("includes a future-only size alongside current sizes with current quantity zero", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [current({ size: "M", quantity: 10 })],
+      future: [future({ variantId: "2", size: "XL", quantity: 8 })],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+
+    expect(result.issues).toEqual([]);
+    expect(result.payload?.size_order).toEqual(["M", "XL"]);
+    expect(result.payload?.colors[0].sizes).toEqual([
+      { size: "M", current: 10 },
+      { size: "XL", current: 0, future: [{ date: "2026-08-01", qty: 8 }] },
+    ]);
+  });
+
+  it("builds a payload for a style represented only by future inventory", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [],
+      future: [future({ size: "L", quantity: 12 })],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+
+    expect(result.issues).toEqual([]);
+    expect(result.payload).toMatchObject({
+      styles: ["STYLE-1"],
+      size_order: ["L"],
+      dates: ["2026-08-01"],
+      colors: [{
+        color: "Black",
+        sizes: [{ size: "L", current: 0, future: [{ date: "2026-08-01", qty: 12 }] }],
+      }],
+    });
+  });
+
   it.each(["2/29/2025", "13/1/2026", "2026-02-30", "2026-8-01", "8-1-2026"])(
     "rejects impossible or non-contract date %s",
     (availabilityDate) => {

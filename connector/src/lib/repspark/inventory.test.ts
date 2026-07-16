@@ -17,6 +17,8 @@ describe("fetchRepSparkInventory", () => {
         { table_name: "scrape_jobs", column_name: "target_type" },
         { table_name: "scrape_jobs", column_name: "brand_slugs" },
         { table_name: "scrape_jobs", column_name: "status" },
+        { table_name: "scrape_batches", column_name: "status" },
+        { table_name: "scrape_batches", column_name: "completed_at" },
         { table_name: "scrape_runs", column_name: "brand_id" },
         { table_name: "scrape_runs", column_name: "status" },
         { table_name: "scrape_runs", column_name: "started_at" },
@@ -36,21 +38,25 @@ describe("fetchRepSparkInventory", () => {
     expect(result.future).toHaveLength(1);
     expect(query.mock.calls[0][1][0]).toContain("scrape_jobs");
     const readinessCalls = query.mock.calls.slice(1, 3);
-    expect(readinessCalls[0][0]).toContain("lower(trim(sj.status)) = 'running'");
+    expect(readinessCalls[0][0]).toContain("lower(trim(sj.status)) = ANY ($2::text[])");
     expect(readinessCalls[0][0]).toContain("regexp_split_to_array");
+    expect(readinessCalls[0][1][1]).toEqual(["pending", "queued", "running", "processing"]);
     expect(readinessCalls[1][0]).toContain("FROM scrape_runs sr");
     const fetchCalls = query.mock.calls.slice(3);
     expect(fetchCalls).toHaveLength(2);
-    expect(fetchCalls[0][0]).toContain("LEFT JOIN variant_sizes vs ON vs.variant_id = pv.id");
+    expect(fetchCalls[0][0]).toContain("JOIN variant_sizes vs ON vs.variant_id = pv.id");
+    expect(fetchCalls[0][0]).not.toContain("LEFT JOIN variant_sizes");
     expect(fetchCalls[0][0]).not.toContain("variant_future_inventory");
-    expect(fetchCalls[1][0]).toContain("LEFT JOIN variant_future_inventory vfi ON vfi.variant_id = pv.id");
+    expect(fetchCalls[1][0]).toContain("JOIN variant_future_inventory vfi ON vfi.variant_id = pv.id");
+    expect(fetchCalls[1][0]).not.toContain("LEFT JOIN variant_future_inventory");
     expect(fetchCalls[1][0]).not.toContain("variant_sizes");
     expect(fetchCalls[0][1]).toEqual([["brand"], ["STYLE"]]);
-    expect(fetchCalls[0][0]).toContain('p."last_seen_at"');
-    expect(fetchCalls[0][0]).toContain('pv."last_seen_at"');
+    expect(fetchCalls[0][0]).toContain("NULL::timestamptz");
+    expect(fetchCalls[0][0]).not.toContain('p."last_seen_at"');
+    expect(fetchCalls[0][0]).not.toContain('pv."last_seen_at"');
   });
 
-  it("fails closed before inventory reads while a target brand scrape is running", async () => {
+  it("fails closed before inventory reads while a target brand scrape is active", async () => {
     const query = vi.fn()
       .mockResolvedValueOnce({ rows: [
         { table_name: "brands", column_name: "id" },
@@ -61,6 +67,8 @@ describe("fetchRepSparkInventory", () => {
         { table_name: "scrape_jobs", column_name: "target_type" },
         { table_name: "scrape_jobs", column_name: "brand_slugs" },
         { table_name: "scrape_jobs", column_name: "status" },
+        { table_name: "scrape_batches", column_name: "status" },
+        { table_name: "scrape_batches", column_name: "completed_at" },
         { table_name: "scrape_runs", column_name: "brand_id" },
         { table_name: "scrape_runs", column_name: "status" },
         { table_name: "scrape_runs", column_name: "id" },
@@ -68,8 +76,9 @@ describe("fetchRepSparkInventory", () => {
       .mockResolvedValueOnce({ rows: [{ brand_name: "Brand" }] });
     const db = { query } as unknown as Pool;
     await expect(fetchRepSparkInventory([{ brandName: "Brand", productNumber: "STYLE" }], db))
-      .rejects.toThrow("RepSpark scrape still running for: Brand");
+      .rejects.toThrow("RepSpark scrape is active for: Brand");
     expect(query).toHaveBeenCalledTimes(2);
+    expect(query.mock.calls[1][0]).toContain("FROM scrape_batches sb");
   });
 
   it("fails closed when the latest target brand scrape failed", async () => {
@@ -86,6 +95,8 @@ describe("fetchRepSparkInventory", () => {
         { table_name: "scrape_runs", column_name: "brand_id" },
         { table_name: "scrape_runs", column_name: "status" },
         { table_name: "scrape_runs", column_name: "id" },
+        { table_name: "scrape_runs", column_name: "started_at" },
+        { table_name: "scrape_runs", column_name: "completed_at" },
       ] })
       .mockResolvedValueOnce({ rows: [] })
       .mockResolvedValueOnce({ rows: [{ brand_name: "Brand", status: "failed" }] });
@@ -93,5 +104,7 @@ describe("fetchRepSparkInventory", () => {
     await expect(fetchRepSparkInventory([{ brandName: "Brand", productNumber: "STYLE" }], db))
       .rejects.toThrow("Latest RepSpark scrape is not complete for: Brand (failed)");
     expect(query).toHaveBeenCalledTimes(3);
+    const latestSql = query.mock.calls[2][0] as string;
+    expect(latestSql.indexOf('sr."started_at"')).toBeLessThan(latestSql.indexOf('sr."completed_at"'));
   });
 });

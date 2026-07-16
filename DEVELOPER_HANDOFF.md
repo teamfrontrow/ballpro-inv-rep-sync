@@ -1,14 +1,14 @@
 # Developer Handoff
 
-Updated: 2026-07-15
+Updated: 2026-07-16
 
 Repository: https://github.com/teamfrontrow/ballpro-inv-rep-sync
 
 ## Executive Status
 
-The implementation is **code-complete and locally verified**, but it is **not yet accepted against the live RepSpark database or a Shopify store**.
+The core implementation is locally verified, and the live RepSpark resource was assessed read-only on 2026-07-15. The connector itself is **not deployed** and has not completed a connector-to-RepSpark query or a Shopify end-to-end run.
 
-The connector, worker, database schema, management UI, Shopify OAuth flow, synchronization pipeline, guarded variant backfill, and storefront theme integration are implemented. The remaining work is deployment configuration and a controlled end-to-end pilot on `ballproplusdev.myshopify.com`.
+The connector, worker, database schema, management UI, Shopify OAuth flow, synchronization pipeline, guarded variant backfill, and storefront theme integration are implemented. Before deployment, the two Coolify resources need a shared network route and the RepSpark database needs a read-only role. RepSpark must also add freshness/snapshot replacement for child inventory rows before any Shopify write.
 
 Do not treat this as production-approved yet. No writes should be made to `ballpro.com` until the development-store gates pass.
 
@@ -18,7 +18,7 @@ Do not treat this as production-approved yet. No writes should be made to `ballp
 | --- | --- | --- |
 | Connector web app and API | Complete | Next.js 15, React 19, TypeScript |
 | Connector Postgres schema | Complete | Checksum migrations and persistent settings |
-| RepSpark database integration | Implemented, live validation pending | Must receive a read-only production-compatible URL |
+| RepSpark database integration | Code implemented; deployment blocked | Requires external `coolify` network, `repspark-db`, and `ballpro_ro` |
 | Shopify authentication | Complete, installation pending | Custom-distribution app plus one-time OAuth install and encrypted offline token |
 | Catalog reconciliation | Complete | Vendor aliases, multi-style mappings, manual override, ignore flow |
 | Inventory transformation | Complete | Current and future quantities, caps, canonical hashes, horizon filtering |
@@ -26,6 +26,8 @@ Do not treat this as production-approved yet. No writes should be made to `ballp
 | Durable worker and scheduling | Complete | Queue, leases, heartbeats, bounded recovery; unattended run pending |
 | Variant backfill | Complete and hard-gated | Additive only, signed preview, blank SKUs, untracked inventory |
 | Theme integration | Complete | Local/MCP validation passed; real product-page preview pending |
+| Live source data | Assessed 2026-07-15 | 3 of 20 brands are completeness candidates; freshness unresolved |
+| Connector deployment | Not started | No connector containers existed in the assessed Coolify environment |
 | Production rollout | Not started | Development-store acceptance must happen first |
 
 ## What The System Does
@@ -46,7 +48,9 @@ One Coolify Docker Compose resource containing:
 - `connector-worker`: private durable sync worker.
 - `connector-db`: dedicated Postgres database and persistent volume.
 
-The connector reads the existing RepSpark Postgres through a separate `SELECT`-only connection.
+The connector reads the existing RepSpark Postgres through a separate `SELECT`-only connection. The selected deployment contract is the external Coolify network named `coolify`, a RepSpark-owned stable hostname `repspark-db`, and a RepSpark-owned role `ballpro_ro`.
+
+The stable alias and database role must be created in the existing RepSpark resource. Deploying this connector repository cannot create them. Connector web and worker services must both join the shared network; the connector database remains private to the connector resource.
 
 ### `shopify-theme/`
 
@@ -91,6 +95,22 @@ Important details:
 - Source readiness checks active scrape jobs and the latest brand scrape run.
 - Current and future rows are queried independently to avoid row multiplication.
 - Inventory rows with missing timestamps or timestamps older than two days are rejected as stale.
+
+The connector now blocks all active job states plus active batches, evaluates enabled brands separately, rejects partial current-size coverage, reads current/future inventory in one repeatable-read transaction, and fails closed when child freshness is unavailable.
+
+## Live RepSpark Snapshot
+
+The following facts were observed read-only on 2026-07-15 and may change after later scrapes:
+
+- RepSpark was deployed from commit `191433c`; the connector was not deployed.
+- RepSpark Postgres was private to resource network `potgqdk2xho4ijy8namfi8kg`, had no published host port, and was not attached to `coolify`.
+- The database had only the `repspark` superuser login; `ballpro_ro` did not exist.
+- The source contained 20 brands, 15 enabled brands, 26,910 products, 28,033 current-size rows, and 15,086 future-inventory rows.
+- johnnie-O, Holderness & Bourne, and Sun Day Red met the aggregate completeness checks, but child freshness remains unprovable.
+- Ten enabled brands were list-only with no size rows; Donald Ross and Flag & Anthem had incomplete color coverage; five disabled brands were empty.
+- Only Sun Day Red had product image rows. Images are not read by the core inventory metafield sync and therefore do not block the pilot.
+
+See `LIVE_COOLIFY_FINDINGS.md` for the full dated evidence and ownership boundaries.
 
 ## Matching Contract
 
@@ -140,7 +160,9 @@ The full copied theme has 27 pre-existing Theme Check offenses in unrelated file
 ## What Has Not Been Verified Yet
 
 - OAuth installation against the real Ball Pro development store.
-- A connector query against the deployed RepSpark database and its production role/network path.
+- RepSpark child-row freshness markers and transactional snapshot replacement/removal.
+- Creation and validation of the shared `coolify` route, `repspark-db` alias, and `ballpro_ro` role.
+- A connector query against the deployed RepSpark database through that production route.
 - Match metrics against a fresh scrape rather than the supplied snapshots.
 - A real dry run using the development store and RepSpark source together.
 - A real metafield write followed by an unchanged second run.
@@ -155,15 +177,17 @@ The full copied theme has 27 pre-existing Theme Check offenses in unrelated file
 Read these in order:
 
 1. `README.md` - system overview and operator flow.
-2. `IMPLEMENTATION_STATUS.md` - acceptance gates.
-3. `BALLPRO_INVENTORY_PLAN.md` - design decisions and data contract.
-4. `connector/src/lib/sync/engine.ts` - sync orchestration and persistence.
-5. `connector/src/lib/repspark/inventory.ts` - source schema discovery, readiness, and queries.
-6. `connector/src/lib/shopify/client.ts` - GraphQL operations, throttling, metafields, and variants.
-7. `connector/src/lib/catalog/` - discovery, reconciliation, and persistence.
-8. `connector/src/lib/variants/service.ts` - signed preview and additive backfill gate.
-9. `connector/src/lib/jobs/queue.ts` - worker leasing and recovery.
-10. `shopify-theme/snippets/product-inventory-table.liquid` - storefront rendering.
+2. `LIVE_COOLIFY_FINDINGS.md` - dated live topology and source-data evidence.
+3. `REPSPARK_UPSTREAM_CHANGES.md` - blocking scraper schema/persistence contract.
+4. `IMPLEMENTATION_STATUS.md` - acceptance gates.
+5. `BALLPRO_INVENTORY_PLAN.md` - design decisions and data contract.
+6. `connector/src/lib/sync/engine.ts` - sync orchestration and persistence.
+7. `connector/src/lib/repspark/inventory.ts` - source schema discovery, readiness, and queries.
+8. `connector/src/lib/shopify/client.ts` - GraphQL operations, throttling, metafields, and variants.
+9. `connector/src/lib/catalog/` - discovery, reconciliation, and persistence.
+10. `connector/src/lib/variants/service.ts` - signed preview and additive backfill gate.
+11. `connector/src/lib/jobs/queue.ts` - worker leasing and recovery.
+12. `shopify-theme/snippets/product-inventory-table.liquid` - storefront rendering.
 
 ## Local Review
 
@@ -190,7 +214,7 @@ Share these through the team's approved secret manager, never Slack, email, or G
 - Permission to install the custom-distribution app on `ballproplusdev.myshopify.com`.
 - Deployed connector HTTPS hostname.
 - `TOKEN_ENCRYPTION_KEY` generated with `openssl rand -hex 32`.
-- Read-only RepSpark Postgres URL and network access from Coolify.
+- Read-only RepSpark Postgres URL using `ballpro_ro@repspark-db` and shared-network access from Coolify.
 - Connector `ADMIN_USERNAME` and `ADMIN_PASSWORD`.
 - Connector Postgres `POSTGRES_PASSWORD`.
 - Coolify project access.
@@ -198,29 +222,31 @@ Share these through the team's approved secret manager, never Slack, email, or G
 
 ## Proposed First Joint Deployment Session
 
-1. Review the source queries and Shopify write paths together.
-2. Create/version the custom-distribution app with only `read_products,write_products`.
-3. Deploy the Compose resource to Coolify with a new connector database.
-4. Verify `/api/health` sees both databases while Shopify is still uninstalled.
-5. Complete the one-time Shopify install and verify the expected shop identity.
-6. Run catalog discovery immediately after a completed RepSpark scrape.
-7. Review match metrics and choose one fully ready pilot brand.
-8. Set a conservative cap and run a dry sync.
-9. Inspect the payload and run the first write.
-10. Verify the metafield in Shopify Admin, rerun, and require `unchanged`.
-11. Preview the theme and inspect current, future, capped, empty, and missing-metafield states.
-12. Test one signed variant preview and addition on a disposable development product.
-13. Enable the scheduled task only after those checks pass.
+1. Update RepSpark child inventory tables/persistence to carry trustworthy freshness and replace each successful modal snapshot.
+2. Re-scrape one candidate brand and verify complete, fresh child coverage with obsolete rows removed.
+3. In the RepSpark resource, attach Postgres to external network `coolify` with stable alias `repspark-db`.
+4. In the RepSpark database, create and verify the SELECT-only `ballpro_ro` role without committing its password.
+5. Create/version the custom-distribution app with only `read_products,write_products`.
+6. Deploy the connector Compose resource with web and worker attached to `coolify` and a new private connector database.
+7. Set the read-only RepSpark URL in Coolify and verify `/api/health` sees both databases while Shopify is still uninstalled.
+8. Complete the one-time Shopify install and verify the expected shop identity.
+9. Run catalog discovery immediately after a completed full/data-only RepSpark scrape.
+10. Start with johnnie-O, Holderness & Bourne, or Sun Day Red and review match metrics.
+11. Set a conservative cap and run a brand-scoped dry sync; require zero skipped/failed products.
+12. Inspect the payload and run the first write.
+13. Verify the metafield in Shopify Admin, rerun, and require `unchanged`.
+14. Preview the theme and inspect current, future, capped, empty, and missing-metafield states.
+15. Test one signed variant preview and addition on a disposable development product.
+16. Enable the scheduled task only after those checks pass.
 
 ## Decisions Still Open
 
 - Final Coolify hostname and scheduled interval.
-- Which RepSpark Postgres role and network route to use.
-- Which brand/product will be the first pilot.
+- Which of the three completeness candidates and which product will be the first pilot.
 - Whether to keep the current stale-mapping behavior (delete the metafield) or switch production to a tombstone.
 - When to clean up the copied theme's unrelated Theme Check backlog.
 - Production rollout date and rollback owner.
 
 ## Current Bottom Line
 
-The project is ready for peer review and a controlled development deployment. The main engineering risk has shifted from implementation to integration: real credentials, network connectivity, current source-data quality, Shopify installation approval, and end-to-end observation on the development store.
+The project is ready for peer review and RepSpark prerequisite work. The immediate blockers are trustworthy child inventory snapshots, the shared network route, and the missing `ballpro_ro` role. The observed source suggests three candidate brands, but none should write to Shopify until freshness is fixed and a scoped dry run is clean.

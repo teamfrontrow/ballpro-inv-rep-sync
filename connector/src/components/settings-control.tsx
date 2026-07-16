@@ -6,7 +6,14 @@ import { DatabaseZap, Link2, LoaderCircle, RefreshCw, Save } from "lucide-react"
 import { apiJson, formatDate, useToast } from "@/components/ui";
 
 type Settings = { default_cap: number | null; future_horizon_days: number; shopify_api_version: string; updated_at: string };
-type Readiness = { ready: boolean; checkedAt: string; globalIssues: Array<{ message: string }>; brands: Array<{ brandName: string; ready: boolean; issues: Array<{ message: string }> }> };
+type Readiness = {
+  ready: boolean;
+  canSync: boolean;
+  checkedAt: string;
+  globalIssues: Array<{ message: string }>;
+  brands: Array<{ brandName: string; sourceEnabled: boolean; ready: boolean; issues: Array<{ message: string }> }>;
+  summary: { totalBrands: number; enabledBrands: number; readyEnabledBrands: number };
+};
 
 export function SettingsControl() {
   const [settings, setSettings] = useState<Settings | null>(null);
@@ -72,11 +79,11 @@ export function SettingsControl() {
       </div>
     </div>
     <div className="card">
-      <div className="card-header"><div><h2 className="section-title">Catalog discovery</h2><p className="section-desc">Read Shopify products and rebuild multi-style mappings from RepSpark without writing inventory.</p></div>{readiness && <span className={`badge ${readiness.ready ? "badge-success" : "badge-warning"}`}>{readiness.ready ? "Source ready" : "Review source"}</span>}</div>
+      <div className="card-header"><div><h2 className="section-title">Catalog discovery</h2><p className="section-desc">Read Shopify products and rebuild multi-style mappings from RepSpark without writing inventory.</p></div>{readiness && <span className={`badge ${readiness.ready ? "badge-success" : "badge-warning"}`}>{readiness.ready ? "Source ready" : readiness.canSync ? "Pilot ready" : "Source blocked"}</span>}</div>
       <div className="card-body stack">
         {readiness ? <>
-          <div className="secondary">{readiness.brands.filter((brand) => brand.ready).length} of {readiness.brands.length} RepSpark brands are sync-ready.</div>
-          {(readiness.globalIssues.length > 0 || readiness.brands.some((brand) => !brand.ready)) && <div className="notice notice-warning">{[...readiness.globalIssues.map((issue) => issue.message), ...readiness.brands.filter((brand) => !brand.ready).slice(0, 5).map((brand) => `${brand.brandName}: ${brand.issues.map((issue) => issue.message).join(", ")}`)].join(" · ")}</div>}
+          <div className="secondary">{readiness.summary.readyEnabledBrands} of {readiness.summary.enabledBrands} enabled RepSpark brands are sync-ready ({readiness.summary.totalBrands} total brands).</div>
+          {(readiness.globalIssues.length > 0 || readiness.brands.some((brand) => brand.sourceEnabled && !brand.ready)) && <div className="notice notice-warning">{[...readiness.globalIssues.map((issue) => issue.message), ...readiness.brands.filter((brand) => brand.sourceEnabled && !brand.ready).slice(0, 5).map((brand) => `${brand.brandName}: ${brand.issues.map((issue) => issue.message).join(", ")}`)].join(" · ")}</div>}
         </> : <div className="secondary">Inspecting RepSpark readiness...</div>}
         <div className="row-wrap"><button className="btn btn-primary" onClick={ingestCatalog} disabled={catalogBusy}>{catalogBusy ? <LoaderCircle className="spinner" size={15} /> : <DatabaseZap size={15} />}Run catalog discovery</button><button className="btn" onClick={loadReadiness} disabled={catalogBusy}><RefreshCw size={15} />Refresh readiness</button></div>
       </div>

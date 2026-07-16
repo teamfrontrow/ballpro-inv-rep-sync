@@ -7,11 +7,17 @@ function sourceDb(options: { active?: boolean; brandStatus?: string } = {}) {
     query: vi.fn()
       .mockResolvedValueOnce({ rows: [{ count: options.active ? 1 : 0 }] })
       .mockResolvedValueOnce({ rows: [{ count: 0 }] })
+      .mockResolvedValueOnce({ rows: [
+        { tableName: "variant_sizes", columnName: "last_seen_at" },
+        { tableName: "variant_future_inventory", columnName: "last_seen_at" },
+      ] })
       .mockResolvedValueOnce({ rows: [{
         brandName: "Acme",
+        sourceEnabled: true,
         latestRunStatus: options.brandStatus ?? "completed",
         currentSizeRows: options.brandStatus === "failed" ? 0 : 1,
         variantRows: 1,
+        variantsWithoutCurrentSizes: 0,
         nullColorRows: 0,
         futureDateRows: [],
       }] })

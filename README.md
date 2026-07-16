@@ -44,6 +44,8 @@ The connector is a Next.js 15 application with a separate durable worker. Both u
 - [`BALLPRO_INVENTORY_PLAN.md`](BALLPRO_INVENTORY_PLAN.md) - architecture, data contracts, implementation phases, and acceptance criteria.
 - [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md) - completed work, measured verification, and remaining live-store gates.
 - [`DEVELOPER_HANDOFF.md`](DEVELOPER_HANDOFF.md) - peer-developer status, review map, access requirements, and recommended first deployment session.
+- [`LIVE_COOLIFY_FINDINGS.md`](LIVE_COOLIFY_FINDINGS.md) - dated 2026-07-15 snapshot of the live RepSpark Coolify topology, database coverage, and deployment prerequisites.
+- [`REPSPARK_UPSTREAM_CHANGES.md`](REPSPARK_UPSTREAM_CHANGES.md) - required child-inventory freshness and snapshot-replacement work in the scraper repository.
 - [`connector/DEPLOY.md`](connector/DEPLOY.md) - Shopify Dev Dashboard and Coolify deployment runbook.
 
 ## Shopify Authentication
@@ -67,7 +69,8 @@ An existing Shopify-admin-created custom app token can be supplied through `SHOP
 - Node.js 22 or newer.
 - Docker with Docker Compose for the recommended local and production layout.
 - A Shopify custom-distribution app with `read_products,write_products`.
-- A read-only Postgres role for the existing RepSpark scraper database.
+- Access to Coolify's external `coolify` network from the connector web and worker services.
+- A RepSpark-owned `repspark-db` network alias and `ballpro_ro` SELECT-only Postgres role.
 - Shopify CLI 3 for theme preview and deployment.
 
 ## Connector Setup
@@ -183,6 +186,15 @@ The new inventory integration introduces no new Theme Check offenses. The copied
 
 ## Coolify Deployment
 
+The connector has **not been deployed** as of the 2026-07-15 live assessment. The selected cross-resource database contract is:
+
+- Both Coolify resources use the external `coolify` network.
+- The RepSpark Postgres service owns the stable `repspark-db` network alias.
+- The RepSpark database owns the `ballpro_ro` login with SELECT-only access.
+- `REPSPARK_DATABASE_URL` uses that alias and role; credentials stay in Coolify secrets and are never committed.
+
+Creating `repspark-db` and `ballpro_ro` changes the existing RepSpark resource. Deploying this repository does not create either prerequisite. Do not publish RepSpark Postgres to the host or depend on a generated Coolify container name.
+
 Create one Docker Compose resource with:
 
 - Base directory: `/connector`
@@ -194,7 +206,7 @@ Create one Docker Compose resource with:
 
 Materialize a private `connector/.env` in Coolify and configure `POSTGRES_PASSWORD` as a Compose variable. Schedule `npm run sync:scheduled`; the command only enqueues work and the worker performs the synchronization.
 
-See [`connector/DEPLOY.md`](connector/DEPLOY.md) for the complete production runbook.
+See [`LIVE_COOLIFY_FINDINGS.md`](LIVE_COOLIFY_FINDINGS.md) for the observed topology and [`connector/DEPLOY.md`](connector/DEPLOY.md) for the deployment runbook.
 
 ## Security
 
@@ -208,11 +220,15 @@ See [`connector/DEPLOY.md`](connector/DEPLOY.md) for the complete production run
 ## Current Verification
 
 - ESLint and TypeScript pass.
-- 50 tests pass across 11 test files.
+- 55 tests pass across 11 test files.
 - Next.js production build passes.
 - Production dependency audit reports zero vulnerabilities.
 - Fresh and repeat migration behavior is verified.
 - Shopify Admin GraphQL operations validate against API `2026-07`.
 - Connector authentication and health routes pass HTTP smoke tests.
+
+A read-only assessment of the live RepSpark resource on 2026-07-15 found 20 brands and 26,910 products, but the connector was not deployed and no connector-to-RepSpark query was performed. johnnie-O, Holderness & Bourne, and Sun Day Red passed aggregate color/size/run checks and are pilot candidates, not yet write-safe. Missing product images do not block the core inventory metafield sync.
+
+RepSpark's child inventory tables do not carry freshness markers and the scraper does not remove quantities missing from a later scrape. The connector now fails closed on that condition. RepSpark must add child freshness/snapshot replacement and re-scrape a candidate brand before the first write.
 
 Live Shopify, RepSpark, theme-preview, and scheduled-run acceptance requires deployment credentials and is tracked in [`IMPLEMENTATION_STATUS.md`](IMPLEMENTATION_STATUS.md).
