@@ -1,0 +1,722 @@
+{% liquid
+  assign loading = 'lazy'
+  assign fetchpriority = 'low'
+  if section.index < 2
+    assign loading = 'eager'
+    assign fetchpriority = 'high'
+  endif
+
+  assign image_alt = section.settings.image.alt | default: section.settings.image_alt | default: section.settings.callout_heading | escape
+%}
+
+{% render 'divider',
+  show_divider: section.settings.show_section_divider,
+  divider_width: section.settings.divider_width
+%}
+
+{% style %}
+  .section-{{ section.id }} {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --custom-features-gap: {{ section.settings.column_gap | divided_by: 10.0 }}rem;
+    --custom-features-accent: {{ section.settings.accent_color }};
+    --custom-features-spec-accent: {{ section.settings.spec_accent_color }};
+    --custom-features-image-glow: rgba({{ section.settings.image_glow_color.red }}, {{ section.settings.image_glow_color.green }}, {{ section.settings.image_glow_color.blue }}, {{ section.settings.image_glow_opacity | divided_by: 100.0 }});
+    --custom-features-callout-background: {{ section.settings.callout_background }};
+    --custom-features-callout-border: {{ section.settings.callout_border }};
+    --custom-features-image-width: {{ section.settings.image_width }}%;
+  }
+
+  .section-{{ section.id }} .custom-features__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .section-{{ section.id }} .custom-features__media {
+    position: relative;
+    order: 2;
+  }
+
+  .section-{{ section.id }} .custom-features__content {
+    order: 1;
+  }
+
+  .section-{{ section.id }} .custom-features__glow {
+    position: absolute;
+    top: -4rem;
+    left: -4rem;
+    width: 16rem;
+    height: 16rem;
+    border-radius: 999px;
+    background: var(--custom-features-image-glow);
+    filter: blur(4rem);
+    pointer-events: none;
+  }
+
+  .section-{{ section.id }} .custom-features__image-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: var(--custom-features-image-width, 100%);
+    margin-inline: {% if section.settings.image_position == 'right' %}auto 0{% else %}0 auto{% endif %};
+    overflow: hidden;
+    border-radius: var(--blocks-radius, 1.6rem);
+  }
+
+  .section-{{ section.id }} .custom-features__image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .section-{{ section.id }} .custom-features__grid--no-image {
+    grid-template-columns: 1fr;
+  }
+
+  .section-{{ section.id }} .custom-features__grid--no-image .custom-features__content {
+    max-width: 72rem;
+    margin-inline: auto;
+  }
+
+  .section-{{ section.id }} .custom-features__callout {
+    position: relative;
+    z-index: 2;
+    max-width: 32rem;
+    margin: 1.6rem 0 0;
+    padding: 2rem;
+    background: var(--custom-features-callout-background);
+    border: 1px solid var(--custom-features-callout-border);
+    border-radius: var(--small-blocks-radius, 1.2rem);
+    box-shadow: 0 1.2rem 3rem rgba(var(--color-foreground), 0.08);
+  }
+
+  .section-{{ section.id }} .custom-features__callout-heading {
+    margin: 0 0 0.8rem;
+    color: var(--custom-features-accent);
+  }
+
+  .section-{{ section.id }} .custom-features__callout-text,
+  .section-{{ section.id }} .custom-features__callout-text p {
+    margin: 0;
+    color: rgba(var(--color-foreground), 0.72);
+  }
+
+  .section-{{ section.id }} .custom-features__heading {
+    margin: 0 0 3.2rem;
+    color: rgb(var(--color-text-heading));
+    line-height: 1.08;
+  }
+
+  .section-{{ section.id }} .custom-features__group + .custom-features__group {
+    margin-top: 3.2rem;
+  }
+
+  .section-{{ section.id }} .custom-features__group-heading {
+    margin: 0 0 2.4rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid rgba(var(--color-foreground), 0.12);
+    color: var(--custom-features-accent);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .section-{{ section.id }} .custom-features__list {
+    display: grid;
+    gap: 1.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .section-{{ section.id }} .custom-features__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    color: rgb(var(--color-foreground));
+  }
+
+  .section-{{ section.id }} .custom-features__icon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.4rem;
+    height: 2.4rem;
+    margin-top: 0.1rem;
+    color: var(--custom-features-accent);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .section-{{ section.id }} .custom-features__group--specifications .custom-features__icon {
+    color: var(--custom-features-spec-accent);
+  }
+
+  .section-{{ section.id }} .custom-features__item-title {
+    font-weight: 700;
+    color: rgb(var(--color-text-heading));
+  }
+
+  .section-{{ section.id }} .custom-features__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    margin-top: 4rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }} .custom-features__callout {
+      position: absolute;
+      right: 3.2rem;
+      bottom: 3.2rem;
+      margin: 0;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .section-{{ section.id }} .custom-features__grid:not(.custom-features__grid--no-image) {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--custom-features-gap);
+    }
+
+    .section-{{ section.id }} .custom-features__media {
+      order: {% if section.settings.image_position == 'right' %}2{% else %}1{% endif %};
+    }
+
+    .section-{{ section.id }} .custom-features__content {
+      order: {% if section.settings.image_position == 'right' %}1{% else %}2{% endif %};
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .section-{{ section.id }} .custom-features__buttons .btn {
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+<div class="section section-{{ section.id }} section--padding custom-features color-{{ section.settings.color_scheme }}"{% if section.settings.css_id != blank %} id="{{ section.settings.css_id | escape }}"{% endif %}>
+  <div class="section__container page-width page-width--{{ section.settings.container }}">
+    <div class="custom-features__grid{% if section.settings.image == blank %} custom-features__grid--no-image{% endif %}">
+      {% if section.settings.image != blank %}
+        <div class="custom-features__media">
+          {% if section.settings.show_image_glow %}
+            <div class="custom-features__glow"></div>
+          {% endif %}
+
+          <div class="custom-features__image-wrap">
+            {{
+              section.settings.image
+              | image_url: width: 1600
+              | image_tag:
+                loading: loading,
+                fetchpriority: fetchpriority,
+                widths: '360, 540, 720, 900, 1100, 1300, 1600',
+                sizes: '(min-width: 990px) 50vw, 100vw',
+                alt: image_alt,
+                class: 'custom-features__image'
+            }}
+          </div>
+
+          {% if section.settings.show_callout and section.settings.callout_heading != blank or section.settings.callout_text != blank %}
+            <div class="custom-features__callout">
+              {% if section.settings.callout_heading != blank %}
+                <h3 class="custom-features__callout-heading h5">{{ section.settings.callout_heading | escape }}</h3>
+              {% endif %}
+              {% if section.settings.callout_text != blank %}
+                <div class="custom-features__callout-text rte text-subtext">{{ section.settings.callout_text }}</div>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="custom-features__content">
+        {% if section.settings.heading != blank %}
+          <h2 class="custom-features__heading {{ section.settings.heading_size }}">{{ section.settings.heading | escape }}</h2>
+        {% endif %}
+
+        <div class="custom-features__group custom-features__group--features">
+          {% if section.settings.features_heading != blank %}
+            <h3 class="custom-features__group-heading">{{ section.settings.features_heading | escape }}</h3>
+          {% endif %}
+
+          <ul class="custom-features__list">
+            {% for block in section.blocks %}
+              {% if block.type == 'feature' %}
+                <li class="custom-features__item" {{ block.shopify_attributes }}>
+                  <span class="custom-features__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M20 6 9 17l-5-5"></path>
+                    </svg>
+                  </span>
+                  <div class="custom-features__item-content">
+                    {% if block.settings.title != blank %}
+                      <span class="custom-features__item-title">{{ block.settings.title | escape }}:</span>
+                    {% endif %}
+                    {{ block.settings.text | escape }}
+                  </div>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="custom-features__group custom-features__group--specifications">
+          {% if section.settings.specifications_heading != blank %}
+            <h3 class="custom-features__group-heading">{{ section.settings.specifications_heading | escape }}</h3>
+          {% endif %}
+
+          <ul class="custom-features__list">
+            {% for block in section.blocks %}
+              {% if block.type == 'specification' %}
+                <li class="custom-features__item" {{ block.shopify_attributes }}>
+                  <span class="custom-features__icon" aria-hidden="true">
+                    {% case block.settings.icon %}
+                      {% when 'air' %}
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h11a3 3 0 1 0-3-3"></path><path d="M4 15h14a3 3 0 1 1-3 3"></path></svg>
+                      {% when 'water' %}
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z"></path></svg>
+                      {% else %}
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"></path><path d="M5 8h14"></path><path d="M7 16h10"></path></svg>
+                    {% endcase %}
+                  </span>
+                  <div class="custom-features__item-content">{{ block.settings.text | escape }}</div>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+
+        {% if section.settings.button_1_label != blank or section.settings.button_2_label != blank %}
+          <div class="custom-features__buttons">
+            {% if section.settings.button_1_label != blank %}
+              {% render 'button',
+                button_style: section.settings.button_1_style,
+                button_link: section.settings.button_1_link,
+                button_label: section.settings.button_1_label,
+                button_icon: section.settings.button_1_icon
+              %}
+            {% endif %}
+
+            {% if section.settings.button_2_label != blank %}
+              {% render 'button',
+                button_style: section.settings.button_2_style,
+                button_link: section.settings.button_2_link,
+                button_label: section.settings.button_2_label,
+                button_icon: section.settings.button_2_icon
+              %}
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom Features",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["footer", "header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "container",
+      "label": "Container",
+      "default": "fixed",
+      "options": [
+        { "value": "full", "label": "Full width" },
+        { "value": "fixed", "label": "Fixed width" }
+      ]
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The Benefits of the Glove Fitting Program"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "Large" },
+        { "value": "h2", "label": "Medium" },
+        { "value": "h3", "label": "Small" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "features_heading",
+      "label": "Features heading",
+      "default": "PROGRAM FEATURES"
+    },
+    {
+      "type": "text",
+      "id": "specifications_heading",
+      "label": "Specifications heading",
+      "default": "GLOVE SPECIFICATIONS"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Image alt text",
+      "default": "Detail of glove with removable ball marker"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position on desktop",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "label": "Image size",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image_glow",
+      "label": "Show image glow",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "image_glow_color",
+      "label": "Image glow color",
+      "default": "#1D349A"
+    },
+    {
+      "type": "range",
+      "id": "image_glow_opacity",
+      "label": "Image glow opacity",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "%",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Callout"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_callout",
+      "label": "Show callout",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "callout_heading",
+      "label": "Callout heading",
+      "default": "Removable Ball Marker"
+    },
+    {
+      "type": "richtext",
+      "id": "callout_text",
+      "label": "Callout text",
+      "default": "<p>Integrated magnetic ball marker for convenient on-course access and branding.</p>"
+    },
+    {
+      "type": "color",
+      "id": "callout_background",
+      "label": "Callout background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "callout_border",
+      "label": "Callout border",
+      "default": "#E7EEF5"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_1_label",
+      "label": "First button label",
+      "default": "Sales Flyer"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "First button link"
+    },
+    {
+      "type": "select",
+      "id": "button_1_style",
+      "label": "First button style",
+      "default": "btn--primary",
+      "options": [
+        { "value": "btn--primary", "label": "Primary" },
+        { "value": "btn--secondary", "label": "Secondary" },
+        { "value": "btn--white", "label": "White" },
+        { "value": "btn--outline", "label": "Outline" },
+        { "value": "btn--plain", "label": "Plain" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "button_1_icon",
+      "label": "First button icon",
+      "default": "download",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "arrow-right", "label": "Arrow right" },
+        { "value": "download", "label": "Download" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "button_2_label",
+      "label": "Second button label",
+      "default": "Left v Right Guide"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Second button link"
+    },
+    {
+      "type": "select",
+      "id": "button_2_style",
+      "label": "Second button style",
+      "default": "btn--outline",
+      "options": [
+        { "value": "btn--primary", "label": "Primary" },
+        { "value": "btn--secondary", "label": "Secondary" },
+        { "value": "btn--white", "label": "White" },
+        { "value": "btn--outline", "label": "Outline" },
+        { "value": "btn--plain", "label": "Plain" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "button_2_icon",
+      "label": "Second button icon",
+      "default": "arrow-right",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "arrow-right", "label": "Arrow right" },
+        { "value": "download", "label": "Download" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Feature accent color",
+      "default": "#316951"
+    },
+    {
+      "type": "color",
+      "id": "spec_accent_color",
+      "label": "Specification accent color",
+      "default": "#1D349A"
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Desktop column gap",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 64
+    },
+    {
+      "type": "checkbox",
+      "id": "show_section_divider",
+      "label": "Show section divider",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "divider_width",
+      "label": "Divider width",
+      "default": "fixed",
+      "options": [
+        { "value": "fixed", "label": "Fixed width" },
+        { "value": "full", "label": "Full width" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "css_id",
+      "label": "CSS ID",
+      "info": "Add a unique ID for anchor links. Do not include the # symbol."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Program feature",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "default": "check",
+          "options": [
+            { "value": "check", "label": "Check" }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "20% Extra Gloves"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Includes 20% extra gloves to ensure everyone finds their perfect size."
+        }
+      ]
+    },
+    {
+      "type": "specification",
+      "name": "Glove specification",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "default": "manufacturing",
+          "options": [
+            { "value": "manufacturing", "label": "Manufacturing" },
+            { "value": "air", "label": "Air" },
+            { "value": "water", "label": "Water" }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Premium Cabretta leather for a comfortable and stable second-skin fit."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Features",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "check",
+            "title": "20% Extra Gloves",
+            "text": "Includes 20% extra gloves to ensure everyone finds their perfect size."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "check",
+            "title": "Flexible Returns",
+            "text": "Return leftover gloves with no restocking fee. Total risk mitigation."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "check",
+            "title": "Quick Turnaround",
+            "text": "3-5 day production for last-minute tournament logistics."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "check",
+            "title": "Bonus Ball Markers",
+            "text": "Keep all extra ball markers - ideal for sponsor branding opportunities."
+          }
+        },
+        {
+          "type": "specification",
+          "settings": {
+            "icon": "manufacturing",
+            "text": "Premium Cabretta leather for a comfortable and stable second-skin fit."
+          }
+        },
+        {
+          "type": "specification",
+          "settings": {
+            "icon": "air",
+            "text": "TruVent airflow system for maximum ventilation across knuckles."
+          }
+        },
+        {
+          "type": "specification",
+          "settings": {
+            "icon": "water",
+            "text": "Absorbsoft wrist band engineered to wick moisture and maintain grip."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

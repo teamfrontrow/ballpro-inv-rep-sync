@@ -1,0 +1,47 @@
+services:
+  connector-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ballpro_connector
+      POSTGRES_USER: ballpro
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    volumes:
+      - connector-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ballpro -d ballpro_connector"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  connector-web:
+    build: .
+    restart: unless-stopped
+    command: ["sh", "-c", "npm run db:migrate && node .next/standalone/server.js"]
+    env_file: .env
+    environment:
+      CONNECTOR_DATABASE_URL: postgresql://ballpro:${POSTGRES_PASSWORD}@connector-db:5432/ballpro_connector
+    depends_on:
+      connector-db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  connector-worker:
+    build: .
+    restart: unless-stopped
+    command: ["sh", "-c", "npm run db:migrate && npm run worker"]
+    env_file: .env
+    environment:
+      CONNECTOR_DATABASE_URL: postgresql://ballpro:${POSTGRES_PASSWORD}@connector-db:5432/ballpro_connector
+    depends_on:
+      connector-db:
+        condition: service_healthy
+
+volumes:
+  connector-db-data:

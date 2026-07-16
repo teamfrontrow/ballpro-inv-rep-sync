@@ -1,0 +1,107 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "breadcrumbs_specials": {
+      "type": "breadcrumbs",
+      "settings": {
+        "container": "fixed",
+        "text_alignment": "start",
+        "padding_top": 16,
+        "padding_bottom": 20
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "container": "fixed",
+        "text_alignment": "center",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "custom_rich_text_cGTFtg": {
+      "type": "custom-rich-text",
+      "blocks": {
+        "heading_n8zj68": {
+          "type": "heading",
+          "disabled": true,
+          "settings": {
+            "heading": "End User Resources",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "hd1"
+          }
+        },
+        "text_CfyLRE": {
+          "type": "text",
+          "settings": {
+            "text": "",
+            "text_size": "text-base",
+            "text_line_limit": "none",
+            "button_style": "btn--underline",
+            "button_icon": "none"
+          }
+        },
+        "button_apkxBB": {
+          "type": "button",
+          "disabled": true,
+          "settings": {
+            "button_label": "Get In Touch",
+            "button_link": "shopify://pages/contact",
+            "button_style": "btn--primary",
+            "button_icon": "none"
+          }
+        }
+      },
+      "block_order": [
+        "heading_n8zj68",
+        "text_CfyLRE",
+        "button_apkxBB"
+      ],
+      "name": "Custom Rich Text",
+      "settings": {
+        "container": "fixed",
+        "padding_left": 0,
+        "padding_right": 32,
+        "color_scheme": "",
+        "use_color_scheme_in_container": false,
+        "content_spacing": "standard",
+        "content_alignment": "left",
+        "padding_top": 50,
+        "padding_bottom": 20,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "specials_grid": {
+      "type": "custom-specials-grid",
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "scheme-1",
+        "heading": "",
+        "heading_size": "h1",
+        "subheading": "",
+        "empty_message": "No specials available right now. Check back soon!",
+        "padding_top": 40,
+        "padding_bottom": 120
+      }
+    }
+  },
+  "order": [
+    "breadcrumbs_specials",
+    "main",
+    "custom_rich_text_cGTFtg",
+    "specials_grid"
+  ]
+}

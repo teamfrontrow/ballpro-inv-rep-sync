@@ -1,0 +1,533 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "container": "fixed",
+        "text_alignment": "center",
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "custom_content_HJqnQy": {
+      "type": "custom-content",
+      "blocks": {
+        "text_YUyTag": {
+          "type": "text",
+          "settings": {
+            "content_alignment": "center",
+            "subheading": "",
+            "heading": "Golf Tournaments",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h1",
+            "description": "",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "btn--primary",
+            "button_icon": "none",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "video_t9hG3m": {
+          "type": "video",
+          "settings": {
+            "video_url": "https://www.youtube.com/watch?v=5JJqEzTMtYE",
+            "cover_image": "shopify://shop_images/maxresdefault_7.jpg",
+            "video_ratio": "adapt",
+            "description": "",
+            "enable_video_autoplay": false,
+            "enable_video_looping": false,
+            "width": "33%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "text_YUyTag",
+        "video_t9hG3m"
+      ],
+      "name": "t:sections.custom-content.name",
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "enable_sticky_column": false,
+        "section_header_alignment": "left",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h1",
+        "description": "",
+        "text_size": "text-base",
+        "column_gap": "medium",
+        "row_gap": "large",
+        "swipe_on_mobile": false,
+        "columns_mobile": "1",
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "custom_content_B9xgDP": {
+      "type": "custom-content",
+      "blocks": {
+        "text_Q84LJB": {
+          "type": "text",
+          "settings": {
+            "content_alignment": "center",
+            "subheading": "",
+            "heading": "EZ Klipp",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h1",
+            "description": "",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "btn--primary",
+            "button_icon": "none",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "video_ig76BV": {
+          "type": "video",
+          "settings": {
+            "video_url": "https://www.youtube.com/watch?v=bd1UMEzQgo0",
+            "cover_image": "shopify://shop_images/maxresdefault_5.jpg",
+            "video_ratio": "adapt",
+            "description": "",
+            "enable_video_autoplay": false,
+            "enable_video_looping": false,
+            "width": "33%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "text_zxhYR9": {
+          "type": "text",
+          "settings": {
+            "content_alignment": "center",
+            "subheading": "",
+            "heading": "Scramble Pic",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h1",
+            "description": "",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "btn--primary",
+            "button_icon": "none",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "video_JJhCy3": {
+          "type": "video",
+          "settings": {
+            "video_url": "https://www.youtube.com/watch?v=kkdoj7QuyRs",
+            "cover_image": "shopify://shop_images/maxresdefault_6.jpg",
+            "video_ratio": "adapt",
+            "description": "",
+            "enable_video_autoplay": false,
+            "enable_video_looping": false,
+            "width": "33%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "text_Q84LJB",
+        "video_ig76BV",
+        "text_zxhYR9",
+        "video_JJhCy3"
+      ],
+      "name": "t:sections.custom-content.name",
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "enable_sticky_column": false,
+        "section_header_alignment": "left",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h1",
+        "description": "",
+        "text_size": "text-base",
+        "column_gap": "medium",
+        "row_gap": "large",
+        "swipe_on_mobile": false,
+        "columns_mobile": "1",
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "custom_content_jr6xQK": {
+      "type": "custom-content",
+      "blocks": {
+        "text_iaeNLA": {
+          "type": "text",
+          "settings": {
+            "content_alignment": "center",
+            "subheading": "",
+            "heading": "Golf Balls",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h1",
+            "description": "",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "btn--primary",
+            "button_icon": "none",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "video_nTdzjw": {
+          "type": "video",
+          "settings": {
+            "video_url": "https://www.youtube.com/watch?v=e4NmXQfMXW4",
+            "cover_image": "shopify://shop_images/Screenshot_2025-11-04_161101.png",
+            "video_ratio": "adapt",
+            "description": "",
+            "enable_video_autoplay": false,
+            "enable_video_looping": false,
+            "width": "33%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "text_jBw7WM": {
+          "type": "text",
+          "settings": {
+            "content_alignment": "center",
+            "subheading": "",
+            "heading": "Poker Chips",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h1",
+            "description": "",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "btn--primary",
+            "button_icon": "none",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "video_4nrMbF": {
+          "type": "video",
+          "settings": {
+            "video_url": "https://www.youtube.com/watch?v=U2-1XfvDZl4",
+            "cover_image": "shopify://shop_images/maxresdefault_1.jpg",
+            "video_ratio": "adapt",
+            "description": "",
+            "enable_video_autoplay": false,
+            "enable_video_looping": false,
+            "width": "33%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "text_iaeNLA",
+        "video_nTdzjw",
+        "text_jBw7WM",
+        "video_4nrMbF"
+      ],
+      "name": "t:sections.custom-content.name",
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "enable_sticky_column": false,
+        "section_header_alignment": "left",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h1",
+        "description": "",
+        "text_size": "text-base",
+        "column_gap": "medium",
+        "row_gap": "large",
+        "swipe_on_mobile": false,
+        "columns_mobile": "1",
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "custom_content_mNegxr": {
+      "type": "custom-content",
+      "blocks": {
+        "text_w8eqVp": {
+          "type": "text",
+          "settings": {
+            "content_alignment": "center",
+            "subheading": "",
+            "heading": "Cooling Towels",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h1",
+            "description": "",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "btn--primary",
+            "button_icon": "none",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "video_pmz7Bx": {
+          "type": "video",
+          "settings": {
+            "video_url": "https://youtu.be/hc4duIwhOB8",
+            "cover_image": "shopify://shop_images/maxresdefault.jpg",
+            "video_ratio": "adapt",
+            "description": "",
+            "enable_video_autoplay": false,
+            "enable_video_looping": false,
+            "width": "33%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "text_eriNEN": {
+          "type": "text",
+          "settings": {
+            "content_alignment": "center",
+            "subheading": "",
+            "heading": "Glove Branders",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h1",
+            "description": "",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "btn--primary",
+            "button_icon": "none",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "video_bNQTPU": {
+          "type": "video",
+          "settings": {
+            "video_url": "https://www.youtube.com/watch?v=leoCcdsoQi0",
+            "cover_image": "shopify://shop_images/maxresdefault_2.jpg",
+            "video_ratio": "adapt",
+            "description": "",
+            "enable_video_autoplay": false,
+            "enable_video_looping": false,
+            "width": "33%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "text_w8eqVp",
+        "video_pmz7Bx",
+        "text_eriNEN",
+        "video_bNQTPU"
+      ],
+      "name": "t:sections.custom-content.name",
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "enable_sticky_column": false,
+        "section_header_alignment": "left",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h1",
+        "description": "",
+        "text_size": "text-base",
+        "column_gap": "medium",
+        "row_gap": "large",
+        "swipe_on_mobile": false,
+        "columns_mobile": "1",
+        "padding_top": 0,
+        "padding_bottom": 50,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "custom_content_VJVRW7": {
+      "type": "custom-content",
+      "blocks": {
+        "text_yNNwUB": {
+          "type": "text",
+          "settings": {
+            "content_alignment": "center",
+            "subheading": "",
+            "heading": "Marker Mate",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h1",
+            "description": "",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "btn--primary",
+            "button_icon": "none",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "video_GR8gnR": {
+          "type": "video",
+          "settings": {
+            "video_url": "https://www.youtube.com/watch?v=7vbFBPURYhU",
+            "cover_image": "shopify://shop_images/maxresdefault_3.jpg",
+            "video_ratio": "adapt",
+            "description": "",
+            "enable_video_autoplay": false,
+            "enable_video_looping": false,
+            "width": "33%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "text_rrDekA": {
+          "type": "text",
+          "settings": {
+            "content_alignment": "center",
+            "subheading": "",
+            "heading": "Ballzee Ball Cleaner",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h1",
+            "description": "",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "btn--primary",
+            "button_icon": "none",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "video_DHtH39": {
+          "type": "video",
+          "settings": {
+            "video_url": "https://www.youtube.com/watch?v=NbJCSRXmjqM",
+            "cover_image": "shopify://shop_images/maxresdefault_4.jpg",
+            "video_ratio": "adapt",
+            "description": "",
+            "enable_video_autoplay": false,
+            "enable_video_looping": false,
+            "width": "33%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "text_yNNwUB",
+        "video_GR8gnR",
+        "text_rrDekA",
+        "video_DHtH39"
+      ],
+      "disabled": true,
+      "name": "t:sections.custom-content.name",
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "enable_sticky_column": false,
+        "section_header_alignment": "left",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h1",
+        "description": "",
+        "text_size": "text-base",
+        "column_gap": "medium",
+        "row_gap": "large",
+        "swipe_on_mobile": false,
+        "columns_mobile": "1",
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "custom_content_HJqnQy",
+    "custom_content_B9xgDP",
+    "custom_content_jr6xQK",
+    "custom_content_mNegxr",
+    "custom_content_VJVRW7"
+  ]
+}

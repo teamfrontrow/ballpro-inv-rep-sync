@@ -1,0 +1,317 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "Overlay group",
+  "type": "custom.overlay",
+  "sections": {
+    "cart-drawer": {
+      "type": "cart-drawer",
+      "disabled": true,
+      "settings": {
+        "show_cart_note": true,
+        "show_shipping_rates_calculator": true,
+        "show_cart_coupon": true,
+        "show_free_shipping_goal": true,
+        "enable_cart_recommendations": true,
+        "cart_recommendations_color_scheme": "",
+        "cart_recommendations_heading": "Pair Well With",
+        "cart_recommendations_limit": 3,
+        "cart_recommendations_products": [],
+        "cart_recommendations_layout": "grid",
+        "cart_mess_color_scheme": "scheme-2",
+        "cart_message": "✌🏼 Free Express Shipping on orders $500!",
+        "cart_message_alignment": "center"
+      }
+    },
+    "product-compare": {
+      "type": "product-compare",
+      "blocks": {
+        "info_BQEhkg": {
+          "type": "info",
+          "settings": {
+            "show_view_details_button": true
+          }
+        },
+        "description_HnwTqC": {
+          "type": "description",
+          "settings": {
+            "text_line_limit": "3-lines",
+            "show_view_more_button": false
+          }
+        },
+        "price_BbVPd4": {
+          "type": "price",
+          "settings": {}
+        },
+        "vendor_DzTLqc": {
+          "type": "vendor",
+          "settings": {}
+        },
+        "type_AzgBQT": {
+          "type": "type",
+          "settings": {}
+        },
+        "variants_RYYmjz": {
+          "type": "variants",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "info_BQEhkg",
+        "description_HnwTqC",
+        "price_BbVPd4",
+        "vendor_DzTLqc",
+        "type_AzgBQT",
+        "variants_RYYmjz"
+      ],
+      "settings": {}
+    },
+    "quick-view": {
+      "type": "quick-view",
+      "blocks": {
+        "badges": {
+          "type": "badges",
+          "settings": {
+            "show_soldout_badge": true,
+            "show_sale_badge": true,
+            "sale_badge_type": "text"
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "heading_size": "h1"
+          }
+        },
+        "meta": {
+          "type": "meta",
+          "settings": {
+            "link_color": "#1d349a",
+            "show_vendor": true,
+            "show_product_type": true,
+            "show_sku": false,
+            "show_barcode": false,
+            "vendor_names_to_replace": "",
+            "vendor_replacement_text": "BallPro"
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "icon_with_text_dNbmeH": {
+          "type": "icon-with-text",
+          "settings": {
+            "layout": "horizontal",
+            "title_font": "body-bolder",
+            "title_size": "text-base",
+            "icon_1": "check",
+            "heading_1": "Modern",
+            "icon_2": "check",
+            "heading_2": "Eco-certified",
+            "icon_3": "check",
+            "heading_3": "Warranty"
+          }
+        },
+        "inventory": {
+          "type": "inventory",
+          "settings": {
+            "text_style": "body",
+            "inventory_threshold": 20,
+            "show_inventory_quantity": true
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button",
+            "swatch_type": "color_swatch",
+            "swatch_style": "square",
+            "swatch_size": 32,
+            "button_style": "normal",
+            "size_title": "Size",
+            "size_chart_from_page": ""
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_quantity_selector": true,
+            "show_dynamic_checkout": true,
+            "show_gift_card_recipient": true
+          }
+        }
+      },
+      "block_order": [
+        "badges",
+        "title",
+        "meta",
+        "price",
+        "icon_with_text_dNbmeH",
+        "inventory",
+        "description",
+        "variant_picker",
+        "buy_buttons"
+      ],
+      "settings": {
+        "show_image_border": false,
+        "enable_sticky_info": true,
+        "enable_video_looping": true
+      }
+    },
+    "popup": {
+      "type": "popup",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Catalogs, Specials and More!",
+            "text_size": "h2"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Sign up to receive seasonal catalogs, end-user flyers, product updates, and exclusive offers delivered to your inbox.</p>",
+            "text_size": "text-base"
+          }
+        },
+        "form": {
+          "type": "form",
+          "settings": {
+            "button_label": "Keep Me in the Loop",
+            "button_icon": "none"
+          }
+        },
+        "socials": {
+          "type": "socials",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "heading",
+        "text",
+        "form",
+        "socials"
+      ],
+      "settings": {
+        "enable": false,
+        "show_for_homepage_only": true,
+        "show_for_visitors_only": true,
+        "trigger_open": "delay",
+        "repeat_open": "every_day",
+        "alignment": "center",
+        "width": 650,
+        "show_teaser": false,
+        "teaser_button_text": "Newsletter",
+        "teaser_popup_bg": "#d63a2f",
+        "teaser_popup_text": "#ffffff"
+      }
+    },
+    "spotlight-picks": {
+      "type": "spotlight-picks",
+      "blocks": {
+        "discount_1": {
+          "type": "discount",
+          "disabled": true,
+          "settings": {
+            "color_scheme": "scheme-10",
+            "icon": "tag",
+            "icon_size": "large",
+            "heading": "Save an extra 10%",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h5",
+            "description": "<p>Use promo code GARA10</p>",
+            "discount_code": "GARA10",
+            "button_label": "Copy",
+            "button_style": "btn--primary",
+            "button_icon": "none"
+          }
+        },
+        "item_dQn9tr": {
+          "type": "item",
+          "settings": {
+            "color_scheme": "scheme-10",
+            "icon": "bell-ringing",
+            "icon_size": "large",
+            "heading": "Spring Flyer",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h5",
+            "description": "",
+            "button_label": "View",
+            "button_link": "shopify://pages/seasonal-flyer",
+            "button_style": "btn--primary",
+            "button_icon": "none"
+          }
+        },
+        "item_xfLhK8": {
+          "type": "item",
+          "settings": {
+            "color_scheme": "scheme-10",
+            "icon": "smiley",
+            "icon_size": "large",
+            "heading": "Best Sellers",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h5",
+            "description": "",
+            "button_label": "View",
+            "button_link": "shopify://pages/best-sellers-guide",
+            "button_style": "btn--primary",
+            "button_icon": "none"
+          }
+        }
+      },
+      "block_order": [
+        "discount_1",
+        "item_dQn9tr",
+        "item_xfLhK8"
+      ],
+      "disabled": true,
+      "custom_css": [
+        ".spotlight__item-content {max-width: 22rem;}"
+      ],
+      "settings": {
+        "header_color_scheme": "scheme-4",
+        "header_message": "",
+        "header_message_alignment": "center",
+        "heading": "Flyer & Best Seller",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h4",
+        "teaser_button_label": "",
+        "teaser_button_background": "#c4301c",
+        "teaser_button_text_color": "#ffffff",
+        "show_close_teaser_button": true
+      }
+    }
+  },
+  "order": [
+    "cart-drawer",
+    "product-compare",
+    "quick-view",
+    "popup",
+    "spotlight-picks"
+  ]
+}

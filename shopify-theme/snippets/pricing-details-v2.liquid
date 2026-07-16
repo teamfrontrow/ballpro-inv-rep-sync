@@ -1,0 +1,258 @@
+{%- comment -%}
+  Pricing Details v2 Block
+  Reads pricing from product metafields (JSON arrays).
+  Selects the correct tier based on customer tags:
+    - "silver" tag  → custom.silver_price_breaks
+    - "gold" tag    → custom.gold_price_breaks
+    - "platinum" tag → custom.platinum_price_breaks
+    - default       → custom.retail_price_breaks
+{%- endcomment -%}
+
+{%- liquid
+  assign price_breaks_to_show = block.settings.price_breaks_count
+  assign variant = product.selected_or_first_available_variant
+
+  if price_breaks_to_show == 'all'
+    assign max_breaks = 999
+  else
+    assign max_breaks = price_breaks_to_show | plus: 0
+  endif
+
+  assign is_logged_in = customer
+  assign active_tier = 'retail'
+  assign price_breaks = null
+
+  comment
+    Determine tier from customer tags
+  endcomment
+  if customer
+    for tag in customer.tags
+      assign tag_lower = tag | downcase
+      if tag_lower == 'platinum'
+        assign active_tier = 'platinum'
+        break
+      elsif tag_lower == 'gold'
+        assign active_tier = 'gold'
+        break
+      elsif tag_lower == 'silver'
+        assign active_tier = 'silver'
+        break
+      endif
+    endfor
+  endif
+
+  comment
+    Load the correct metafield based on tier
+  endcomment
+  if active_tier == 'platinum'
+    assign price_breaks = product.metafields.custom.platinum_price_breaks.value
+  elsif active_tier == 'gold'
+    assign price_breaks = product.metafields.custom.gold_price_breaks.value
+  elsif active_tier == 'silver'
+    assign price_breaks = product.metafields.custom.silver_price_breaks.value
+  else
+    assign price_breaks = product.metafields.custom.retail_price_breaks.value
+  endif
+
+  comment
+    Fallback: if chosen tier has no data, try retail
+  endcomment
+  if price_breaks == blank and active_tier != 'retail'
+    assign price_breaks = product.metafields.custom.retail_price_breaks.value
+    assign active_tier = 'retail'
+  endif
+
+  if price_breaks and price_breaks.size > 0
+    assign base_price = price_breaks[0].price
+  endif
+-%}
+
+{%- if price_breaks and price_breaks.size > 0 -%}
+  <style>
+    table.frd-table td,
+    table.frd-table th {
+      border-color: #e7eef5 !important;
+    }
+    .price-breaks-table-wrapper tr:hover {
+      background-color: #f8f9fa !important;
+    }
+  </style>
+
+  <div class="price-breaks-container" style="margin: 20px 0;">
+
+    <h3 style="margin-bottom: 15px; color: #333; font-size: 18px; font-weight: 600;">
+      Pricing Details
+    </h3>
+
+    <div class="price-breaks-table-wrapper" style="overflow-x: auto;">
+      <table class="frd-table" style="width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <thead style="background-color: #e7eef5;">
+          <tr>
+            <th style="padding: 12px 16px; text-align: left; border-top: 1px solid #e7eef5; border-bottom: 1px solid #e7eef5; border-left: 1px solid #e7eef5; border-right: 1px solid #e7eef5;">Quantity</th>
+            <th style="padding: 12px 16px; text-align: right; border-top: 1px solid #e7eef5; border-bottom: 1px solid #e7eef5; border-right: 1px solid #e7eef5;">{% if customer %}Net&nbsp;{%- endif -%}Price Each</th>
+            <th style="padding: 12px 16px; text-align: right; border-top: 1px solid #e7eef5; border-bottom: 1px solid #e7eef5; border-right: 1px solid #e7eef5;">You Save</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for break in price_breaks -%}
+            {%- liquid
+              assign displayed_rows = 0
+              if max_breaks != 999
+                assign displayed_rows = displayed_rows | plus: 1
+              endif
+            -%}
+            {%- if max_breaks == 999 or forloop.index <= max_breaks -%}
+              {%- assign price = break.price -%}
+              {%- assign savings = base_price | minus: price -%}
+              {%- assign percent = 0 -%}
+              {%- if base_price > 0 -%}
+                 {%- assign percent = savings | divided_by: base_price | times: 100 -%}
+              {%- endif -%}
+
+              <tr style="{% cycle 'background-color: #ffffff;', 'background-color: #e7eef5;' %}">
+                <td style="padding: 12px 16px; font-weight: 500; color: #007bff; border-bottom: 1px solid #e7eef5; border-left: 1px solid #e7eef5; border-right: 1px solid #e7eef5;">{{ break.quantity }}+</td>
+                <td style="padding: 12px 16px; text-align: right; font-weight: 600; color: #28a745; border-bottom: 1px solid #e7eef5; border-right: 1px solid #e7eef5;">
+                  {%- assign price_formatted = price | times: 100 | round | divided_by: 100.0 -%}
+                  {%- assign price_parts = price_formatted | split: '.' -%}
+                  {%- if price_parts.size == 1 -%}
+                    ${{ price_formatted }}.00
+                  {%- else -%}
+                    {%- assign decimals = price_parts[1] | size -%}
+                    {%- if decimals == 1 -%}
+                      ${{ price_formatted }}0
+                    {%- else -%}
+                      ${{ price_formatted }}
+                    {%- endif -%}
+                  {%- endif -%}
+                </td>
+                <td style="padding: 12px 16px; text-align: right; border-bottom: 1px solid #e7eef5; border-right: 1px solid #e7eef5;">
+                  {%- if savings > 0 -%}
+                    {%- assign savings_formatted = savings | times: 100 | round | divided_by: 100.0 -%}
+                    {%- assign savings_parts = savings_formatted | split: '.' -%}
+                    {%- if savings_parts.size == 1 -%}
+                      <span style="color: #28a745;">${{ savings_formatted }}.00</span>
+                    {%- else -%}
+                      {%- assign savings_decimals = savings_parts[1] | size -%}
+                      {%- if savings_decimals == 1 -%}
+                        <span style="color: #28a745;">${{ savings_formatted }}0</span>
+                      {%- else -%}
+                        <span style="color: #28a745;">${{ savings_formatted }}</span>
+                      {%- endif -%}
+                    {%- endif -%}
+                    <span style="font-size: 12px; color: #6c757d;">({{ percent | round: 1 }}%)</span>
+                  {%- else -%}
+                    —
+                  {%- endif -%}
+                </td>
+              </tr>
+            {%- endif -%}
+          {%- endfor -%}
+
+<!-- Setup Charge Section -->
+{%- assign setup_charge_metafield = product.metafields.custom.setup_charges -%}
+
+{%- if customer -%}
+  {%- if customer.tags contains 'Platinum' and product.metafields.custom.setup_charges_platinum != blank and product.metafields.custom.setup_charges_platinum.value != blank -%}
+    {%- assign setup_charge_metafield = product.metafields.custom.setup_charges_platinum -%}
+  {%- elsif customer.tags contains 'Gold' and product.metafields.custom.setup_charges_gold != blank and product.metafields.custom.setup_charges_gold.value != blank -%}
+    {%- assign setup_charge_metafield = product.metafields.custom.setup_charges_gold -%}
+  {%- elsif customer.tags contains 'Silver' and product.metafields.custom.setup_charges_silver != blank and product.metafields.custom.setup_charges_silver.value != blank -%}
+    {%- assign setup_charge_metafield = product.metafields.custom.setup_charges_silver -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- if setup_charge_metafield != blank and setup_charge_metafield.value != blank -%}
+  {%- assign setup_charge_raw = setup_charge_metafield.value -%}
+  {%- assign setup_charge_clean = setup_charge_raw | remove: '$' | strip -%}
+  {%- assign setup_suffix = '' -%}
+
+  {%- if setup_charge_clean contains '(' -%}
+    {%- assign paren_start = setup_charge_clean | split: '(' -%}
+    {%- if paren_start.size > 1 -%}
+      {%- assign paren_content = paren_start[1] | split: ')' -%}
+      {%- if paren_content.size > 0 -%}
+        {%- assign setup_suffix = '(' | append: paren_content[0] | append: ')' -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- assign setup_number_str = setup_charge_clean | remove: setup_suffix | strip -%}
+  {%- assign setup_number = setup_number_str | plus: 0 -%}
+  {%- assign setup_formatted = setup_number | times: 100 | round | divided_by: 100.0 -%}
+  {%- assign setup_num_parts = setup_formatted | split: '.' -%}
+
+  {%- if setup_num_parts.size == 1 -%}
+    {%- assign setup_display = '$' | append: setup_formatted | append: '.00' -%}
+  {%- else -%}
+    {%- assign setup_decimals = setup_num_parts[1] | size -%}
+    {%- if setup_decimals == 1 -%}
+      {%- assign setup_display = '$' | append: setup_formatted | append: '0' -%}
+    {%- else -%}
+      {%- assign setup_display = '$' | append: setup_formatted -%}
+    {%- endif -%}
+  {%- endif -%}
+
+  <tr style="background-color: #e7eef5;">
+    <td colspan="3" style="padding: 12px 16px; font-weight: 600; color: #333; font-size: 16px; border-top: 1px solid #e7eef5; border-bottom: 1px solid #e7eef5; border-left: 1px solid #e7eef5; border-right: 1px solid #e7eef5;">
+      Setup Charge
+    </td>
+  </tr>
+  <tr style="background-color: #ffffff;">
+    <td colspan="3" style="padding: 12px 16px; font-weight: 600; color: #28a745; border-bottom: 1px solid #e7eef5; border-left: 1px solid #e7eef5; border-right: 1px solid #e7eef5;">
+      {{ setup_display }}{{ setup_suffix }} each
+    </td>
+  </tr>
+{%- endif -%}
+        </tbody>
+      </table>
+    </div>
+
+    {%- if is_logged_in and price_breaks.size > max_breaks -%}
+      <div style="margin: 30px 0 10px 0; position: relative; text-align: center; display:none">
+        <hr style="border-top: 1px solid #ccc; margin:0">
+        <span style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: white; padding: 2px 10px; border-radius: 12px; font-weight: bold; font-size: 13px; color: #28a745; border: 1px solid #28a745;">
+          EQP
+        </span>
+      </div>
+
+      <table style="width: 100%; border-collapse: collapse; background-color: #212529; border-radius: 8px; overflow: hidden; color: #fff; margin-top:18px; border: 1px solid rgba(255, 255, 255, 0.2);">
+        <thead>
+          <tr style="background-color: #343a40;">
+            <th style="padding: 12px 16px; text-align: left;">Beyond EQP Quantity</th>
+            <th style="padding: 12px 16px; text-align: right;">{% if customer %}Net&nbsp;{%- endif -%}Price Each</th>
+            <th style="padding: 12px 16px; text-align: right;color: #343a40;">You Save</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for break in price_breaks -%}
+            {%- if forloop.index > max_breaks -%}
+              <tr>
+                <td style="padding: 14px 16px; font-weight: 600; color: #17a2b8; border-bottom: 1px solid #343a40;">
+                  {{ break.quantity }}+
+                </td>
+                <td style="padding: 14px 16px; font-weight: 600; color: #28a745; text-align: right; border-bottom: 1px solid #343a40;">
+                  {%- assign eqp_price_formatted = break.price | times: 100 | round | divided_by: 100.0 -%}
+                  {%- assign eqp_price_parts = eqp_price_formatted | split: '.' -%}
+                  {%- if eqp_price_parts.size == 1 -%}
+                    ${{ eqp_price_formatted }}.00
+                  {%- else -%}
+                    {%- assign eqp_decimals = eqp_price_parts[1] | size -%}
+                    {%- if eqp_decimals == 1 -%}
+                      ${{ eqp_price_formatted }}0
+                    {%- else -%}
+                      ${{ eqp_price_formatted }}
+                    {%- endif -%}
+                  {%- endif -%}
+                </td>
+                <td style="padding: 14px 16px; text-align: right; border-bottom: 1px solid #343a40;">
+                  &nbsp;
+                </td>
+              </tr>
+            {%- endif -%}
+          {%- endfor -%}
+        </tbody>
+      </table>
+    {%- endif -%}
+
+  </div>
+{%- endif -%}

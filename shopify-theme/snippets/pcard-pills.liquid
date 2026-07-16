@@ -1,0 +1,66 @@
+{%- liquid
+  assign has_product_images = false
+  if product.images.size > 0
+    assign has_product_images = true
+  endif
+  assign allow_pills = true
+  if require_product_images and has_product_images == false
+    assign allow_pills = false
+  endif
+
+  assign has_ribbon_tag = false
+  assign has_sale_tag = false
+  assign has_new_tag = false
+  for tag in product.tags
+    assign tag_handle = tag | handle
+    if tag_handle == 'ribbon'
+      assign has_ribbon_tag = true
+    elsif tag_handle == 'on_sale'
+      assign has_sale_tag = true
+    elsif tag_handle == 'new'
+      assign has_new_tag = true
+    endif
+  endfor
+
+  assign production_type_metafield = product.metafields.custom.production_type
+  assign production_type = ''
+  if production_type_metafield != blank and production_type_metafield.value != blank
+    assign production_type = production_type_metafield.value | downcase
+  endif
+
+  assign show_factory = false
+  assign show_in_house = false
+  if has_ribbon_tag
+    if production_type == 'factory'
+      assign show_factory = true
+    elsif production_type == 'in-house'
+      assign show_in_house = true
+    endif
+  endif
+
+  assign is_out_of_stock = false
+  unless product.available
+    assign is_out_of_stock = true
+  endunless
+-%}
+{%- if allow_pills -%}
+  {%- if is_out_of_stock -%}
+    <div class="product-pills" aria-label="Product status">
+      <span class="product-pill product-pill--out-of-stock">Out of Stock</span>
+    </div>
+  {%- elsif show_factory or show_in_house or has_sale_tag or has_new_tag -%}
+    <div class="product-pills" aria-label="Product status">
+      {%- if show_factory -%}
+        <span class="product-pill product-pill--factory">Factory</span>
+      {%- elsif show_in_house -%}
+        <span class="product-pill product-pill--in-house">In-House</span>
+      {%- endif -%}
+      {%- if has_sale_tag -%}
+        <span class="product-pill product-pill--sale">Sale</span>
+      {%- endif -%}
+      {%- if has_new_tag -%}
+        <span class="product-pill product-pill--new">New</span>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+{%- endif -%}

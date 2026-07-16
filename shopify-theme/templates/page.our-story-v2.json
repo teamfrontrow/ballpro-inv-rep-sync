@@ -1,0 +1,369 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "container": "fixed",
+        "text_alignment": "center",
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "custom_hero_banner_dkggpT": {
+      "type": "custom-hero-banner",
+      "name": "Custom Hero Banner",
+      "settings": {
+        "background_image": "shopify://shop_images/balls_cover_86870838-f056-4e07-acfe-eb18023170d4.jpg",
+        "background_position": "center",
+        "title": "Ball Pro's Story",
+        "text": "<p>Ball Pro exists to serve the promotional industry by owning the process from<br/>start to finish, delivering the quality our customers need at the speed our<br/>industry demands.</p>"
+      }
+    },
+    "custom_image_with_text_j8YYJq": {
+      "type": "custom-image-with-text",
+      "blocks": {
+        "subheading_7WLkdP": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "Our Beginning"
+          }
+        },
+        "heading_XHUXHN": {
+          "type": "heading",
+          "settings": {
+            "heading": "Pro Ball to Ball Pro ",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h3"
+          }
+        },
+        "text_RqTiqW": {
+          "type": "text",
+          "settings": {
+            "text": "<p>When Tim Hanson acquired Pro Ball, he saw an opportunity to do things differently. Custom golf balls were being produced in factories with standard turnaround times that often exceeded a month, leaving the promotional industry underserved in both speed and service. Tim flipped the business model, starting with the name. He changed it from Pro Ball to Ball Pro, reflecting a commitment to a new approach built on faster turnaround, better service, and a commitment to doing things right.</p><p><strong>Built on Family Values</strong><br/>Tim led Ball Pro the same way he lived his life, grounded in family, respect, and doing right by people. He believed that how you treat your team matters just as much as the work you deliver, and he showed up for his employees with care, consistency, and integrity. That mindset shaped the foundation of Ball Pro, and it still guides us today. Even as we’ve grown, we’ve stayed true to what mattered most, putting people first and building a culture rooted in respect. It’s a commitment we’re proud to see recognized as one of Counselor’s Best Places to Work, and one we’ll continue to carry forward.<br/><br/></p>",
+            "subtext_color": true
+          }
+        }
+      },
+      "block_order": [
+        "subheading_7WLkdP",
+        "heading_XHUXHN",
+        "text_RqTiqW"
+      ],
+      "name": "Custom Image w/text",
+      "settings": {
+        "color_scheme": "",
+        "image": "shopify://shop_images/tim-hanson.webp",
+        "video_url": "",
+        "video_description": "",
+        "image_position": "left",
+        "image_width": 45,
+        "section_width": 1200,
+        "desktop_content_position": "center",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "inherit",
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "animation_direction": "right",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "custom_image_with_text_YWXtet": {
+      "type": "custom-image-with-text",
+      "blocks": {
+        "subheading_JQ8Ucc": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "Speed & Quality"
+          }
+        },
+        "heading_yQzUaP": {
+          "type": "heading",
+          "settings": {
+            "heading": "Invested in Technology",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h3"
+          }
+        },
+        "text_KpKYXM": {
+          "type": "text",
+          "settings": {
+            "text": "<p>To deliver greater speed and tighter quality control, we brought the process in-house, investing in our own inventory and printing technology and taking ownership from start to finish. The impact was immediate; standard turnaround times dropped from over a month to just five days. Today, we’ve gone even further, offering 24-hour rush services on popular products, with capabilities expanding every day to meet the needs of our customers without compromising quality.</p>",
+            "subtext_color": true
+          }
+        }
+      },
+      "block_order": [
+        "subheading_JQ8Ucc",
+        "heading_yQzUaP",
+        "text_KpKYXM"
+      ],
+      "name": "Custom Image w/text",
+      "settings": {
+        "color_scheme": "",
+        "image": "shopify://shop_images/Owning.jpg",
+        "video_url": "",
+        "video_description": "",
+        "image_position": "right",
+        "image_width": 45,
+        "section_width": 1200,
+        "desktop_content_position": "center",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "inherit",
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "animation_direction": "left",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "custom_rich_text_L8jd4P": {
+      "type": "custom-rich-text",
+      "blocks": {
+        "text_6PEAqM": {
+          "type": "text",
+          "settings": {
+            "text": "<p><em>More than thirty years later, that belief still drives us. Three-day turns are now standard, and we continue to push the industry forward with a free 24-hour rush program.</em></p>",
+            "text_size": "text-base",
+            "text_line_limit": "none",
+            "button_style": "btn--underline",
+            "button_icon": "none"
+          }
+        }
+      },
+      "block_order": [
+        "text_6PEAqM"
+      ],
+      "name": "Custom Rich Text",
+      "settings": {
+        "container": "fixed",
+        "padding_left": 16,
+        "padding_right": 16,
+        "color_scheme": "scheme-inverse",
+        "use_color_scheme_in_container": false,
+        "content_spacing": "standard",
+        "content_alignment": "center",
+        "padding_top": 62,
+        "padding_bottom": 62,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "custom_image_with_text_RwnzXw": {
+      "type": "custom-image-with-text",
+      "blocks": {
+        "subheading_eKypUL": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "Growth"
+          }
+        },
+        "heading_dRLR9E": {
+          "type": "heading",
+          "settings": {
+            "heading": "Diversified Ad-Tee Acquisition",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h3"
+          }
+        },
+        "text_UehTck": {
+          "type": "text",
+          "settings": {
+            "text": "<p>In 2017, we acquired Diversified Ad-Tee, adding kitchenware and drinkware to our lineup. At first, it seemed like an unexpected fit, but we were looking to balance the seasonality of our golf business. What we found was a natural connection. Golf is part of a lifestyle, and our customers were looking for practical, everyday items that complemented it. What began as kitchenware has since grown into a broader home category, expanding our offerings while staying true to our focus on quality, speed, and service.<br/></p>",
+            "subtext_color": true
+          }
+        }
+      },
+      "block_order": [
+        "subheading_eKypUL",
+        "heading_dRLR9E",
+        "text_UehTck"
+      ],
+      "name": "Custom Image w/text",
+      "settings": {
+        "color_scheme": "",
+        "image": "shopify://shop_images/Drinkware.jpg",
+        "video_url": "",
+        "video_description": "",
+        "image_position": "left",
+        "image_width": 45,
+        "section_width": 1200,
+        "desktop_content_position": "center",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "inherit",
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "animation_direction": "right",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "custom_image_with_text_FEyeTj": {
+      "type": "custom-image-with-text",
+      "blocks": {
+        "subheading_e38qCe": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "Expansion"
+          }
+        },
+        "heading_Jf7neY": {
+          "type": "heading",
+          "settings": {
+            "heading": "Branded Apparel Acquisition",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h3"
+          }
+        },
+        "text_8p8gKT": {
+          "type": "text",
+          "settings": {
+            "text": "<p>In 2025, we expanded into apparel with the acquisition of Branded Apparel, a 50+ year industry leader in premium, name-brand clothing. This addition brought top golf and corporate brands into our lineup and strengthened our ability to support customers end-to-end. It also moved us closer to our goal of being a true one-stop shop delivering more, while maintaining the speed and service our customers expect.</p>",
+            "subtext_color": true
+          }
+        }
+      },
+      "block_order": [
+        "subheading_e38qCe",
+        "heading_Jf7neY",
+        "text_8p8gKT"
+      ],
+      "name": "Custom Image w/text",
+      "settings": {
+        "color_scheme": "",
+        "image": "shopify://shop_images/Apparel2.jpg",
+        "video_url": "",
+        "video_description": "",
+        "image_position": "right",
+        "image_width": 45,
+        "section_width": 1200,
+        "desktop_content_position": "center",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "inherit",
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "animation_direction": "left",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "custom_image_with_text_FrBpC3": {
+      "type": "custom-image-with-text",
+      "blocks": {
+        "subheading_6mMm6V": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "What’s next"
+          }
+        },
+        "heading_ix7hhd": {
+          "type": "heading",
+          "settings": {
+            "heading": "<strong>Looking Ahead</strong>",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h3"
+          }
+        },
+        "text_w7iTW6": {
+          "type": "text",
+          "settings": {
+            "text": "<p>From our early days to where we are today, one thing hasn’t changed, our commitment to doing things better. As we continue to grow, we remain focused on what got us here: speed, service, and putting people first. We’re proud of how far we’ve come and even more excited about what’s ahead.</p>",
+            "subtext_color": true
+          }
+        }
+      },
+      "block_order": [
+        "subheading_6mMm6V",
+        "heading_ix7hhd",
+        "text_w7iTW6"
+      ],
+      "name": "Custom Image w/text",
+      "settings": {
+        "color_scheme": "",
+        "image": "shopify://shop_images/Apparel_569218bc-e59f-4fd8-b3ee-2c5e95755748.jpg",
+        "video_url": "",
+        "video_description": "",
+        "image_position": "left",
+        "image_width": 45,
+        "section_width": 1200,
+        "desktop_content_position": "center",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "inherit",
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "animation_direction": "right",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "custom_rich_text_PLncF9": {
+      "type": "custom-rich-text",
+      "blocks": {
+        "heading_q8izwj": {
+          "type": "heading",
+          "settings": {
+            "heading": "Your trusted Pros in promo.",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h2"
+          }
+        }
+      },
+      "block_order": [
+        "heading_q8izwj"
+      ],
+      "name": "Custom Rich Text",
+      "settings": {
+        "container": "fixed",
+        "padding_left": 0,
+        "padding_right": 0,
+        "color_scheme": "scheme-inverse",
+        "use_color_scheme_in_container": false,
+        "content_spacing": "fitted",
+        "content_alignment": "center",
+        "padding_top": 70,
+        "padding_bottom": 70,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "custom_hero_banner_dkggpT",
+    "custom_image_with_text_j8YYJq",
+    "custom_image_with_text_YWXtet",
+    "custom_rich_text_L8jd4P",
+    "custom_image_with_text_RwnzXw",
+    "custom_image_with_text_FEyeTj",
+    "custom_image_with_text_FrBpC3",
+    "custom_rich_text_PLncF9"
+  ]
+}

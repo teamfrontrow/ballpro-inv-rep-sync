@@ -1,0 +1,1165 @@
+  {%- if template.name == 'product' -%}
+    <style>
+      .product__popup-page-title {
+        margin-bottom: 0px!important;
+      }
+      .product__popup-form {
+        padding: 0px;
+      }
+      .product__popup-form .form-group {
+        margin-bottom: 0px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+      }
+      .product__popup-form .form-row {
+        display: grid;
+        gap: 20px;
+        margin-bottom: 0px;
+        width: 100%;
+      }
+      .product__popup-form .form-row--two {
+        grid-template-columns: 1fr 1fr;
+      }
+      .product__popup-form .form-row--three {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      @media (max-width: 768px) {
+        .product__popup-form .form-row--two,
+        .product__popup-form .form-row--three {
+          grid-template-columns: 1fr;
+        }
+      }
+      .product__popup-form label {
+        display: block !important;
+        margin-top: 10px;
+        font-weight: 600;
+        color: inherit;
+        width: 100%;
+        text-align: left;
+        padding: 0;
+        margin-left: 0;
+      }
+      .product__popup-form .form-group > label {
+        display: block !important;
+        flex-shrink: 0;
+        width: 100%;
+      }
+      .product__popup-form .form-group > .form-control,
+      .product__popup-form .form-group > textarea {
+        display: block !important;
+        width: 100%;
+        flex: 1;
+        margin-left: 0;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .product__popup-form .form-control {
+        width: 100%;
+        padding: 0;
+        border: 1px solid rgba(var(--color-foreground), 0.2);
+        border-radius: 4px;
+        font-size: 1.5rem !important;
+        font-family: inherit;
+        background: rgba(var(--color-background), 1);
+        color: rgba(var(--color-foreground), 1);
+        box-sizing: border-box;
+        height: auto;
+        line-height: 1.5;
+        margin: 0;
+      }
+      .product__popup-form input[type="text"],
+      .product__popup-form input[type="email"],
+      .product__popup-form input[type="tel"],
+      .product__popup-form input[type="text"].form-control,
+      .product__popup-form input[type="email"].form-control,
+      .product__popup-form input[type="tel"].form-control {
+        padding: 8px 12px;
+        height: auto;
+        min-height: 36px;
+        font-size: 1.5rem !important;
+        line-height: 1.5;
+      }
+      .product__popup-form .form-control:focus {
+        outline: 2px solid rgba(var(--color-foreground), 0.5);
+        outline-offset: 2px;
+      }
+      .product__popup-form textarea.form-control {
+        resize: vertical;
+        min-height: 60px;
+        max-height: 120px;
+        padding: 8px 12px;
+        height: 60px;
+        font-size: 1.5rem !important;
+        line-height: 1.5;
+      }
+      .product__popup-form input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        min-width: 18px;
+        min-height: 18px;
+        margin: 0 8px 0 0;
+        cursor: pointer;
+        accent-color: rgba(var(--color-foreground), 1);
+        flex-shrink: 0;
+      }
+      .product__popup-form input[type="checkbox"]:checked {
+        background-color: rgba(var(--color-foreground), 1);
+      }
+      .inventory-table {
+        margin-top: 20px;
+      }
+      .inventory-table th {
+        font-weight: 600;
+        text-align: left;
+      }
+      .inventory-table td,
+      .inventory-table th {
+        padding: 12px;
+        border: 1px solid rgba(var(--color-foreground), 0.1);
+      }
+      .inventory-table tbody tr:hover {
+        background-color: rgba(var(--color-foreground), 0.05);
+      }
+      .showInventory, .salesTools, .showProductOptions {
+        text-decoration: inherit;
+        background-color: #fff;
+        color: #000;
+        border-radius: 30px;
+        padding: 10px;
+        flex: 1;
+        min-width: 0;
+        text-align: center;
+        border: 1px solid #000;
+      }
+      .showInventory:hover, .salesTools:hover, .showProductOptions:hover {
+        background-color: #000;
+        color: #fff;
+        transition: 0.4s;
+        border: 1px solid #000;
+      }
+      .product-options-container {
+        border: 1px solid rgba(var(--color-foreground), 0.1);
+        border-radius: 4px;
+        padding: 20px;
+        margin-bottom: 20px;
+        background-color: rgba(var(--color-background), 1);
+      }
+      .product-options-container h3 {
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+        font-weight: 600;
+      }
+      .product-options-container p {
+        margin-bottom: 8px;
+        font-size: 1.5rem;
+        color: rgba(var(--color-foreground), 0.8);
+      }
+      .requestInfo, .emailProduct {
+        text-decoration: inherit;
+        background-color: #000;
+        color: #fff;
+        border-radius: 30px;
+        padding: 10px;
+        width: 100%;
+        text-align: center;
+        border: 1px solid #000;
+      }
+      .requestInfo:hover, .emailProduct:hover {
+        background-color: #fff;
+        color: #000;
+        transition: 0.4s;
+        border: 1px solid #000;
+      }
+    </style>
+    <!-- Inventory Modal -->
+    <basic-modal id="inventoryModal" class="drawer modal" style="--modal-width: 77rem;">
+      <div class="fixed-overlay" aria-controls="inventoryModal"></div>
+      <div class="drawer__inner color-{{ settings.overlay_color_scheme }}">
+        <button
+          class="drawer__close-btn"
+          aria-controls="inventoryModal"
+          aria-label="{{ 'accessibility.close' | t }}"
+        >
+          {% render 'icon-close' %}
+        </button>
+        <div class="drawer__body v-scrollable h-full">
+          <h2 class="h2 product__popup-page-title">Product Inventory</h2>
+          <!-- Product Display -->
+          <div class="form-group" style="display: flex; flex-direction: column; margin-bottom: 20px; width: 100%;">
+            <label style="display: block; margin-bottom: 8px; width: 100%;"><strong>Product</strong></label>
+            <p id="inventory-product-display" style="display: block; margin: 0; padding: 0; color: rgba(var(--color-foreground), 0.8); text-align: left; width: 100%;">Loading product information...</p>
+          </div>
+          <div id="inventoryContent">
+            <p>Loading inventory information...</p>
+          </div>
+        </div>
+      </div>
+    </basic-modal>
+
+    <!-- Request Info Modal -->
+    <basic-modal id="requestInfoModal" class="drawer modal" style="--modal-width: 77rem;">
+      <div class="fixed-overlay" aria-controls="requestInfoModal"></div>
+      <div class="drawer__inner color-{{ settings.overlay_color_scheme }}">
+        <button
+          class="drawer__close-btn"
+          aria-controls="requestInfoModal"
+          aria-label="{{ 'accessibility.close' | t }}"
+        >
+          {% render 'icon-close' %}
+        </button>
+        <div class="drawer__body v-scrollable h-full">
+          <h2 class="h2 product__popup-page-title">Request Additional Information</h2>
+          <form id="requestInfoForm" class="product__popup-form">
+            <!-- Product Display -->
+            <div class="form-group" style="margin-bottom: 0px;">
+              <label style="margin-bottom: 8px;"><strong>Product</strong></label>
+              <p id="request-product-display" style="margin: 0; padding: 0; color: rgba(var(--color-foreground), 0.8); text-align: left; width: 100%;">Loading product information...</p>
+            </div>
+            
+            <!-- Quantity Needed and Date Needed (Two columns) -->
+            <div class="form-row form-row--two">
+              <div class="form-group">
+                <label for="request-quantity">Quantity Needed</label>
+                <input type="text" id="request-quantity" name="quantity" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="request-date">Date Needed</label>
+                <input type="text" id="request-date" name="date_needed" class="form-control">
+              </div>
+            </div>
+            
+            <!-- Comments (Full width) -->
+            <div class="form-group">
+              <label for="request-comments">Comments</label>
+              <textarea id="request-comments" name="comments" class="form-control" rows="5"></textarea>
+            </div>
+            
+            <!-- First Name and Last Name (Two columns) -->
+            <div class="form-row form-row--two">
+              <div class="form-group">
+                <label for="request-first-name">First Name <span style="color: red;">*</span></label>
+                <input type="text" id="request-first-name" name="first_name" required class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="request-last-name">Last Name <span style="color: red;">*</span></label>
+                <input type="text" id="request-last-name" name="last_name" required class="form-control">
+              </div>
+            </div>
+            
+            <!-- Email (Full width) -->
+            <div class="form-group">
+              <label for="request-email">Email <span style="color: red;">*</span></label>
+              <input type="email" id="request-email" name="email" required class="form-control">
+            </div>
+            
+            <!-- Phone, Extension, Fax (Three columns) -->
+            <div class="form-row form-row--three">
+              <div class="form-group">
+                <label for="request-phone">Phone <span style="color: red;">*</span></label>
+                <input type="tel" id="request-phone" name="phone" required class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="request-extension">Extension</label>
+                <input type="text" id="request-extension" name="extension" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="request-fax">Fax</label>
+                <input type="text" id="request-fax" name="fax" class="form-control">
+              </div>
+            </div>
+            
+            <!-- Company Name (Full width) -->
+            <div class="form-group">
+              <label for="request-company">Company Name</label>
+              <input type="text" id="request-company" name="company" class="form-control">
+            </div>
+            
+            <!-- Street Address (Full width) -->
+            <div class="form-group">
+              <label for="request-address">Street Address</label>
+              <input type="text" id="request-address" name="address" class="form-control">
+            </div>
+            
+            <!-- City, State, Zip (Three columns) -->
+            <div class="form-row form-row--three">
+              <div class="form-group">
+                <label for="request-city">City</label>
+                <input type="text" id="request-city" name="city" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="request-state">State</label>
+                <input type="text" id="request-state" name="state" class="form-control">
+              </div>
+              <div class="form-group">
+                <label for="request-zip">Zip</label>
+                <input type="text" id="request-zip" name="zip" class="form-control">
+              </div>
+            </div>
+            
+            <!-- Send copy checkbox -->
+            <div class="form-group">
+              <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                <input type="checkbox" id="request-send-copy" name="send_copy" value="yes">
+                <span>Send a copy of this email to me</span>
+              </label>
+            </div>
+            
+            <!-- Hidden fields for product data -->
+            <input type="hidden" id="request-product-title" name="product_title" value="{{ product.title | escape }}">
+            <input type="hidden" id="request-product-sku" name="product_sku" value="{{ product.selected_or_first_available_variant.sku }}">
+            <input type="hidden" id="request-product-url" name="product_url" value="{{ product.url }}">
+            
+            <button type="submit" class="btn btn--primary" style="margin-top: 20px;">Send Request</button>
+          </form>
+        </div>
+      </div>
+    </basic-modal>
+
+    <!-- Email Product Modal -->
+    <basic-modal id="emailProductModal" class="drawer modal" style="--modal-width: 77rem;">
+      <div class="fixed-overlay" aria-controls="emailProductModal"></div>
+      <div class="drawer__inner color-{{ settings.overlay_color_scheme }}">
+        <button
+          class="drawer__close-btn"
+          aria-controls="emailProductModal"
+          aria-label="{{ 'accessibility.close' | t }}"
+        >
+          {% render 'icon-close' %}
+        </button>
+        <div class="drawer__body v-scrollable h-full">
+          <h2 class="h2 product__popup-page-title">Email Product</h2>
+          <form id="emailProductForm" class="product__popup-form">
+            <!-- Product Display -->
+            <div class="form-group" style="margin-bottom: 0px;">
+              <label style="margin-bottom: 8px;"><strong>Product</strong></label>
+              <p id="form-product-display" style="margin: 0; padding: 0; color: rgba(var(--color-foreground), 0.8); text-align: left; width: 100%;">Loading product information...</p>
+            </div>
+            
+            <!-- Recipient Email -->
+            <div class="form-group">
+              <label for="email-to">Recipient Email <span style="color: red;">*</span></label>
+              <input type="email" id="email-to" name="to" required class="form-control">
+              <p style="margin: 4px 0 0 0; font-size: 0.875rem; color: rgba(var(--color-foreground), 0.6);">Use commas or semicolons (no spaces) to separate multiple addresses</p>
+            </div>
+            
+            <!-- Your Email -->
+            <div class="form-group">
+              <label for="email-from">Your Email <span style="color: red;">*</span></label>
+              <input type="email" id="email-from" name="from_email" required class="form-control">
+            </div>
+            
+            <!-- Your Name -->
+            <div class="form-group">
+              <label for="email-name">Your Name</label>
+              <input type="text" id="email-name" name="from_name" class="form-control">
+            </div>
+            
+            <!-- Subject -->
+            <div class="form-group">
+              <label for="email-subject">Subject <span style="color: red;">*</span></label>
+              <input type="text" id="email-subject" name="subject" required class="form-control">
+            </div>
+            
+            <!-- Message -->
+            <div class="form-group">
+              <label for="email-message">Message</label>
+              <textarea id="email-message" name="message" class="form-control" rows="5"></textarea>
+            </div>
+            
+            <!-- Send a copy checkbox -->
+            <div class="form-group">
+              <label style="display: flex; align-items: center; font-weight: normal; cursor: pointer;">
+                <input type="checkbox" id="email-send-copy" name="send_copy" value="yes">
+                <span>Send a copy of this email to this address:</span>
+              </label>
+              <input type="email" id="email-copy-address" name="copy_email" class="form-control" style="margin-top: 8px;" placeholder="Enter email address">
+            </div>
+            
+            <!-- Hidden fields for product data -->
+            <input type="hidden" id="form-product-title" name="product_title" value="{{ product.title | escape }}">
+            <input type="hidden" id="form-product-sku" name="product_sku" value="{{ product.selected_or_first_available_variant.sku }}">
+            <input type="hidden" id="form-product-url" name="product_url" value="{{ product.url }}">
+            
+            <button type="submit" class="btn btn--primary" style="margin-top: 20px;">Send Email</button>
+          </form>
+        </div>
+      </div>
+    </basic-modal>
+
+    <!-- Sales Tools Modal -->
+    <basic-modal id="salesToolsModal" class="drawer modal" style="--modal-width: 77rem;">
+      <div class="fixed-overlay" aria-controls="salesToolsModal"></div>
+      <div class="drawer__inner color-{{ settings.overlay_color_scheme }}">
+        <button
+          class="drawer__close-btn"
+          aria-controls="salesToolsModal"
+          aria-label="{{ 'accessibility.close' | t }}"
+        >
+          {% render 'icon-close' %}
+        </button>
+        <div class="drawer__body v-scrollable h-full">
+          <h2 class="h2 product__popup-page-title">Sales Tools</h2>
+          <!-- Product Display -->
+          <div class="form-group" style="display: flex; flex-direction: column; margin-bottom: 20px; width: 100%;">
+            <label style="display: block; margin-bottom: 8px; width: 100%;"><strong>Product</strong></label>
+            <p id="sales-tools-product-display" style="display: block; margin: 0; padding: 0; color: rgba(var(--color-foreground), 0.8); text-align: left; width: 100%;">Loading product information...</p>
+          </div>
+          <div id="salesToolsContent">
+            <p>Loading sales tools...</p>
+          </div>
+        </div>
+      </div>
+    </basic-modal>
+
+    <!-- Product Options Modal -->
+    <basic-modal id="productOptionsModal" class="drawer modal" style="--modal-width: 77rem;">
+      <div class="fixed-overlay" aria-controls="productOptionsModal"></div>
+      <div class="drawer__inner color-{{ settings.overlay_color_scheme }}">
+        <button
+          class="drawer__close-btn"
+          aria-controls="productOptionsModal"
+          aria-label="{{ 'accessibility.close' | t }}"
+        >
+          {% render 'icon-close' %}
+        </button>
+        <div class="drawer__body v-scrollable h-full">
+          <h2 class="h2 product__popup-page-title">Product Options</h2>
+          <!-- Product Display -->
+          <div class="form-group" style="display: flex; flex-direction: column; margin-bottom: 20px; width: 100%;">
+            <label style="display: block; margin-bottom: 8px; width: 100%;"><strong>Product</strong></label>
+            <p id="product-options-product-display" style="display: block; margin: 0; padding: 0; color: rgba(var(--color-foreground), 0.8); text-align: left; width: 100%;">Loading product information...</p>
+          </div>
+          <div id="productOptionsContent">
+            <p>Loading product options...</p>
+          </div>
+        </div>
+      </div>
+    </basic-modal>
+  {%- endif -%}
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script>
+    (function() {
+      'use strict';
+      
+      // Initialize EmailJS
+      if (typeof emailjs !== 'undefined') {
+    emailjs.init("u24h0rlyz_5EglBDe");
+      }
+
+      // Helper function to get product data (works with dynamic content)
+      function getProductData() {
+        const productInfo = document.querySelector('product-info');
+        if (productInfo) {
+          const productId = productInfo.dataset.productId;
+          const productJson = document.querySelector(`#ProductJSON-${productId}`);
+          if (productJson) {
+            try {
+              return JSON.parse(productJson.textContent);
+            } catch(e) {
+              console.error('Error parsing product JSON:', e);
+            }
+          }
+        }
+        return null;
+      }
+
+      // Helper function to get current variant SKU
+      function getCurrentVariantSKU() {
+        const variantSelects = document.querySelector('variant-selects');
+        if (variantSelects) {
+          const selectedVariant = variantSelects.selectedVariant;
+          if (selectedVariant && selectedVariant.sku) {
+            return selectedVariant.sku;
+          }
+        }
+        // Fallback to first available variant
+        const productInfo = document.querySelector('product-info');
+        if (productInfo) {
+          const productId = productInfo.dataset.productId;
+          const productJson = document.querySelector(`script[type="application/json"]#ProductJSON-${productId}`);
+          if (productJson) {
+            try {
+              const product = JSON.parse(productJson.textContent);
+              return product.selected_or_first_available_variant?.sku || '';
+            } catch(e) {
+              console.error('Error parsing product JSON:', e);
+            }
+          }
+        }
+        return '';
+      }
+
+      // Helper function to close basic-modal
+      function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          // Try to find close button and click it
+          const closeBtn = modal.querySelector('.drawer__close-btn');
+          if (closeBtn) {
+            closeBtn.click();
+          } else if (typeof modal.hide === 'function') {
+            modal.hide();
+          } else {
+            // Fallback: dispatch escape key event
+            const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
+            modal.dispatchEvent(escapeEvent);
+          }
+        }
+      }
+
+      // Event delegation for dynamically loaded buttons
+      // Let basic-modal handle opening natively via aria-controls, but update data first
+      document.addEventListener('click', function(e) {
+        const target = e.target.closest('.showInventory, .requestInfo, .emailProduct, .salesTools, .showProductOptions');
+        if (!target) return;
+
+        // Don't prevent default - let basic-modal handle it natively
+        // But update data before the modal opens
+        
+        if (target.classList.contains('showInventory')) {
+          // Load inventory data before modal opens
+          loadInventoryData();
+          // Small delay to ensure modal is opening
+          setTimeout(() => {
+            const modal = document.getElementById('inventoryModal');
+            if (modal) {
+              // Ensure content is loaded
+              loadInventoryData();
+            }
+          }, 100);
+        } else if (target.classList.contains('requestInfo')) {
+          // Update form with current product data
+          updateRequestInfoForm();
+        } else if (target.classList.contains('emailProduct')) {
+          // Update form with current product data
+          updateEmailProductForm();
+        } else if (target.classList.contains('salesTools')) {
+          // Load sales tools content
+          loadSalesToolsContent();
+        } else if (target.classList.contains('showProductOptions')) {
+          // Load product options content
+          loadProductOptionsContent();
+        }
+      });
+
+      // Listen for modal open events to ensure data is fresh
+      document.addEventListener('modal:opened', function(e) {
+        const modalId = e.target?.id;
+        if (modalId === 'inventoryModal') {
+          loadInventoryData();
+        } else if (modalId === 'requestInfoModal') {
+          updateRequestInfoForm();
+        } else if (modalId === 'emailProductModal') {
+          updateEmailProductForm();
+        } else if (modalId === 'salesToolsModal') {
+          loadSalesToolsContent();
+        } else if (modalId === 'productOptionsModal') {
+          loadProductOptionsContent();
+        }
+      });
+
+      // Load inventory data
+      function loadInventoryData() {
+        const inventoryContent = document.getElementById('inventoryContent');
+        if (!inventoryContent) return;
+
+        // Update product display
+        const productTitle = document.querySelector('h1.product__title')?.textContent?.trim() || 
+                           '{{ product.title | escape }}';
+        const productSKU = getCurrentVariantSKU() || '{{ product.selected_or_first_available_variant.sku }}';
+        const inventoryDisplayElement = document.getElementById('inventory-product-display');
+        if (inventoryDisplayElement) {
+          const displayText = productSKU ? `# ${productSKU} - ${productTitle}` : productTitle;
+          inventoryDisplayElement.textContent = displayText;
+        }
+
+        inventoryContent.innerHTML = '<p>Loading inventory information...</p>';
+
+        const productInfo = document.querySelector('product-info');
+        if (!productInfo) {
+          inventoryContent.innerHTML = '<p>Product information not available.</p>';
+          return;
+        }
+
+        const productId = productInfo.dataset.productId;
+        const productUrl = productInfo.dataset.url || window.location.pathname;
+        
+        // Try multiple methods to get product data
+        let productData = null;
+        
+        // Method 1: Try to get from variant-selects element
+        const variantSelects = document.querySelector('variant-selects');
+        if (variantSelects) {
+          // Check various properties where product data might be stored
+          if (variantSelects.product) {
+            productData = variantSelects.product;
+          } else if (variantSelects.dataset && variantSelects.dataset.product) {
+            try {
+              productData = JSON.parse(variantSelects.dataset.product);
+            } catch(e) {
+              console.error('Error parsing product data from dataset:', e);
+            }
+          }
+        }
+        
+        // Method 2: Try to get from structured data (LD+JSON)
+        if (!productData) {
+          const structuredData = document.querySelector('script[type="application/ld+json"]');
+          if (structuredData) {
+            try {
+              const ldData = JSON.parse(structuredData.textContent);
+              if (ldData && ldData['@graph']) {
+                const productNode = ldData['@graph'].find(node => node['@type'] === 'Product');
+                if (productNode && productNode.offers && productNode.offers.offers) {
+                  // Convert structured data to our format
+                  productData = {
+                    variants: productNode.offers.offers.map((offer, index) => ({
+                      id: offer.sku || index,
+                      title: offer.name || productNode.name || 'Default',
+                      sku: offer.sku || '',
+                      available: offer.availability === 'https://schema.org/InStock',
+                      inventory_quantity: null,
+                      inventory_management: null
+                    }))
+                  };
+                }
+              }
+            } catch(e) {
+              console.error('Error parsing structured data:', e);
+            }
+          }
+        }
+        
+        // Method 3: Fetch from Shopify product JSON endpoint
+        if (!productData) {
+          // Use Shopify's product JSON endpoint
+          // Extract product handle from URL
+          let productHandle = '';
+          if (productUrl.includes('/products/')) {
+            productHandle = productUrl.split('/products/')[1].split('?')[0].split('#')[0];
+          } else {
+            // If URL is just a path, extract handle
+            productHandle = productUrl.replace(/^\//, '').replace(/\/$/, '').split('?')[0];
+          }
+          
+          if (!productHandle) {
+            // Fallback: try to get from current page URL
+            productHandle = window.location.pathname.split('/products/')[1]?.split('?')[0] || '';
+          }
+          
+          if (!productHandle) {
+            getInventoryFromPage();
+            return;
+          }
+          
+          const jsonUrl = `/products/${productHandle}.js`;
+          fetch(jsonUrl)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Failed to fetch product data');
+              }
+              return response.json();
+            })
+            .then(data => {
+              if (data && data.variants) {
+                displayInventoryData({ variants: data.variants });
+              } else {
+                getInventoryFromPage();
+              }
+            })
+            .catch(error => {
+              console.error('Error fetching product JSON:', error);
+              // Fallback to page scraping
+              getInventoryFromPage();
+            });
+          return; // Exit early, displayInventoryData will be called in fetch
+        }
+        
+        // If we have product data, display it
+        if (productData) {
+          displayInventoryData(productData);
+        } else {
+          getInventoryFromPage();
+        }
+        
+        function getInventoryFromPage() {
+          // Try to extract variant data from variant-selects options
+          const variantSelects = document.querySelector('variant-selects');
+          if (!variantSelects) {
+            inventoryContent.innerHTML = '<div class="inventory-list"><p>Unable to load inventory information. Please refresh the page.</p></div>';
+            return;
+          }
+          
+          // Try to find variant option elements
+          const variantOptions = variantSelects.querySelectorAll('input[type="radio"], select option, [data-variant-id]');
+          
+          if (variantOptions.length === 0) {
+            // Try to get from selected variant data
+            const selectedVariantEl = variantSelects.querySelector('[data-selected-variant]');
+            if (selectedVariantEl) {
+              try {
+                const selectedVariant = JSON.parse(selectedVariantEl.textContent);
+                displayInventoryData({ variants: [selectedVariant] });
+                return;
+              } catch(e) {
+                console.error('Error parsing selected variant:', e);
+              }
+            }
+            
+            // Show current variant info from inventory block
+            const currentInventory = document.querySelector('#Inventory-' + productInfo.dataset.section);
+            if (currentInventory) {
+              inventoryContent.innerHTML = '<div class="inventory-list"><p><strong>Current Variant:</strong><br>' + currentInventory.textContent.trim() + '</p><p>For full inventory details, please contact us.</p></div>';
+            } else {
+              inventoryContent.innerHTML = '<div class="inventory-list"><p>Inventory information is not available for this product. Please contact us for availability.</p></div>';
+            }
+            return;
+          }
+          
+          // Build table from variant options
+          let html = '<div class="inventory-list">';
+          html += '<table class="inventory-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">';
+          html += '<thead><tr><th style="padding: 10px; border: 1px solid #ddd; background: #f5f5f5;">Variant</th><th style="padding: 10px; border: 1px solid #ddd; background: #f5f5f5;">SKU</th><th style="padding: 10px; border: 1px solid #ddd; background: #f5f5f5;">Status</th></tr></thead>';
+          html += '<tbody>';
+          
+          variantOptions.forEach(option => {
+            const variantTitle = option.textContent?.trim() || option.value || 'Default';
+            const sku = option.dataset?.sku || option.value || 'N/A';
+            const available = option.dataset?.available === 'true' || !option.disabled ? 'Available' : 'Unavailable';
+            
+            html += `<tr>
+              <td style="padding: 10px; border: 1px solid #ddd;">${variantTitle}</td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${sku}</td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${available}</td>
+            </tr>`;
+          });
+          
+          html += '</tbody></table>';
+          html += '</div>';
+          inventoryContent.innerHTML = html;
+        }
+        
+        function displayInventoryData(product) {
+          const variants = product.variants || [];
+          let html = '<div class="inventory-list">';
+          
+          if (variants.length > 0) {
+            html += '<table class="inventory-table" style="width: 100%; border-collapse: collapse; margin-top: 20px;">';
+            html += '<thead><tr><th style="padding: 10px; border: 1px solid #ddd; background: #f5f5f5;">Variant</th><th style="padding: 10px; border: 1px solid #ddd; background: #f5f5f5;">SKU</th><th style="padding: 10px; border: 1px solid #ddd; background: #f5f5f5;">Inventory</th><th style="padding: 10px; border: 1px solid #ddd; background: #f5f5f5;">Status</th></tr></thead>';
+            html += '<tbody>';
+            
+            variants.forEach(variant => {
+              const variantTitle = variant.title || variant.name || 'Default';
+              const sku = variant.sku || 'N/A';
+              let inventory = 'N/A';
+              let status = 'Unknown';
+              
+              if (variant.inventory_management === 'shopify') {
+                if (variant.inventory_quantity !== null && variant.inventory_quantity !== undefined) {
+                  inventory = variant.inventory_quantity;
+                  if (variant.inventory_quantity > 0) {
+                    status = variant.inventory_quantity <= 10 ? 'Low Stock' : 'In Stock';
+                  } else {
+                    status = variant.inventory_policy === 'continue' ? 'Backorder' : 'Out of Stock';
+                  }
+                } else {
+                  inventory = 'Unlimited';
+                  status = 'Available';
+                }
+              } else {
+                inventory = 'Not Tracked';
+                status = variant.available ? 'Available' : 'Unavailable';
+              }
+              
+              html += `<tr>
+                <td style="padding: 10px; border: 1px solid #ddd;">${variantTitle}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${sku}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${inventory}</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">${status}</td>
+              </tr>`;
+            });
+            
+            html += '</tbody></table>';
+          } else {
+            html += '<p>No variant information available.</p>';
+          }
+          
+          html += '</div>';
+          inventoryContent.innerHTML = html;
+        }
+      }
+
+      // Update request info form
+      function updateRequestInfoForm() {
+        const productTitle = document.querySelector('h1.product__title')?.textContent?.trim() || 
+                           '{{ product.title | escape }}';
+        const productSKU = getCurrentVariantSKU() || '{{ product.selected_or_first_available_variant.sku }}';
+        const productUrl = window.location.href;
+
+        const titleInput = document.getElementById('request-product-title');
+        const skuInput = document.getElementById('request-product-sku');
+        const urlInput = document.getElementById('request-product-url');
+        const displayElement = document.getElementById('request-product-display');
+
+        if (titleInput) titleInput.value = productTitle;
+        if (skuInput) skuInput.value = productSKU;
+        if (urlInput) urlInput.value = productUrl;
+        
+        // Update the product display text
+        if (displayElement) {
+          const displayText = productSKU ? `# ${productSKU} - ${productTitle}` : productTitle;
+          displayElement.textContent = displayText;
+        }
+      }
+
+      // Update email product form
+      function updateEmailProductForm() {
+        const productTitle = document.querySelector('h1.product__title')?.textContent?.trim() || 
+                           '{{ product.title | escape }}';
+        const productSKU = getCurrentVariantSKU() || '{{ product.selected_or_first_available_variant.sku }}';
+        const productUrl = window.location.href;
+
+        const subjectInput = document.getElementById('email-subject');
+        const titleInput = document.getElementById('form-product-title');
+        const skuInput = document.getElementById('form-product-sku');
+        const urlInput = document.getElementById('form-product-url');
+        const displayElement = document.getElementById('form-product-display');
+
+        const subject = `${productSKU} - ${productTitle}`;
+        if (subjectInput) subjectInput.value = subject;
+        if (titleInput) titleInput.value = productTitle;
+        if (skuInput) skuInput.value = productSKU;
+        if (urlInput) urlInput.value = productUrl;
+        
+        // Update the product display text
+        if (displayElement) {
+          const displayText = productSKU ? `${productSKU} - ${productTitle}` : productTitle;
+          displayElement.textContent = displayText;
+        }
+      }
+
+      // Load sales tools content
+      function loadSalesToolsContent() {
+        const salesToolsContent = document.getElementById('salesToolsContent');
+        if (!salesToolsContent) return;
+
+        // Get product title and SKU
+        const productTitle = document.querySelector('h1.product__title')?.textContent?.trim() || 
+                           '{{ product.title | escape }}';
+        const productSKU = getCurrentVariantSKU() || '{{ product.selected_or_first_available_variant.sku }}';
+        
+        // Update product display
+        const salesToolsDisplayElement = document.getElementById('sales-tools-product-display');
+        if (salesToolsDisplayElement) {
+          const displayText = productSKU ? `# ${productSKU} - ${productTitle}` : productTitle;
+          salesToolsDisplayElement.textContent = displayText;
+        }
+        
+        // Check if product title contains "Golf Balls" and does not contain "Wilson 50" or "Wilson Duo Soft"
+        // OR contains "Callaway Dozen box" OR contains "Dozen Titleist"
+        const containsGolfBalls = productTitle.toLowerCase().includes('golf balls');
+        const containsWilson50 = productTitle.toLowerCase().includes('wilson 50');
+        const containsWilsonDuoSoft = productTitle.toLowerCase().includes('wilson duo soft');
+        const containsCallawayDozenBox = productTitle.toLowerCase().includes('callaway dozen box');
+        const containsDozenTitleist = productTitle.toLowerCase().includes('dozen titleist');
+        
+        // Check if product title contains "Baseball" and does NOT contain "Keychain" or "Acrylic" or "Bat" or "Cooler" or "Synthetic"
+        const containsBaseball = productTitle.toLowerCase().includes('baseball');
+        const containsKeychain = productTitle.toLowerCase().includes('keychain');
+        const containsAcrylic = productTitle.toLowerCase().includes('acrylic');
+        const containsBat = productTitle.toLowerCase().includes('bat');
+        const containsCooler = productTitle.toLowerCase().includes('cooler');
+        const containsSynthetic = productTitle.toLowerCase().includes('synthetic');
+        const showBaseballTemplate = containsBaseball && !containsKeychain && !containsAcrylic && !containsBat && !containsCooler && !containsSynthetic;
+        
+        let html = '<div style="margin-top: 20px;">';
+        html += '<div style="border: 1px solid rgba(var(--color-foreground), 0.1); border-radius: 4px; padding: 20px; background-color: rgba(var(--color-background), 1);">';
+        html += '<h3 style="margin-bottom: 15px; font-size: 1.8rem;">Artwork Templates</h3>';
+        html += '<p style="margin-bottom: 15px; color: rgba(var(--color-foreground), 0.8); font-size: 1.5rem;">Templates for artwork layout and margin information.</p>';
+        
+        let templateShown = false;
+        
+        // Check for Golf Ball template
+        if ((containsGolfBalls && !containsWilson50 && !containsWilsonDuoSoft) || containsCallawayDozenBox || containsDozenTitleist) {
+          // Show the Template link
+          html += '<p style="margin-bottom: 10px;"><a href="https://s3.distributorcentral.com/uploads/6/E/6EA141D552BAB890BA6B424986067D97.pdf" target="_blank" style="color: rgba(var(--color-foreground), 1); text-decoration: underline; font-size: 1.6rem;">View Golf Ball Template</a></p>';
+          templateShown = true;
+        }
+        
+        // Check for Baseball template
+        if (showBaseballTemplate) {
+          html += '<p style="margin-bottom: 10px;"><a href="https://s3.distributorcentral.com/uploads/0/C/0C560CA6CD4EFCAAA0BC14E6970CDE38.pdf" target="_blank" style="color: rgba(var(--color-foreground), 1); text-decoration: underline; font-size: 1.6rem;">Template</a></p>';
+          templateShown = true;
+        }
+        
+        // Show message if no template is available
+        if (!templateShown) {
+          html += '<p style="margin-bottom: 10px; color: rgba(var(--color-foreground), 0.6); font-size: 1.5rem;">Template not available for this product.</p>';
+        }
+        
+        html += '</div>';
+        html += '</div>';
+        salesToolsContent.innerHTML = html;
+      }
+
+      // Load product options content
+      function loadProductOptionsContent() {
+        const productOptionsContent = document.getElementById('productOptionsContent');
+        if (!productOptionsContent) return;
+
+        // Get product title and SKU
+        const productTitle = document.querySelector('h1.product__title')?.textContent?.trim() || 
+                           '{{ product.title | escape }}';
+        const productSKU = getCurrentVariantSKU() || '{{ product.selected_or_first_available_variant.sku }}';
+        
+        // Update product display
+        const productOptionsDisplayElement = document.getElementById('product-options-product-display');
+        if (productOptionsDisplayElement) {
+          const displayText = productSKU ? `# ${productSKU} - ${productTitle}` : productTitle;
+          productOptionsDisplayElement.textContent = displayText;
+        }
+
+        // Get product data to access metafields
+        const productData = getProductData();
+        let html = '';
+
+        // Container 1: PMS Charge
+        {% if product.metafields.custom.pms_charges.value %}
+        const pmsCharges = '{{ product.metafields.custom.pms_charges.value | escape }}';
+        {% else %}
+        const pmsCharges = productData?.metafields?.custom?.pms_charges?.value || '';
+        {% endif %}
+        if (pmsCharges && pmsCharges !== '') {
+          html += '<div class="product-options-container">';
+          html += '<h3>PMS Charge</h3>';
+          
+          // Parse: "$45(V) Per color" -> "Price: $45.00 per color"
+          const pmsMatch = pmsCharges.match(/\$([\d.]+)\(V\)\s*(.+)/i);
+          if (pmsMatch) {
+            const price = parseFloat(pmsMatch[1]).toFixed(2);
+            const unit = pmsMatch[2].trim().toLowerCase();
+            html += `<p>Price: $${price} ${unit}</p>`;
+          } else {
+            html += `<p>${pmsCharges}</p>`;
+          }
+          
+          html += '</div>';
+        }
+
+        // Container 2: 2nd Color Run Charge OR 2nd Pole Golf Balls
+        {% if product.metafields.custom.addition_imprint_charges.value %}
+        const additionImprintCharges = '{{ product.metafields.custom.addition_imprint_charges.value | escape }}';
+        {% else %}
+        const additionImprintCharges = productData?.metafields?.custom?.addition_imprint_charges?.value || '';
+        {% endif %}
+        if (additionImprintCharges && additionImprintCharges !== '') {
+          const chargesStr = String(additionImprintCharges);
+          
+          // Check if it contains "Per color" (Option 1) or "2nd Pole Imprint" (Option 2)
+          if (chargesStr.toLowerCase().includes('per color')) {
+            // Option 1: 2nd Color Run Charge
+            html += '<div class="product-options-container">';
+            html += '<h3>2nd Color Run Charge</h3>';
+            
+            // Parse: "$0.40(V) Per color/per pc $50(V) Setup charge per color"
+            // Extract price: $0.40(V) Per color/per pc
+            const priceMatch = chargesStr.match(/\$([\d.]+)\(V\)\s*Per\s+color/i);
+            // Extract setup charge: $50(V) Setup charge per color
+            const setupMatch = chargesStr.match(/\$([\d.]+)\(V\)\s*Setup\s+charge/i);
+            
+            if (priceMatch) {
+              const price = parseFloat(priceMatch[1]).toFixed(2);
+              html += `<p>Price: $${price} each</p>`;
+            }
+            
+            if (setupMatch) {
+              const setupPrice = parseFloat(setupMatch[1]).toFixed(2);
+              html += `<p>Setup Charge: $${setupPrice} each</p>`;
+            }
+            
+            html += '</div>';
+          } else if (chargesStr.toLowerCase().includes('2nd pole imprint')) {
+            // Option 2: 2nd Pole Golf Balls
+            html += '<div class="product-options-container">';
+            html += '<h3>2nd Pole Golf Balls</h3>';
+            
+            // Parse: "2nd Pole Imprint $3.75(V) Per Dozen $50{V) Setup charge per location"
+            // Handle both (V) and {V) variations - match $digits followed by either (V) or {V)
+            const priceMatch = chargesStr.match(/\$([\d.]+)(\(|\{)V\)\s*Per\s+Dozen/i);
+            // Match both (V) and {V) for setup charge
+            const setupMatch = chargesStr.match(/\$([\d.]+)(\(|\{)V\)\s*Setup\s+charge/i);
+            
+            if (priceMatch) {
+              const price = parseFloat(priceMatch[1]).toFixed(2);
+              html += `<p>Price: $${price} per dozen</p>`;
+            }
+            
+            if (setupMatch) {
+              const setupPrice = parseFloat(setupMatch[1]).toFixed(2);
+              html += `<p>Setup Charge: $${setupPrice} each</p>`;
+            }
+            
+            html += '</div>';
+          } else {
+            // Option 3: 2nd Location Run Charge (if metafield exists but doesn't match Option 1 or Option 2)
+            html += '<div class="product-options-container">';
+            html += '<h3>2nd Location Run Charge</h3>';
+            
+            // Parse: "$0.35(V) Per location/per pc $50(V) Setup charge per location"
+            // Extract price: $0.35(V) Per location/per pc
+            const priceMatch = chargesStr.match(/\$([\d.]+)\(V\)\s*Per\s+location/i);
+            // Extract setup charge: $50(V) Setup charge per location
+            const setupMatch = chargesStr.match(/\$([\d.]+)\(V\)\s*Setup\s+charge\s+per\s+location/i);
+            
+            if (priceMatch) {
+              const price = parseFloat(priceMatch[1]).toFixed(2);
+              html += `<p>Price: $${price} each</p>`;
+            }
+            
+            if (setupMatch) {
+              const setupPrice = parseFloat(setupMatch[1]).toFixed(2);
+              html += `<p>Setup Charge: $${setupPrice} per location</p>`;
+            }
+            
+            html += '</div>';
+          }
+        }
+
+        // Container 3: FCD Upgrade Charge
+        {% if product.metafields.custom.imprint_method_charge.value %}
+        const imprintMethodCharge = '{{ product.metafields.custom.imprint_method_charge.value | escape }}';
+        {% else %}
+        const imprintMethodCharge = productData?.metafields?.custom?.imprint_method_charge?.value || '';
+        {% endif %}
+        if (imprintMethodCharge && imprintMethodCharge !== '') {
+          html += '<div class="product-options-container">';
+          html += '<h3>FCD Upgrade Charge</h3>';
+          
+          // Parse: "Full color transfer - $.65(V) Per pc; $62.50(V) Setup charge"
+          const chargeStr = String(imprintMethodCharge);
+          
+          // Extract price: $.65(V) Per pc
+          const priceMatch = chargeStr.match(/\$([\d.]+)\(V\)\s*Per\s+pc/i);
+          // Extract setup charge: $62.50(V) Setup charge
+          const setupMatch = chargeStr.match(/\$([\d.]+)\(V\)\s*Setup\s+charge/i);
+          
+          if (priceMatch) {
+            const price = parseFloat(priceMatch[1]).toFixed(2);
+            html += `<p>Price: $${price} each</p>`;
+          }
+          
+          if (setupMatch) {
+            const setupPrice = parseFloat(setupMatch[1]).toFixed(2);
+            html += `<p>Setup Charge: $${setupPrice} each</p>`;
+          }
+          
+          html += '</div>';
+        }
+
+        // If no containers were added, show a message
+        if (html === '') {
+          html = '<p>No product options available for this product.</p>';
+        }
+
+        productOptionsContent.innerHTML = html;
+      }
+
+      // Handle form submissions
+      function initializeForms() {
+        // Email Product Form
+        const emailForm = document.getElementById('emailProductForm');
+        if (emailForm && !emailForm.dataset.initialized) {
+          emailForm.dataset.initialized = 'true';
+          emailForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+            if (typeof emailjs === 'undefined') {
+              alert('EmailJS is not loaded. Please check your connection.');
+              return;
+            }
+            
+            // Get form values
+            const formData = new FormData(this);
+            const recipientEmail = formData.get('to');
+            
+            // Validate recipient email first
+            if (!recipientEmail || recipientEmail.trim() === '') {
+              alert('Please enter a recipient email address.');
+              return;
+            }
+            
+            // Map form fields to template parameters
+            // Try common EmailJS template variable names for recipient
+            const templateParams = {
+              to: recipientEmail,
+              to_email: recipientEmail,
+              recipient_email: recipientEmail,
+              email_to: recipientEmail,
+              from_email: formData.get('from_email'),
+              from_name: formData.get('from_name') || '',
+              subject: formData.get('subject'),
+              message: formData.get('message') || '',
+              product_title: formData.get('product_title'),
+              product_sku: formData.get('product_sku'),
+              product_url: formData.get('product_url'),
+              send_copy: formData.get('send_copy'),
+              copy_email: formData.get('copy_email') || ''
+            };
+            
+      emailjs.send("service_mj8zxbu", "template_9ckncc7", templateParams)
+        .then(function() {
+          alert("Email sent successfully!");
+                closeModal('emailProductModal');
+                emailForm.reset();
+        }, function(error) {
+          alert("Failed to send email: " + JSON.stringify(error));
+                console.error('EmailJS error:', error);
+              });
+          });
+        }
+
+        // Request Info Form
+        const requestForm = document.getElementById('requestInfoForm');
+        if (requestForm && !requestForm.dataset.initialized) {
+          requestForm.dataset.initialized = 'true';
+          requestForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+            if (typeof emailjs === 'undefined') {
+              alert('EmailJS is not loaded. Please check your connection.');
+              return;
+            }
+
+          emailjs.sendForm("service_mj8zxbu", "template_soo5ntm", this)
+            .then(() => {
+              alert("Request sent successfully!");
+                closeModal('requestInfoModal');
+                requestForm.reset();
+            })
+            .catch((err) => {
+              alert("Error sending request. Please try again.");
+                console.error('EmailJS error:', err);
+            });
+        });
+        }
+      }
+
+      // Initialize on DOM ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeForms);
+      } else {
+        initializeForms();
+      }
+
+      // Re-initialize forms when product info updates (for dynamic content)
+      const productInfo = document.querySelector('product-info');
+      if (productInfo) {
+        const observer = new MutationObserver(function(mutations) {
+          initializeForms();
+        });
+        observer.observe(productInfo, { childList: true, subtree: true });
+      }
+    })();
+    </script>
+    <!-- END OF EMAIL POPUP CODE FOR PRODUCT PAGES -->

@@ -1,0 +1,133 @@
+{% style %}
+  .custom-hero-banner-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    min-height: 70vh;
+    display: flex;
+    align-items: flex-end;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .custom-hero-banner-{{ section.id }}::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.35) 20%, transparent 100%);
+  }
+
+  .custom-hero-banner-{{ section.id }} .custom-hero-banner__content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    padding: 40px 20px 60px;
+    color: #fff;
+  }
+
+  .custom-hero-banner-{{ section.id }} .page-width {
+    margin: 0;
+  }
+
+  .custom-hero-banner-{{ section.id }} .custom-hero-banner__title {
+    margin: 0 0 16px;
+    font-size: clamp(2rem, 5vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.15;
+    text-transform: uppercase;
+    color: #fff;
+  }
+
+  .custom-hero-banner-{{ section.id }} .custom-hero-banner__text {
+    margin: 0;
+    font-size: clamp(1rem, 2vw, 1.7rem);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 899px) {
+    .custom-hero-banner-{{ section.id }}::before {
+      background: rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .custom-hero-banner-{{ section.id }} {
+      min-height: 50vh;
+    }
+  }
+{% endstyle %}
+
+{% liquid
+  assign hero_title = section.settings.title
+  if hero_title == blank
+    assign hero_title = page.title
+  endif
+%}
+
+<div
+  class="custom-hero-banner-{{ section.id }}"
+  {% if section.settings.background_image != blank %}
+    style="background-image: url('{{ section.settings.background_image | image_url: width: 2400 }}'); background-position: {{ section.settings.background_position }};"
+  {% endif %}
+>
+  <div class="custom-hero-banner__content page-width">
+    {% if hero_title != blank %}
+      <h2 class="custom-hero-banner__title">{{ hero_title | escape }}</h2>
+    {% endif %}
+
+    {% if section.settings.text != blank %}
+      <div class="custom-hero-banner__text rte">{{ section.settings.text }}</div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom Hero Banner",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "select",
+      "id": "background_position",
+      "label": "Background image focus",
+      "options": [
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Add banner text here.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Hero Banner"
+    }
+  ]
+}
+{% endschema %}

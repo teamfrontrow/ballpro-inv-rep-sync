@@ -1,0 +1,287 @@
+{
+  "sections": {
+    "breadcrumbs": {
+      "type": "breadcrumbs",
+      "settings": {
+        "container": "fixed",
+        "text_alignment": "start",
+        "padding_top": 16,
+        "padding_bottom": 20
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "container": "fixed",
+        "text_alignment": "left",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "ballpro_faq": {
+      "type": "collapsible-tabs",
+      "blocks": {
+        "item_orders": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "paperplane",
+            "heading": "Where do I send my orders?",
+            "content": "<p><a href=\"mailto:sales@ballpro.com\">sales@ballpro.com</a></p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": true,
+            "use_subtext_color": true
+          }
+        },
+        "item_valid_order": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "check",
+            "heading": "How do I place a valid order?",
+            "content": "<p>To avoid delays, include your PO# and company name in the email subject line. Orders must be in PO format and include:</p><ul><li>Company Name, Address, Phone</li><li>ASI Number (if applicable)</li><li>Contact Name &amp; Email</li><li>Ship-To Address</li><li>Special Shipping Instructions</li><li>Required In-Hands Date</li><li>Item Number(s), Quantity &amp; Color</li><li>Proof Preference</li><li>Logo Description</li><li>PMS# for Imprint Colors</li><li>Logo Placement &amp; Size</li><li>On Reorders - Previous PO# &amp; Date</li></ul>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        },
+        "item_acknowledgment": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "clock",
+            "heading": "Will I receive an order acknowledgment?",
+            "content": "<p>Yes, within 24 hours for current customers, 48 hours for new customers.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        },
+        "item_requests": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "chat",
+            "heading": "Where do I send quote requests, product info, or order status updates?",
+            "content": "<p><a href=\"mailto:sales@ballpro.com\">sales@ballpro.com</a> (requests forwarded to your assigned rep)</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        },
+        "item_sales_team": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "phone",
+            "heading": "Do you have an outside sales team?",
+            "content": "<p>Yes. A territory-based roster can be provided upon request.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        },
+        "item_eqp": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "currency-circle-dollar",
+            "heading": "How do I get EQP pricing?",
+            "content": "<p>You must reach $10,000 in annual sales.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        },
+        "item_prices": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "tag",
+            "heading": "Are prices subject to change?",
+            "content": "<p>Yes. Supplier increases and errors may occur. Website pricing is updated regularly.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        },
+        "item_paper_proof": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "check",
+            "heading": "Do you charge for a paper proof?",
+            "content": "<p>No. Free for orders over $2,500 or upon request. Changes must be emailed and approved within 24 hours to avoid delays.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        },
+        "item_production": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "calendar-blank",
+            "heading": "What is the production time for orders?",
+            "content": "<p>Varies by product. Starts after PO, artwork, and credit approval. Orders after 1 PM CST are processed next business day.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        },
+        "item_payment_terms": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "currency-circle-dollar",
+            "heading": "What are the payment terms?",
+            "content": "<p>New accounts pay at time of order. Credit accounts must respond to info requests or face delays.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        },
+        "item_rush": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "lightning",
+            "heading": "Do you offer rush service?",
+            "content": "<p>Yes. Orders must be received by 1 PM CST with approved PO, artwork, and credit. Proofs not available for rush orders.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        },
+        "item_cancel": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "bell-ringing",
+            "heading": "Can I cancel my order?",
+            "content": "<p>Yes, with Ball Pro approval. Fees may apply. Completed orders cannot be canceled.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        },
+        "item_returns": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "package",
+            "heading": "What is the policy for returned goods?",
+            "content": "<p>Factory authorization required. Credit issued upon return.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        },
+        "item_samples": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "gift",
+            "heading": "What is your sample policy?",
+            "content": "<p>Random imprints free up to $10 EQP with a 3rd-party shipping number. Above $10, EQP charges apply.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        },
+        "item_blank": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "package",
+            "heading": "Can I order blank products?",
+            "content": "<p>Yes. Call for availability. Some items not available blank.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        },
+        "item_repeat": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "check",
+            "heading": "Repeat order policy?",
+            "content": "<p>We retain artwork files for a period of three (3) years. During this time, no repeat setup charges will apply for exact reorders.</p><p>To ensure prompt processing, please reference your previous order number, invoice number, or purchase order number when placing a repeat order. An order qualifies as an exact repeat if all the following match the original order:</p><ul><li>Item – For Golf Ball repeat orders, see below.</li><li>Imprint method</li><li>Imprint location</li><li>Imprint size</li></ul><p>Any variation from the original specifications may result in additional charges or delays.</p><h4>Golf Ball Repeat Order</h4><p>We retain artwork files for a period of three (3) years. During this time, no repeat setup charges will apply for exact reorders.</p><p>Repeat setup charges are waived on all golf ball orders, regardless of whether the order is placed:</p><ul><li>Directly with our golf ball vendors,</li><li>Through our in-house services, or</li><li>With a different golf ball brand.</li></ul><p>To qualify for waived setup charges, the imprint method and imprint size must remain the same as the original order.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        },
+        "item_artwork": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "paperplane",
+            "heading": "Where do I send artwork & what are accepted formats?",
+            "content": "<p>Email to <a href=\"mailto:sales@ballpro.com\">sales@ballpro.com</a> with your company and PO in the subject line.</p><p>Preferred: AI, PDF, PSD, EPS (vector). Also accepted: JPG, TIFF at 300 dpi or higher. Provide PMS# if applicable.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": true
+          }
+        }
+      },
+      "block_order": [
+        "item_orders",
+        "item_valid_order",
+        "item_acknowledgment",
+        "item_requests",
+        "item_sales_team",
+        "item_eqp",
+        "item_prices",
+        "item_paper_proof",
+        "item_production",
+        "item_payment_terms",
+        "item_rush",
+        "item_cancel",
+        "item_returns",
+        "item_samples",
+        "item_blank",
+        "item_repeat",
+        "item_artwork"
+      ],
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "scheme-1",
+        "header_layout": "vertical",
+        "section_header_alignment": "left",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "Ordering & General FAQ",
+        "heading": "Ball Pro Ordering FAQ",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h2",
+        "description": "",
+        "text_size": "text-base",
+        "button_label": "",
+        "button_link": "",
+        "button_style": "btn--primary",
+        "button_icon": "none",
+        "column_gap": "large",
+        "row_gap": "inherit",
+        "item_style": "card",
+        "item_color_scheme": "scheme-2",
+        "item_heading_font": "heading",
+        "item_heading_size": "h5",
+        "item_icon_size": "medium",
+        "padding_top": 28,
+        "padding_bottom": 64,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    }
+  },
+  "order": [
+    "breadcrumbs",
+    "main",
+    "ballpro_faq"
+  ]
+}

@@ -1,0 +1,228 @@
+{{ 'customer.css' | asset_url | stylesheet_tag }}
+
+<div
+  class="customer register section section--padding"
+  style="--section-padding-top: {{ section.settings.padding_top }}px;--section-padding-bottom: {{ section.settings.padding_bottom }}px;"
+>
+  <div class="section__wrapper">
+    <h1 class="text-center h2">
+      Register for a Wholesale Account
+    </h1>
+    <p class="text-center" style="color: rgba(var(--color-subtext), var(--color-subtext-alpha, 1)); margin-top: 0.5rem;">
+      Complete the form below to request a wholesale account. Your application will be reviewed and you'll receive an email once approved.
+    </p>
+
+    <form id="wholesale-register-form" class="flex flex-col" novalidate>
+      <!-- Success / Error Messages -->
+      <div id="register-success" class="register-message register-message--success" style="display:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span>Your application has been submitted! You'll receive an email once your account is approved.</span>
+      </div>
+      <div id="register-already-registered" class="register-message register-message--info" style="display:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span>Good news - this email is already registered. <a href="/account/login" class="register-message-link">Log in here</a> to continue.</span>
+      </div>
+      <div id="register-error" class="register-message register-message--error" style="display:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <span id="register-error-text">Something went wrong. Please try again.</span>
+      </div>
+
+      <!-- Account Details -->
+      <h3 class="register-section-heading h5">Account Details</h3>
+
+      <div class="form-field">
+        <label for="RegisterForm-CustomerName" class="form-label">
+          Customer Name <span class="required-marker">*</span>
+        </label>
+        <input
+          type="text"
+          name="customer_name"
+          id="RegisterForm-CustomerName"
+          autocomplete="name"
+          placeholder="Your full name"
+          class="form-control"
+          required
+        >
+        <span id="RegisterForm-customer_name-error" class="form-message form-message--small form-message--error" style="display:none;">
+          Customer Name is required.
+        </span>
+      </div>
+
+      <div class="form-field">
+        <label for="RegisterForm-email" class="form-label">
+          Email <span class="required-marker">*</span>
+        </label>
+        <input
+          required
+          type="email"
+          name="email"
+          id="RegisterForm-email"
+          spellcheck="false"
+          autocapitalize="off"
+          autocomplete="email"
+          aria-required="true"
+          placeholder="you@company.com"
+          class="form-control"
+          {%- if customer %}
+            value="{{ customer.email }}"
+            readonly
+          {%- endif %}
+        >
+        <span id="RegisterForm-email-error" class="form-message form-message--small form-message--error" style="display:none;">
+          Please enter a valid email address.
+        </span>
+      </div>
+
+      <!-- Company Information -->
+      <h3 class="register-section-heading h5">Company Information</h3>
+
+      <div class="form-field">
+        <label for="RegisterForm-CompanyName" class="form-label">
+          Company Name <span class="required-marker">*</span>
+        </label>
+        <input
+          type="text"
+          name="company_name"
+          id="RegisterForm-CompanyName"
+          placeholder="Your company name"
+          class="form-control"
+          required
+        >
+        <span id="RegisterForm-company_name-error" class="form-message form-message--small form-message--error" style="display:none;">
+          Company Name is required.
+        </span>
+      </div>
+
+      <div class="form-field">
+        <label for="RegisterForm-CompanyAddress" class="form-label">
+          Company Address <span class="required-marker">*</span>
+        </label>
+        <input
+          type="text"
+          name="company_address"
+          id="RegisterForm-CompanyAddress"
+          placeholder="Street, City, State, ZIP"
+          class="form-control"
+          required
+        >
+        <span id="RegisterForm-company_address-error" class="form-message form-message--small form-message--error" style="display:none;">
+          Company Address is required.
+        </span>
+      </div>
+
+      <div class="form-field">
+        <label for="RegisterForm-CompanyPhone" class="form-label">
+          Company Phone
+        </label>
+        <input
+          type="tel"
+          name="company_phone"
+          id="RegisterForm-CompanyPhone"
+          placeholder="(555) 123-4567"
+          autocomplete="tel"
+          class="form-control"
+        >
+      </div>
+
+      <!-- Industry Identifiers -->
+      <h3 class="register-section-heading h5">Industry Identifiers</h3>
+
+      <div class="form-field">
+        <label for="RegisterForm-CompanyEIN" class="form-label">
+          Company EIN#
+        </label>
+        <input
+          type="text"
+          name="company_ein"
+          id="RegisterForm-CompanyEIN"
+          placeholder="XX-XXXXXXX"
+          class="form-control"
+        >
+      </div>
+
+      <div class="form-field">
+        <label for="RegisterForm-CustomerASI" class="form-label">
+          Customer ASI#
+        </label>
+        <input
+          type="text"
+          name="customer_asi"
+          id="RegisterForm-CustomerASI"
+          placeholder="ASI number"
+          class="form-control"
+        >
+      </div>
+
+      <div class="form-field">
+        <label for="RegisterForm-CustomerPPAI" class="form-label">
+          Customer PPAI#
+        </label>
+        <input
+          type="text"
+          name="customer_ppai"
+          id="RegisterForm-CustomerPPAI"
+          placeholder="PPAI number"
+          class="form-control"
+        >
+      </div>
+
+      <!-- Email Communications -->
+      <h3 class="register-section-heading h5">Communications</h3>
+
+      <div class="form-field">
+        <label for="RegisterForm-EmailOptIn" class="form-label checkbox-label">
+          <input
+            type="checkbox"
+            name="email_opt_in"
+            id="RegisterForm-EmailOptIn"
+            class="checkbox-input"
+            checked
+          >
+          <span>I'd like to receive email updates about new products, special offers, and company news</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn--primary w-full" id="register-submit-btn">
+        <span class="btn__text">Submit Application</span>
+        <span class="btn__loader" style="display:none;">
+          <svg class="spinner" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="31.4 31.4" stroke-linecap="round"><animateTransform attributeName="transform" type="rotate" dur="0.8s" from="0 12 12" to="360 12 12" repeatCount="indefinite"/></circle></svg>
+          Submitting...
+        </span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<script src="{{ 'registration-form.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Registration Form",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:general.padding.section_heading.content"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "t:general.padding.top.label",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "t:general.padding.bottom.label",
+      "default": 100
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,457 @@
+{
+  "sections": {
+    "breadcrumbs_Gxg9wp": {
+      "type": "breadcrumbs",
+      "settings": {
+        "container": "fixed",
+        "text_alignment": "start",
+        "padding_top": 16,
+        "padding_bottom": 20
+      }
+    },
+    "banner": {
+      "type": "main-collection-banner",
+      "blocks": {
+        "collection_info_zUNyKV": {
+          "type": "collection_info",
+          "settings": {
+            "heading_size": "h1",
+            "heading_tag": "h1",
+            "show_description": true,
+            "padding_top": 40,
+            "padding_bottom": 40
+          }
+        }
+      },
+      "block_order": [
+        "collection_info_zUNyKV"
+      ],
+      "custom_css": [],
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "scheme-4",
+        "text_alignment": "left",
+        "show_collection_image": true,
+        "image_overlay_opacity": 0,
+        "image_position": "left",
+        "image_height": "extra-small",
+        "enable_parallax": false,
+        "parallax_direction": "vertical",
+        "image_height_mobile": "auto",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "collection_list_slider_RhTY4b": {
+      "type": "collection-list-slider",
+      "blocks": {
+        "featured_collection_8tnn6r": {
+          "type": "featured_collection",
+          "settings": {
+            "title": "Sale Items"
+          }
+        },
+        "featured_collection_tiXre7": {
+          "type": "featured_collection",
+          "settings": {
+            "title": "Press Tables"
+          }
+        },
+        "featured_collection_bzB66y": {
+          "type": "featured_collection",
+          "settings": {
+            "title": "Lighting"
+          }
+        },
+        "featured_collection_PqTpUF": {
+          "type": "featured_collection",
+          "settings": {
+            "title": "Spoke Sofa"
+          }
+        },
+        "featured_collection_fwhDJj": {
+          "type": "featured_collection",
+          "settings": {
+            "title": "Storage"
+          }
+        },
+        "featured_collection_TgAVER": {
+          "type": "featured_collection",
+          "settings": {
+            "title": "Turn Chairs"
+          }
+        },
+        "featured_collection_AezMqe": {
+          "type": "featured_collection",
+          "settings": {
+            "title": "Longe Chairs"
+          }
+        },
+        "featured_collection_PAktXA": {
+          "type": "featured_collection",
+          "settings": {
+            "title": "Curve Coat"
+          }
+        },
+        "featured_collection_CgAVpU": {
+          "type": "featured_collection",
+          "settings": {
+            "title": "Bend Chairs"
+          }
+        },
+        "featured_collection_YUdHH6": {
+          "type": "featured_collection",
+          "settings": {
+            "title": "Accessories"
+          }
+        },
+        "featured_collection_bm7TJP": {
+          "type": "featured_collection",
+          "settings": {
+            "title": "Cross Tables"
+          }
+        },
+        "featured_collection_TPTe6C": {
+          "type": "featured_collection",
+          "settings": {
+            "title": "Bar Chairs"
+          }
+        }
+      },
+      "block_order": [
+        "featured_collection_8tnn6r",
+        "featured_collection_tiXre7",
+        "featured_collection_bzB66y",
+        "featured_collection_PqTpUF",
+        "featured_collection_fwhDJj",
+        "featured_collection_TgAVER",
+        "featured_collection_AezMqe",
+        "featured_collection_PAktXA",
+        "featured_collection_CgAVpU",
+        "featured_collection_YUdHH6",
+        "featured_collection_bm7TJP",
+        "featured_collection_TPTe6C"
+      ],
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "section_header_alignment": "center",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h1",
+        "description": "",
+        "text_size": "text-base",
+        "button_label": "",
+        "button_link": "",
+        "button_style": "btn--underline",
+        "button_icon": "none",
+        "rounded_card_image": true,
+        "padding_top": 20,
+        "padding_bottom": 20,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "blocks": {
+        "image_card_QN6LVy": {
+          "type": "image_card",
+          "settings": {
+            "color_scheme": "scheme-inverse",
+            "image_position": 1,
+            "image_ratio": "adapt",
+            "image_overlay_opacity": 10,
+            "content_position": "split-bottom-button",
+            "content_alignment": "center",
+            "content_spacing": "small",
+            "content_gap": "fitted",
+            "subheading": "Home & Decor",
+            "subheading_style": "",
+            "heading": "Saving $30 for Lighting",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h3",
+            "heading_size_mobile": "inherit",
+            "heading_size_custom": 18,
+            "description": "",
+            "text_size": "text-base",
+            "button_label": "Shop Now",
+            "button_style": "btn--primary",
+            "button_icon": "none",
+            "order_first": false,
+            "enable_preload_image": false
+          }
+        }
+      },
+      "block_order": [
+        "image_card_QN6LVy"
+      ],
+      "custom_css": [],
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "scheme-1",
+        "products_per_page": 20,
+        "columns_desktop": 4,
+        "column_gap": "medium",
+        "row_gap": "large",
+        "pagination": "number",
+        "enable_filtering": true,
+        "enable_color_swatch": true,
+        "filter_type": "vertical",
+        "expand_filter_groups": "Availability, Price, Color, Size, Category",
+        "enable_sorting": true,
+        "enable_layout_switching": true,
+        "columns_mobile": "2",
+        "padding_top": 28,
+        "padding_bottom": 60,
+        "show_section_divider": true,
+        "divider_width": "fixed"
+      }
+    },
+    "rich_text_dgPtDV": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_kVf6qj": {
+          "type": "heading",
+          "settings": {
+            "heading": "About Garage",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h3"
+          }
+        },
+        "text_xtLQE8": {
+          "type": "text",
+          "settings": {
+            "text": "<p>From classic wood and metal to contemporary acrylic and glass, each material brings unique advantages to furniture design. Wood offers timeless strength and natural warmth, while metal adds resilience and industrial charm. Acrylic and glass, on the other hand, bring a modern touch, providing sleek, versatile options for contemporary spaces. The choice of material is not just about appearance; it defines durability and functionality, ensuring each piece serves its purpose beautifully.</p><p>When selecting furniture, it’s important to think beyond aesthetics. The right pieces create a cohesive atmosphere that balances beauty, practicality, and longevity. Minimalist designs, with their clean lines and simplicity, appeal to those who value modern elegance. However, traditional styles like Victorian, Art Deco, or Mid-Century Modern captivate with their intricate details and timeless craftsmanship, offering a sense of history and character that enriches any space.</p><p>This guide explores a variety of furniture styles and materials, helping you discover what aligns with your preferences and needs. Whether you lean toward contemporary sophistication or classic charm, choosing the right furniture ensures your space reflects your unique personality while meeting functional requirements. With the right selections, you can create a harmonious and inviting home.</p>",
+            "text_size": "text-base",
+            "text_line_limit": "5-lines",
+            "button_style": "btn--underline",
+            "button_icon": "none"
+          }
+        }
+      },
+      "block_order": [
+        "heading_kVf6qj",
+        "text_xtLQE8"
+      ],
+      "custom_css": [],
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "scheme-10",
+        "use_color_scheme_in_container": true,
+        "content_spacing": "standard",
+        "content_alignment": "left",
+        "padding_top": 0,
+        "padding_bottom": 60,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "buttons_with_icon_H6J7D6": {
+      "type": "buttons-with-icon",
+      "blocks": {
+        "button_item_yDfxQR": {
+          "type": "button_item",
+          "settings": {
+            "button_label": "Living Room",
+            "icon": "check"
+          }
+        },
+        "button_item_FFe78E": {
+          "type": "button_item",
+          "settings": {
+            "button_label": "Planters",
+            "icon": "check"
+          }
+        },
+        "button_item_Xzfx8G": {
+          "type": "button_item",
+          "settings": {
+            "button_label": "Gravel Rug",
+            "icon": "check"
+          }
+        },
+        "button_item_AcxVWB": {
+          "type": "button_item",
+          "settings": {
+            "button_label": "Table Mirror",
+            "icon": "check"
+          }
+        },
+        "button_item_GFw6Ye": {
+          "type": "button_item",
+          "settings": {
+            "button_label": "Table Wears",
+            "icon": "check"
+          }
+        },
+        "button_item_Waky9q": {
+          "type": "button_item",
+          "settings": {
+            "button_label": "Dining Decor",
+            "icon": "check"
+          }
+        },
+        "button_item_fQXyJC": {
+          "type": "button_item",
+          "settings": {
+            "button_label": "Ray Table Lamp",
+            "icon": "check"
+          }
+        },
+        "button_item_L9Q9wT": {
+          "type": "button_item",
+          "settings": {
+            "button_label": "Chairs",
+            "icon": "check"
+          }
+        },
+        "button_item_7f4MqP": {
+          "type": "button_item",
+          "settings": {
+            "button_label": "Living Room",
+            "icon": "check"
+          }
+        },
+        "button_item_9GXfn3": {
+          "type": "button_item",
+          "settings": {
+            "button_label": "Planters",
+            "icon": "check"
+          }
+        }
+      },
+      "block_order": [
+        "button_item_yDfxQR",
+        "button_item_FFe78E",
+        "button_item_Xzfx8G",
+        "button_item_AcxVWB",
+        "button_item_GFw6Ye",
+        "button_item_Waky9q",
+        "button_item_fQXyJC",
+        "button_item_L9Q9wT",
+        "button_item_7f4MqP",
+        "button_item_9GXfn3"
+      ],
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "section_header_alignment": "left",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "Popular Search",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h2",
+        "item_alignment": "left",
+        "item_button_style": "btn--icon",
+        "item_button_font": "button",
+        "enable_slider": true,
+        "swipe_on_mobile": true,
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "padding_top": 0,
+        "padding_bottom": 60
+      }
+    },
+    "scrolling_promotion_Fy9Yhn": {
+      "type": "scrolling-promotion",
+      "blocks": {
+        "text_gijz7Q": {
+          "type": "text",
+          "settings": {
+            "text_link": "",
+            "text": "Fast Delivery",
+            "text_size": "h4",
+            "text_opacity": 100,
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "text_3TVCPg": {
+          "type": "text",
+          "settings": {
+            "text_link": "",
+            "text": "30 Days Free Returns",
+            "text_size": "h4",
+            "text_opacity": 100,
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "text_iD6689": {
+          "type": "text",
+          "settings": {
+            "text_link": "",
+            "text": "Secure Payment",
+            "text_size": "h4",
+            "text_opacity": 100,
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "text_CtJBtL": {
+          "type": "text",
+          "settings": {
+            "text_link": "",
+            "text": "24/7 Customer Support",
+            "text_size": "h4",
+            "text_opacity": 100,
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "text_dGmg9m": {
+          "type": "text",
+          "settings": {
+            "text_link": "",
+            "text": "Sustainable Materials",
+            "text_size": "h4",
+            "text_opacity": 100,
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        }
+      },
+      "block_order": [
+        "text_gijz7Q",
+        "text_3TVCPg",
+        "text_iD6689",
+        "text_CtJBtL",
+        "text_dGmg9m"
+      ],
+      "settings": {
+        "color_scheme": "scheme-3",
+        "direction": "left",
+        "pause_on_hover": true,
+        "speed": 0.2,
+        "h_spacing": 80,
+        "show_section_divider": false,
+        "padding_top": 22,
+        "padding_bottom": 22
+      }
+    }
+  },
+  "order": [
+    "breadcrumbs_Gxg9wp",
+    "banner",
+    "collection_list_slider_RhTY4b",
+    "product-grid",
+    "rich_text_dgPtDV",
+    "buttons_with_icon_H6J7D6",
+    "scrolling_promotion_Fy9Yhn"
+  ]
+}

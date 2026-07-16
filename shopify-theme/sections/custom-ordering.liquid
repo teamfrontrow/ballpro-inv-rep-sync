@@ -1,0 +1,460 @@
+{% style %}
+  .section-{{ section.id }} {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --custom-ordering-section-background: {{ section.settings.section_background }};
+    --custom-ordering-panel-background: {{ section.settings.panel_background }};
+    --custom-ordering-panel-text: {{ section.settings.panel_text }};
+    --custom-ordering-accent: {{ section.settings.accent_color }};
+    background: var(--custom-ordering-section-background);
+  }
+
+  .section-{{ section.id }} .custom-ordering__panel {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    gap: 3.2rem;
+    padding: clamp(2.4rem, 5vw, 6.4rem);
+    background: var(--custom-ordering-panel-background);
+    color: var(--custom-ordering-panel-text);
+    box-shadow: 0 2rem 5rem rgba(var(--color-foreground), 0.14);
+  }
+
+  .section-{{ section.id }} .custom-ordering__glow {
+    position: absolute;
+    top: -8rem;
+    right: -8rem;
+    width: 24rem;
+    height: 24rem;
+    border-radius: 50%;
+    background: var(--custom-ordering-accent);
+    opacity: 0.22;
+    filter: blur(6rem);
+    pointer-events: none;
+  }
+
+  .section-{{ section.id }} .custom-ordering__content,
+  .section-{{ section.id }} .custom-ordering__summary {
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-{{ section.id }} .custom-ordering__heading {
+    margin: 0;
+    color: inherit;
+  }
+
+  .section-{{ section.id }} .custom-ordering__text {
+    margin-top: 1.6rem;
+    color: currentColor;
+    opacity: 0.9;
+  }
+
+  .section-{{ section.id }} .custom-ordering__text a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .section-{{ section.id }} .custom-ordering__note {
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    margin-top: 2rem;
+    padding: 1.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--small-blocks-radius, 1.2rem);
+    background: rgba(255, 255, 255, 0.1);
+    color: currentColor;
+  }
+
+  .section-{{ section.id }} .custom-ordering__note-icon {
+    flex: 0 0 auto;
+    color: var(--custom-ordering-accent);
+  }
+
+  .section-{{ section.id }} .custom-ordering__note-text {
+    margin: 0;
+    font-size: 1.4rem;
+    line-height: 1.5;
+    opacity: 0.9;
+  }
+
+  .section-{{ section.id }} .custom-ordering__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    margin-top: 2.8rem;
+  }
+
+  .section-{{ section.id }} .custom-ordering__summary {
+    padding: 2.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: var(--blocks-radius, 1.6rem);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+  }
+
+  .section-{{ section.id }} .custom-ordering__item-code {
+    margin: 0;
+    font-family: var(--font-heading-family);
+    font-style: var(--font-heading-style);
+    font-weight: 700;
+    font-size: clamp(4rem, 7vw, 6rem);
+    line-height: 1;
+    color: inherit;
+    text-align: center;
+  }
+
+  .section-{{ section.id }} .custom-ordering__eyebrow {
+    margin: 0.8rem 0 2rem;
+    font-family: var(--font-subheading-family);
+    font-weight: var(--font-subheading-weight);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    text-align: center;
+    opacity: 0.65;
+  }
+
+  .section-{{ section.id }} .custom-ordering__divider {
+    width: 100%;
+    height: 1px;
+    margin-bottom: 2rem;
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  .section-{{ section.id }} .custom-ordering__features {
+    display: grid;
+    gap: 1.2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .section-{{ section.id }} .custom-ordering__feature {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.4rem;
+    line-height: 1.4;
+  }
+
+  .section-{{ section.id }} .custom-ordering__feature-icon {
+    flex: 0 0 auto;
+    color: var(--custom-ordering-accent);
+  }
+
+  @media screen and (min-width: 990px) {
+    .section-{{ section.id }} .custom-ordering__panel {
+      grid-template-columns: minmax(0, 1fr) minmax(28rem, 36rem);
+      align-items: center;
+      gap: 4.8rem;
+    }
+  }
+{% endstyle %}
+
+{% render 'divider',
+  show_divider: section.settings.show_section_divider,
+  divider_width: section.settings.divider_width
+%}
+
+<div class="section section-{{ section.id }} section--padding custom-ordering color-{{ section.settings.color_scheme }}">
+  <div class="section__container page-width page-width--{{ section.settings.container }}">
+    <div class="custom-ordering__panel blocks-radius">
+      <div class="custom-ordering__glow"></div>
+
+      <div class="custom-ordering__content">
+        {% if section.settings.heading != blank %}
+          <h2 class="custom-ordering__heading {{ section.settings.heading_size }}">{{ section.settings.heading }}</h2>
+        {% endif %}
+        {% if section.settings.text != blank %}
+          <div class="custom-ordering__text rte text-subtext">{{ section.settings.text }}</div>
+        {% endif %}
+        {% if section.settings.note != blank %}
+          <div class="custom-ordering__note">
+            {% if section.settings.note_icon != blank %}
+              <span class="custom-ordering__note-icon material-symbols-outlined" aria-hidden="true">{{ section.settings.note_icon }}</span>
+            {% endif %}
+            <div class="custom-ordering__note-text rte">{{ section.settings.note }}</div>
+          </div>
+        {% endif %}
+        <div class="custom-ordering__buttons">
+          {% if section.settings.primary_button_label != blank %}
+            {% render 'button',
+              button_style: section.settings.primary_button_style,
+              button_link: section.settings.primary_button_link,
+              button_label: section.settings.primary_button_label,
+              button_icon: section.settings.primary_button_icon,
+              button_size: 'btn--large'
+            %}
+          {% endif %}
+          {% if section.settings.secondary_button_label != blank %}
+            {% render 'button',
+              button_style: section.settings.secondary_button_style,
+              button_link: section.settings.secondary_button_link,
+              button_label: section.settings.secondary_button_label,
+              button_icon: section.settings.secondary_button_icon,
+              button_size: 'btn--large'
+            %}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="custom-ordering__summary">
+        {% if section.settings.item_code != blank %}
+          <p class="custom-ordering__item-code">{{ section.settings.item_code }}</p>
+        {% endif %}
+        {% if section.settings.item_label != blank %}
+          <p class="custom-ordering__eyebrow">{{ section.settings.item_label }}</p>
+        {% endif %}
+        <div class="custom-ordering__divider"></div>
+        <ul class="custom-ordering__features">
+          {% for block in section.blocks %}
+            <li class="custom-ordering__feature" {{ block.shopify_attributes }}>
+              {% if block.settings.icon != blank %}
+                <span class="custom-ordering__feature-icon material-symbols-outlined" aria-hidden="true">{{ block.settings.icon }}</span>
+              {% endif %}
+              <span>{{ block.settings.text }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom Ordering",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["footer", "header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "container",
+      "label": "Container",
+      "default": "fixed",
+      "options": [
+        { "value": "full", "label": "Full width" },
+        { "value": "fixed", "label": "Fixed width" }
+      ]
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "Section background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Order Your Direct Mail Matchbooks"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Send your artwork and purchase order for item number <strong><u>PM411-PROMO</u></strong> to our sales team.</p>"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "Large" },
+        { "value": "h2", "label": "Medium" },
+        { "value": "h3", "label": "Small" }
+      ]
+    },
+    {
+      "type": "richtext",
+      "id": "note",
+      "label": "Info note",
+      "default": "<p>Includes: 4 golf tees, 1 ball marker, 1 divot tool, and full-color custom artwork on all components.</p>"
+    },
+    {
+      "type": "text",
+      "id": "note_icon",
+      "label": "Info note Material icon",
+      "default": "info"
+    },
+    {
+      "type": "text",
+      "id": "primary_button_label",
+      "label": "Primary button label",
+      "default": "Email sales@ballpro.com"
+    },
+    {
+      "type": "url",
+      "id": "primary_button_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "select",
+      "id": "primary_button_style",
+      "label": "Primary button style",
+      "default": "btn--white",
+      "options": [
+        { "value": "btn--primary", "label": "Primary" },
+        { "value": "btn--secondary", "label": "Secondary" },
+        { "value": "btn--white", "label": "White" },
+        { "value": "btn--outline", "label": "Outline" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "primary_button_icon",
+      "label": "Primary button icon",
+      "default": "none",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "arrow-right", "label": "Arrow right" },
+        { "value": "download", "label": "Download" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "secondary_button_label",
+      "label": "Secondary button label",
+      "default": "View Specs"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "select",
+      "id": "secondary_button_style",
+      "label": "Secondary button style",
+      "default": "btn--outline",
+      "options": [
+        { "value": "btn--primary", "label": "Primary" },
+        { "value": "btn--secondary", "label": "Secondary" },
+        { "value": "btn--white", "label": "White" },
+        { "value": "btn--outline", "label": "Outline" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "secondary_button_icon",
+      "label": "Secondary button icon",
+      "default": "none",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "arrow-right", "label": "Arrow right" },
+        { "value": "download", "label": "Download" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "item_code",
+      "label": "Item code",
+      "default": "PM411"
+    },
+    {
+      "type": "text",
+      "id": "item_label",
+      "label": "Item label",
+      "default": "Promotional Item"
+    },
+    {
+      "type": "color",
+      "id": "panel_background",
+      "label": "Container background",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "panel_text",
+      "label": "Container text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 72
+    },
+    {
+      "type": "checkbox",
+      "id": "show_section_divider",
+      "label": "Show section divider",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "divider_width",
+      "label": "Divider width",
+      "default": "fixed",
+      "options": [
+        { "value": "fixed", "label": "Fixed width" },
+        { "value": "full", "label": "Full width" }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Material icon name",
+          "default": "check_circle"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "4x Premium Tees"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Ordering",
+      "blocks": [
+        { "type": "feature", "settings": { "text": "4x Premium Tees" } },
+        { "type": "feature", "settings": { "text": "1x Precision Ball Marker" } },
+        { "type": "feature", "settings": { "text": "1x Ergonomic Divot Tool" } },
+        { "type": "feature", "settings": { "text": "Full Color Branding" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,195 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "breadcrumbs_F4iNAA": {
+      "type": "breadcrumbs",
+      "settings": {
+        "container": "fixed",
+        "text_alignment": "start",
+        "padding_top": 16,
+        "padding_bottom": 20
+      }
+    },
+    "custom_featured_cards_GbE7jj": {
+      "type": "custom-featured-cards",
+      "blocks": {
+        "card_hYkznf": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/AdobeStock_404204223.jpg",
+            "title": "Promotional Insights",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h1",
+            "text": "<p>Explore expert tips, product highlights, and planning resources for corporate golf events, tournaments, and promotional merchandise. <br/></p>",
+            "text_size": "text-base",
+            "content_alignment": "center",
+            "content_position": "middle",
+            "button_label": "LEARN MORE",
+            "button_link": "#all-blogs",
+            "button_style": "btn--primary",
+            "button_icon": "none"
+          }
+        },
+        "card_W9VRU3": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/Golf_Kit.jpg",
+            "title": "",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h3",
+            "text": "",
+            "text_size": "text-base",
+            "content_alignment": "center",
+            "content_position": "middle",
+            "button_label": "Golf",
+            "button_link": "https://ballproplusdev.myshopify.com/collections/golf-balls",
+            "button_style": "btn--primary",
+            "button_icon": "none"
+          }
+        },
+        "card_gPCJtt": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/AdobeStock_921623009.jpg",
+            "title": "",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h3",
+            "text": "",
+            "text_size": "text-base",
+            "content_alignment": "center",
+            "content_position": "middle",
+            "button_label": "Apparel",
+            "button_link": "https://www.brandedapparel.com/",
+            "button_style": "btn--primary",
+            "button_icon": "none"
+          }
+        },
+        "card_fYMRpz": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/sports.jpg",
+            "title": "",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h3",
+            "text": "",
+            "text_size": "text-base",
+            "content_alignment": "center",
+            "content_position": "middle",
+            "button_label": "Sports",
+            "button_link": "https://ballproplusdev.myshopify.com/pages/best-sellers",
+            "button_style": "btn--primary",
+            "button_icon": "none"
+          }
+        },
+        "card_VNx6jY": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/home.jpg",
+            "title": "",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h3",
+            "text": "",
+            "text_size": "text-base",
+            "content_alignment": "center",
+            "content_position": "middle",
+            "button_label": "Home",
+            "button_link": "#",
+            "button_style": "btn--primary",
+            "button_icon": "none"
+          }
+        }
+      },
+      "block_order": [
+        "card_hYkznf",
+        "card_W9VRU3",
+        "card_gPCJtt",
+        "card_fYMRpz",
+        "card_VNx6jY"
+      ],
+      "disabled": true,
+      "name": "Featured Cards",
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "scheme-6",
+        "section_header_alignment": "left",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h1",
+        "description": "",
+        "text_size": "text-base",
+        "button_label": "",
+        "button_link": "",
+        "button_style": "btn--underline",
+        "button_icon": "none",
+        "image_ratio": "landscape",
+        "card_overlay_color": "#0f172a",
+        "card_overlay_opacity": 55,
+        "card_text_color": "#ffffff",
+        "column_gap": "large",
+        "row_gap": "large",
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "padding_top": 120,
+        "padding_bottom": 120
+      }
+    },
+    "main": {
+      "type": "custom-main-blog",
+      "settings": {
+        "container": "fixed",
+        "css_id": "all-blogs",
+        "sidebar_description": "",
+        "search_placeholder": "Search blog posts",
+        "search_button_label": "Search",
+        "recent_posts_heading": "Recent Posts",
+        "categories_heading": "Categories",
+        "archive_heading": "Archive",
+        "post_limit": 12,
+        "columns_desktop": 1,
+        "column_gap": "medium",
+        "row_gap": "small",
+        "card_title_size": "h4",
+        "show_tags": true,
+        "show_excerpt": true,
+        "show_date": false,
+        "show_author": false,
+        "show_button": false,
+        "padding_top": 80,
+        "padding_bottom": 120
+      }
+    }
+  },
+  "order": [
+    "breadcrumbs_F4iNAA",
+    "custom_featured_cards_GbE7jj",
+    "main"
+  ]
+}

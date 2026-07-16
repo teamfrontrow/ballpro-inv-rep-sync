@@ -1,0 +1,538 @@
+{%- liquid
+  assign now_timestamp = 'now' | date: '%s' | plus: 0
+-%}
+
+{% style %}
+  .section-{{ section.id }} {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  .section-{{ section.id }} .specials-layout {
+    display: flex;
+    gap: 3.2rem;
+  }
+
+  .section-{{ section.id }} .specials-sidebar {
+    flex: 0 0 24rem;
+    min-width: 0;
+  }
+
+  .section-{{ section.id }} .specials-sidebar__inner {
+    position: sticky;
+    top: 10rem;
+    padding: 2rem;
+    border-radius: var(--blocks-radius);
+  }
+
+  .section-{{ section.id }} .specials-sidebar__title {
+    margin: 0 0 1.2rem;
+    font-size: 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgb(var(--color-foreground));
+  }
+
+  .section-{{ section.id }} .specials-filter-group {
+    display: flex;
+    flex-direction: row;
+    gap: 0.8rem;
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .section-{{ section.id }} .specials-filter-option {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    cursor: pointer;
+    font-size: 1.6rem;
+    line-height: 1.8;
+    color: rgb(var(--color-foreground), 0.8);
+  }
+
+  .section-{{ section.id }} .specials-filter-option input[type="checkbox"] {
+    width: 1.8rem;
+    height: 1.8rem;
+    margin: 0;
+    cursor: pointer;
+    accent-color: rgb(var(--color-foreground));
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #dee2e6;
+    background-image: none;
+    border: none;
+    border-radius: 3px;
+  }
+
+  .section-{{ section.id }} .specials-filter-option input:is([type="checkbox"],[type="radio"])::after {
+    border: none;
+  }
+
+  .section-{{ section.id }} .specials-filter-option input[type="checkbox"]:checked {
+    background-color: rgb(var(--color-foreground));
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23dee2e6'%3E%3Cpath d='M12.207 4.793a1 1 0 0 1 0 1.414l-5 5a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L6.5 9.086l4.293-4.293a1 1 0 0 1 1.414 0z'/%3E%3C/svg%3E");
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .section-{{ section.id }} .specials-filter-option:hover {
+    color: rgb(var(--color-foreground));
+  }
+
+  .section-{{ section.id }} .specials-card.specials-card--hidden {
+    display: none;
+  }
+
+  @keyframes specialsFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-{{ section.id }} .specials-card.specials-card--fade-in {
+    animation: specialsFadeIn 0.4s ease forwards;
+  }
+
+  .section-{{ section.id }} .specials-empty-filtered {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 6rem 2rem;
+    color: rgb(var(--color-foreground), 0.5);
+    font-size: 1.6rem;
+    display: none;
+  }
+
+  .section-{{ section.id }} .specials-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .section-{{ section.id }} .specials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.4rem;
+  }
+
+  .section-{{ section.id }} .specials-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--blocks-radius);
+    background: rgb(var(--color-background));
+    box-shadow: 0 4px 12px rgb(var(--color-foreground), 0.15);
+    transition: box-shadow 0.4s ease, transform 0.4s ease;
+    cursor: pointer;
+  }
+
+  .section-{{ section.id }} .specials-card:hover {
+    box-shadow: 0 6px 20px rgb(var(--color-foreground), 0.2);
+  }
+
+  .section-{{ section.id }} .specials-card__media {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    background: rgb(var(--color-foreground), 0.04);
+  }
+
+  .section-{{ section.id }} .specials-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .section-{{ section.id }} .specials-card:hover .specials-card__media img {
+    transform: scale(1.03);
+  }
+
+  .section-{{ section.id }} .specials-card__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 2rem;
+    gap: 0.8rem;
+  }
+
+  .section-{{ section.id }} .specials-card__heading {
+    margin: 0;
+    font-size: 1.8rem;
+    line-height: 1.3;
+  }
+
+  .section-{{ section.id }} .specials-card__subheading {
+    margin: 0;
+    font-size: 1.4rem;
+    color: rgb(var(--color-foreground), 0.6);
+    line-height: 1.5;
+  }
+
+  .section-{{ section.id }} .specials-card__link {
+    display: block;
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 600;
+    padding: 1.2rem 2rem;
+    text-decoration: none;
+    transition: opacity 0.4s ease;
+  }
+
+  .section-{{ section.id }} .specials-card__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .section-{{ section.id }} .specials-card__link:hover {
+    opacity: 0.85;
+  }
+
+  @media screen and (min-width: 990px) {
+    .section-{{ section.id }} .specials-card__link {
+      font-size: 1.6rem;
+    }
+  }
+
+  .section-{{ section.id }} .specials-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 6rem 2rem;
+    color: rgb(var(--color-foreground), 0.5);
+    font-size: 1.6rem;
+  }
+
+  @media screen and (min-width: 990px) {
+    .section-{{ section.id }} .specials-card__heading {
+      font-size: 2.4rem;
+    }
+
+    .section-{{ section.id }} .specials-card__subheading {
+      font-size: 1.6rem;
+    }
+
+    .section-{{ section.id }} .specials-filter-group {
+      flex-direction: column;
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    .section-{{ section.id }} .specials-layout {
+      flex-direction: column;
+      gap: 2.4rem;
+    }
+
+    .section-{{ section.id }} .specials-sidebar {
+      flex: none;
+    }
+
+    .section-{{ section.id }} .specials-sidebar__inner {
+      position: static;
+    }
+
+    .section-{{ section.id }} .specials-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .section-{{ section.id }} .specials-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstyle %}
+
+<div class="section section-{{ section.id }} section--padding color-{{ section.settings.color_scheme }}">
+  <div class="section__container page-width page-width--{{ section.settings.container }}">
+
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="specials-header" style="margin-bottom: 3.2rem;">
+        {%- if section.settings.heading != blank -%}
+          <h1 class="{{ section.settings.heading_size }}" style="margin: 0 0 0.4rem;">{{ section.settings.heading }}</h1>
+        {%- endif -%}
+        {%- if section.settings.subheading != blank -%}
+          <p style="margin: 0; color: rgb(var(--color-foreground), 0.6);">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="specials-layout">
+      <!-- Sidebar: category filters -->
+      <aside class="specials-sidebar" role="search" aria-label="Filter specials by category">
+        <div class="specials-sidebar__inner">
+          <h2 class="specials-sidebar__title">Filters</h2>
+          <fieldset class="specials-filter-group" id="specials-filter-group-{{ section.id }}">
+            <legend class="visually-hidden">Filter by category</legend>
+            {%- assign filter_categories = 'Golf,Apparel,Sports,Home' | split: ',' -%}
+            {%- for cat in filter_categories -%}
+              <label class="specials-filter-option">
+                <input type="checkbox" name="specials-category" value="{{ cat }}" />
+                {{ cat }}
+              </label>
+            {%- endfor -%}
+          </fieldset>
+        </div>
+      </aside>
+
+      <!-- Content grid -->
+      <div class="specials-content">
+        <div class="specials-grid">
+          {%- assign visible_count = 0 -%}
+
+          {%- for entry in shop.metaobjects.specials.values -%}
+            {%- liquid
+              assign show_entry = true
+
+              assign raw_start = entry.start_date_and_time
+              assign raw_end = entry.end_date_and_time
+
+              assign has_start = false
+              assign has_end = false
+
+              if raw_start != blank
+                assign start_date_check = raw_start | date: '%Y-%m-%d'
+                if start_date_check != blank
+                  assign has_start = true
+                  assign start_ts = raw_start | date: '%s' | plus: 0
+                endif
+              endif
+
+              if raw_end != blank
+                assign end_date_check = raw_end | date: '%Y-%m-%d'
+                if end_date_check != blank
+                  assign has_end = true
+                  assign end_ts = raw_end | date: '%s' | plus: 0
+                endif
+              endif
+
+              if has_start and has_end
+                if now_timestamp < start_ts or now_timestamp > end_ts
+                  assign show_entry = false
+                endif
+              elsif has_start
+                if now_timestamp < start_ts
+                  assign show_entry = false
+                endif
+              elsif has_end
+                if now_timestamp > end_ts
+                  assign show_entry = false
+                endif
+              endif
+            -%}
+
+            {%- if show_entry -%}
+              {%- assign visible_count = visible_count | plus: 1 -%}
+
+              <article class="specials-card" data-categories='{{ entry.category }}'>
+                {%- if entry.featured_image != blank -%}
+                  <div class="specials-card__media">
+                    {{
+                      entry.featured_image
+                      | image_url: width: 800
+                      | image_tag:
+                        loading: 'lazy',
+                        widths: '375, 550, 800',
+                        sizes: '(min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw',
+                        alt: entry.heading | escape
+                    }}
+                  </div>
+                {%- endif -%}
+
+                <div class="specials-card__body">
+                  {%- if entry.heading != blank -%}
+                    <h3 class="specials-card__heading">{{ entry.heading | escape }}</h3>
+                  {%- endif -%}
+
+                  {%- if entry.subheading != blank -%}
+                    <p class="specials-card__subheading">{{ entry.subheading | escape }}</p>
+                  {%- endif -%}
+
+                </div>
+
+                {%- if entry.link != blank -%}
+                  {%- assign link_json = entry.link | split: '"url":"' | last | split: '"' | first -%}
+                  {%- assign link_text_raw = entry.link | split: '"text":"' | last | split: '"' | first -%}
+                  <a href="{{ link_json }}" class="specials-card__link">
+                    {% if link_text_raw != blank %}{{ link_text_raw }}{% else %}View Special{% endif %}
+                  </a>
+                {%- endif -%}
+              </article>
+            {%- endif -%}
+          {%- endfor -%}
+
+          {%- if visible_count == 0 -%}
+            <div class="specials-empty">
+              <p>{{ section.settings.empty_message }}</p>
+            </div>
+          {%- endif -%}
+
+          <div class="specials-empty-filtered" id="specials-empty-filtered-{{ section.id }}">
+            <p>No specials match the selected filters.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var sectionId = '{{ section.id }}';
+    var wrapper = document.querySelector('.section-' + sectionId);
+    if (!wrapper) return;
+
+    var filterGroup = document.getElementById('specials-filter-group-' + sectionId);
+    var emptyFiltered = document.getElementById('specials-empty-filtered-' + sectionId);
+    if (!filterGroup) return;
+
+    filterGroup.addEventListener('change', function () {
+      var checkboxes = filterGroup.querySelectorAll('input[type="checkbox"]');
+      var cards = wrapper.querySelectorAll('.specials-card[data-categories]');
+
+      var selected = [];
+      checkboxes.forEach(function (cb) {
+        if (cb.checked) selected.push(cb.value);
+      });
+
+      var visibleCount = 0;
+
+      cards.forEach(function (card) {
+        var raw = card.getAttribute('data-categories') || '';
+        var categories = [];
+        try { categories = JSON.parse(raw); } catch (e) {}
+
+        var wasHidden = card.classList.contains('specials-card--hidden');
+        var shouldShow = false;
+
+        if (selected.length === 0) {
+          shouldShow = true;
+        } else {
+          shouldShow = selected.some(function (sel) {
+            return categories.indexOf(sel) !== -1;
+          });
+        }
+
+        if (shouldShow) {
+          card.classList.remove('specials-card--hidden');
+          if (wasHidden) {
+            card.classList.remove('specials-card--fade-in');
+            void card.offsetWidth;
+            card.classList.add('specials-card--fade-in');
+          }
+          visibleCount++;
+        } else {
+          card.classList.add('specials-card--hidden');
+          card.classList.remove('specials-card--fade-in');
+        }
+      });
+
+      if (emptyFiltered) {
+        emptyFiltered.style.display = (visibleCount === 0 && selected.length > 0) ? 'block' : 'none';
+      }
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Specials Grid",
+  "class": "section",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["footer", "header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "select",
+      "id": "container",
+      "options": [
+        { "value": "full", "label": "Full width" },
+        { "value": "fixed", "label": "Fixed width" }
+      ],
+      "default": "fixed",
+      "label": "Container"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Page heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Specials",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "default": "h1",
+      "options": [
+        { "value": "h3", "label": "Small" },
+        { "value": "h2", "label": "Medium" },
+        { "value": "h1", "label": "Large" }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "header",
+      "content": "Empty state"
+    },
+    {
+      "type": "text",
+      "id": "empty_message",
+      "default": "No specials available right now. Check back soon!",
+      "label": "Empty message"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 50
+    }
+  ],
+  "presets": [
+    {
+      "name": "Specials Grid"
+    }
+  ]
+}
+{% endschema %}

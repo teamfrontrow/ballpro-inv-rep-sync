@@ -1,0 +1,332 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "container": "fixed",
+        "text_alignment": "center",
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "breadcrumbs_DgnWDV": {
+      "type": "breadcrumbs",
+      "settings": {
+        "container": "fixed",
+        "text_alignment": "start",
+        "padding_top": 16,
+        "padding_bottom": 20
+      }
+    },
+    "custom_hero_banner_HGewUm": {
+      "type": "custom-hero-banner",
+      "name": "Custom Hero Banner",
+      "settings": {
+        "background_image": "shopify://shop_images/AdobeStock_89240595.jpg",
+        "title": "",
+        "text": "<p>Are you a promotional product distributor looking to tap into the golf market? Check out our golf tournament resources!<br/><br/></p>"
+      }
+    },
+    "custom_image_with_text_PzTVfM": {
+      "type": "custom-image-with-text",
+      "blocks": {
+        "heading_rfRgMk": {
+          "type": "heading",
+          "settings": {
+            "heading": "Golf Tournament Resources",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h2"
+          }
+        },
+        "text_jhwUpL": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Our Golf Tournament Planner provides a step-by-step approach to planning a successful event. Our Golf Tournament Promotional Product Guide helps you choose the right products to maximize branding opportunities. The Golf Glove Tournament Fitting Program offers an easy way to ensure the perfect fit for golf gloves.</p><p>Whether you're new to golf tournaments or looking to refine your strategy, these resources simplify the process and will help you offer more value to your clients.</p>",
+            "subtext_color": true
+          }
+        }
+      },
+      "block_order": [
+        "heading_rfRgMk",
+        "text_jhwUpL"
+      ],
+      "name": "Custom Image w/text",
+      "settings": {
+        "color_scheme": "",
+        "video_url": "youtube.com/watch?v=5JJqEzTMtYE&source_ve_path=OTY3MTQ&embeds_referring_euri=https%3A%2F%2Fballproplusdev.myshopify.com%2F",
+        "cover_image": "shopify://shop_images/Screenshot_2026-04-13_101600.png",
+        "video_description": "",
+        "image_position": "left",
+        "image_width": 45,
+        "section_width": 1200,
+        "desktop_content_position": "center",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "inherit",
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "custom_image_with_text_iAhXKU": {
+      "type": "custom-image-with-text",
+      "blocks": {
+        "heading_4zn6X8": {
+          "type": "heading",
+          "settings": {
+            "heading": "Golf Tournament Planner",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h2"
+          }
+        },
+        "text_NPKDrF": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Planning a golf tournament doesn't have to be a solo round. We've put together a set of resources to help promotional distributors run standout events with confidence. You'll get access to our step-by-step Golf Tournament Planner, a Promotional Product Guide packed with ideas for maximum brand visibility, and a simple Golf Glove Tournament Fitting Program. From first-time organizers to seasoned pros, these tools are built to save you time and help you deliver more to every client.</p>",
+            "subtext_color": true
+          }
+        },
+        "button_qMbaN4": {
+          "type": "button",
+          "settings": {
+            "button_label": "Learn more",
+            "button_link": "https://ballproplusdev.myshopify.com/pages/golf-tournament-planner",
+            "button_style": "btn--primary",
+            "button_icon": "none"
+          }
+        }
+      },
+      "block_order": [
+        "heading_4zn6X8",
+        "text_NPKDrF",
+        "button_qMbaN4"
+      ],
+      "name": "Custom Image w/text",
+      "settings": {
+        "color_scheme": "",
+        "image": "shopify://shop_images/AdobeStock_172942652.jpg",
+        "video_description": "",
+        "image_position": "right",
+        "image_width": 45,
+        "section_width": 1200,
+        "desktop_content_position": "center",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "inherit",
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "custom_image_with_text_w97Ctp": {
+      "type": "custom-image-with-text",
+      "blocks": {
+        "heading_3EfqFx": {
+          "type": "heading",
+          "settings": {
+            "heading": "<strong>Golf Tournament Glove Fitting Program</strong>",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h2"
+          }
+        },
+        "text_gyjyH6": {
+          "type": "text",
+          "settings": {
+            "text": "<p>The Golf Tournament Glove Fitting Program takes the guesswork out of sizing by shipping 20% extra gloves to your event, ensuring every golfer walks away with a glove that fits. Participants receive premium Cabretta leather gloves featuring a TruVent airflow system for breathability and an Absorbsoft moisture-wicking wrist band for all-day comfort. The program is built for convenience—offering flexible returns with no restocking fee, next-day size replacements, and fast turnaround for last-minute events. You'll also keep all bonus ball markers, making it an easy win for sponsorship branding. Ultimately, it's a simple way to elevate the golfer experience with a memorable, high-quality keepsake.<br/><br/></p>",
+            "subtext_color": true
+          }
+        },
+        "button_i3YXhq": {
+          "type": "button",
+          "settings": {
+            "button_label": "Learn more",
+            "button_link": "shopify://pages/glove-fitting-program",
+            "button_style": "btn--primary",
+            "button_icon": "none"
+          }
+        }
+      },
+      "block_order": [
+        "heading_3EfqFx",
+        "text_gyjyH6",
+        "button_i3YXhq"
+      ],
+      "name": "Custom Image w/text",
+      "settings": {
+        "color_scheme": "",
+        "image": "shopify://shop_images/AdobeStock_502906418.jpg",
+        "video_description": "",
+        "image_position": "left",
+        "image_width": 45,
+        "section_width": 1200,
+        "desktop_content_position": "center",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "inherit",
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "scrolling_promotion_Fy9Yhn": {
+      "type": "scrolling-promotion",
+      "blocks": {
+        "text_gijz7Q": {
+          "type": "text",
+          "settings": {
+            "text_link": "",
+            "text": "Fast Delivery",
+            "text_size": "h4",
+            "text_opacity": 100,
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "text_3TVCPg": {
+          "type": "text",
+          "settings": {
+            "text_link": "",
+            "text": "30 Days Free Returns",
+            "text_size": "h4",
+            "text_opacity": 100,
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "text_iD6689": {
+          "type": "text",
+          "settings": {
+            "text_link": "",
+            "text": "Secure Payment",
+            "text_size": "h4",
+            "text_opacity": 100,
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "text_CtJBtL": {
+          "type": "text",
+          "settings": {
+            "text_link": "",
+            "text": "24/7 Customer Support",
+            "text_size": "h4",
+            "text_opacity": 100,
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        },
+        "text_dGmg9m": {
+          "type": "text",
+          "settings": {
+            "text_link": "",
+            "text": "Sustainable Materials",
+            "text_size": "h4",
+            "text_opacity": 100,
+            "use_custom_color": false,
+            "custom_color": "#000000"
+          }
+        }
+      },
+      "block_order": [
+        "text_gijz7Q",
+        "text_3TVCPg",
+        "text_iD6689",
+        "text_CtJBtL",
+        "text_dGmg9m"
+      ],
+      "disabled": true,
+      "settings": {
+        "color_scheme": "scheme-3",
+        "direction": "left",
+        "pause_on_hover": true,
+        "speed": 0.2,
+        "h_spacing": 80,
+        "show_section_divider": false,
+        "padding_top": 22,
+        "padding_bottom": 22
+      }
+    },
+    "custom_image_with_text_6NiyYf": {
+      "type": "custom-image-with-text",
+      "blocks": {
+        "heading_DqEymk": {
+          "type": "heading",
+          "settings": {
+            "heading": "Golf Ball Drop",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h2"
+          }
+        },
+        "text_F6ttk7": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Looking to add an exciting, high-energy fundraising element to your next charity golf tournament? A golf ball drop raffle is a proven way to keep participants engaged while maximizing donations for your cause. Participants purchase pre-numbered golf balls that are dropped from an elevated structure onto a designated green, with the closest ball to the target winning the prize. From strategic ball sales and custom branding to prize structures and drop locations, there's a lot that goes into running a successful event.<br/><br/></p>",
+            "subtext_color": true
+          }
+        },
+        "button_qwpRgq": {
+          "type": "button",
+          "settings": {
+            "button_label": "Learn more",
+            "button_link": "shopify://pages/golf-ball-drop",
+            "button_style": "btn--primary",
+            "button_icon": "none"
+          }
+        }
+      },
+      "block_order": [
+        "heading_DqEymk",
+        "text_F6ttk7",
+        "button_qwpRgq"
+      ],
+      "name": "Custom Image w/text",
+      "settings": {
+        "color_scheme": "",
+        "image": "shopify://shop_images/AdobeStock_231647366_1.jpg",
+        "video_description": "",
+        "image_position": "right",
+        "image_width": 45,
+        "section_width": 1200,
+        "desktop_content_position": "center",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "inherit",
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    }
+  },
+  "order": [
+    "main",
+    "breadcrumbs_DgnWDV",
+    "custom_hero_banner_HGewUm",
+    "custom_image_with_text_PzTVfM",
+    "custom_image_with_text_iAhXKU",
+    "custom_image_with_text_w97Ctp",
+    "scrolling_promotion_Fy9Yhn",
+    "custom_image_with_text_6NiyYf"
+  ]
+}

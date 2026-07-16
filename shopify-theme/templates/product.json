@@ -1,0 +1,1343 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "breadcrumbs": {
+      "type": "breadcrumbs",
+      "custom_css": [
+        "@media (min-width: 1280px) {.breadcrumbs {padding-inline: 5rem; }}"
+      ],
+      "settings": {
+        "container": "fixed",
+        "text_alignment": "start",
+        "padding_top": 16,
+        "padding_bottom": 20
+      }
+    },
+    "product_logo_customizer_h3qHQQ": {
+      "type": "product-logo-customizer",
+      "disabled": true,
+      "name": "Product Logo Customizer",
+      "settings": {
+        "enable_customizer": false,
+        "title": "Customize Your Product",
+        "description": "Upload your logo to see how it looks on this product",
+        "api_proxy_url": "/apps/zoomcatalog/",
+        "product_asset_id": "77ADAF4B723BC485CABE56964B763A50"
+      }
+    },
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "badges": {
+          "type": "badges",
+          "settings": {
+            "show_soldout_badge": true,
+            "show_sale_badge": true,
+            "sale_badge_type": "percentage"
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "heading_size": "h1"
+          }
+        },
+        "meta": {
+          "type": "meta",
+          "settings": {
+            "link_color": "#1d349a",
+            "show_vendor": true,
+            "show_product_type": true,
+            "show_sku": true,
+            "show_barcode": false,
+            "vendor_names_to_replace": "Galaxy\nPride\nDiversified\nTowel Specialties",
+            "vendor_replacement_text": "BallPro",
+            "rush_image": "shopify://shop_images/24Rush_V5.jpg"
+          }
+        },
+        "custom_liquid_NeG9d7": {
+          "type": "custom_liquid",
+          "name": "Product Sizes",
+          "disabled": true,
+          "settings": {
+            "custom_liquid": "{% if product.metafields.custom.apparel_size.value != blank %}\n  <p>\n    <b>Sizes:</b>\n    {{ product.metafields.custom.apparel_size.value | join: ', ' }}\n  </p>\n{% endif %}"
+          }
+        },
+        "price": {
+          "type": "price",
+          "disabled": true,
+          "settings": {}
+        },
+        "icon_with_text": {
+          "type": "icon-with-text",
+          "disabled": true,
+          "settings": {
+            "layout": "horizontal",
+            "title_font": "body-bolder",
+            "title_size": "text-base",
+            "icon_1": "check",
+            "heading_1": "Modern",
+            "icon_2": "check",
+            "heading_2": "Eco-certified",
+            "icon_3": "check",
+            "heading_3": "Warranty"
+          }
+        },
+        "inventory": {
+          "type": "inventory",
+          "disabled": true,
+          "settings": {
+            "text_style": "body",
+            "inventory_threshold": 10,
+            "show_inventory_quantity": true
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "custom_liquid_TUNymW": {
+          "type": "custom_liquid",
+          "name": "Production Time & Additonal Info",
+          "disabled": true,
+          "settings": {
+            "custom_liquid": "<style>\n.pairedProduct {border-radius: 8px; background-color: green;color:white; margin-left: 10px; padding:1px 6px}\n</style>\n{% if product.metafields.custom.production_time_in_days %}\n\t<p><strong>Production Time in Days</strong></p>\n\t<p>{{ product.metafields.custom.production_time_in_days }} Working Days\n\t\n{% if product.metafields.custom.paired_product %}\n  {%- assign paired_product = product.metafields.custom.paired_product.value -%}\n\n  {% if paired_product %}\n    {%- assign prod_type = paired_product.metafields.custom.production_type.value -%}\n\n    {% if prod_type == \"factory\" %}\n      <span class=\"pairedProduct\"><a href=\"{{ paired_product.url }}\">See Factory Production Version</a></span>\n\n    {% elsif prod_type == \"in-house\" %}\n      <span class=\"pairedProduct\"><a href=\"{{ paired_product.url }}\">See In-house Production Version</a></span>\n    {% endif %}\n  {% endif %}\n{% endif %}\n\n</p>\n\t\n\t\n{% endif %}\n<div class=\"frd-pdp-additional-info\">\n<p><strong>Additional Info</strong></p>\n{% if product.metafields.custom.imprint_size %}\n\t<p>● Imprint Area: {{ product.metafields.custom.imprint_size }}</p>\n{% endif %}\n\n{% if product.metafields.custom.price_includes %}\n\t<p>● {{ product.metafields.custom.price_includes }}</p>\n{% endif %}\n\n{% if product.metafields.custom.add_prod_info %}\n\t<p>● {{ product.metafields.custom.add_prod_info }}</p>\n{% endif %}\n</div>"
+          }
+        },
+        "custom_liquid_CFcxyw": {
+          "type": "custom_liquid",
+          "name": "Production Time & Additonal Info",
+          "settings": {
+            "custom_liquid": "<style>\n.pairedProduct {border-radius: 8px; background-color: green;color:white; margin-left: 10px; padding:1px 6px}\n</style>\n{% if product.metafields.custom.production_time_in_days %}\n\t{%- liquid\n\t  assign production_time = product.metafields.custom.production_time_in_days | strip\n\t  assign min_days = production_time\n\t  \n\t  if production_time contains '-' or production_time contains ' to '\n\t    if production_time contains ' to '\n\t      assign time_parts = production_time | split: ' to '\n\t    elsif production_time contains '-'\n\t      assign time_parts = production_time | split: '-'\n\t    endif\n\t    assign min_days = time_parts[0] | strip\n\t  endif\n\t-%}\n\t<p><strong>Production Time in Days</strong></p>\n\t<p>{{ min_days }} Working Days (After artwork and credit approval)\n\t\n{% if product.metafields.custom.paired_product %}\n  {%- assign paired_product = product.metafields.custom.paired_product.value -%}\n\n  {% if paired_product %}\n    {%- assign prod_type = paired_product.metafields.custom.production_type.value -%}\n\n    {% if prod_type == \"Factory\" %}\n      <span class=\"pairedProduct\"><a href=\"{{ paired_product.url }}\">See Factory Production Version</a></span>\n\n    {% elsif prod_type == \"In-House\" %}\n      <span class=\"pairedProduct\"><a href=\"{{ paired_product.url }}\">See In-house Production Version</a></span>\n    {% endif %}\n  {% endif %}\n{% endif %}\n\n</p>\n\t\n\t\n{% endif %}\n<div class=\"frd-pdp-additional-info\">\n<p><strong>Additional Info</strong></p>\n\n{% if product.metafields.custom.price_includes %}\n\t<p>● Price Includes:{{ product.metafields.custom.price_includes }}</p>\n{% endif %}\n\n</div>"
+          }
+        },
+        "pricing_details_NphPi7": {
+          "type": "pricing_details",
+          "disabled": true,
+          "settings": {
+            "price_breaks_count": "3"
+          }
+        },
+        "pricing_details_v2_block": {
+          "type": "pricing_details_v2",
+          "settings": {
+            "price_breaks_count": "3"
+          }
+        },
+        "custom_liquid_McNW3C": {
+          "type": "custom_liquid",
+          "name": "Pricing Details",
+          "disabled": true,
+          "settings": {
+            "custom_liquid": "{% comment %}\n  EQP row count is driven by number of discount codes.\n  If no discount codes are present, fall back to 3 rows.\n{% endcomment %}\n{% assign discount_codes_raw = product.metafields.custom.discount_codes.value | default: '' %}\n{% assign discount_codes = discount_codes_raw | split: ',' %}\n{% assign eqp_count = discount_codes | size %}\n{% if eqp_count == 0 %}\n  {% assign eqp_count = 3 %}\n{% endif %}\n\n{% assign price_breaks = product.metafields.b2b.price_breaks.value %}\n\n{% if price_breaks and price_breaks.size > 0 %}\n  <style>\n    table.frd-table td,\n    table.frd-table th {\n      border-color: #e7eef5 !important;\n    }\n  </style>\n  {% comment %} Allowed quantities: 5, 12, 24, 48, 100, 120, 150, 200, 300, 500 {% endcomment %}\n  {% comment %} Find the first allowed quantity price break for base price {% endcomment %}\n  {% assign base_price = null %}\n  {% for break in price_breaks %}\n    {% if break.quantity != 1 and base_price == null %}\n      {% assign qty_5 = 5 %}\n      {% assign qty_12 = 12 %}\n      {% assign qty_24 = 24 %}\n      {% assign qty_48 = 48 %}\n      {% assign qty_100 = 100 %}\n      {% assign qty_120 = 120 %}\n      {% assign qty_150 = 150 %}\n      {% assign qty_200 = 200 %}\n      {% assign qty_300 = 300 %}\n      {% assign qty_500 = 500 %}\n      {% if break.quantity == qty_5 or break.quantity == qty_12 or break.quantity == qty_24 or break.quantity == qty_48 or break.quantity == qty_100 or break.quantity == qty_120 or break.quantity == qty_150 or break.quantity == qty_200 or break.quantity == qty_300 or break.quantity == qty_500 %}\n        {% assign base_price = break.price %}\n      {% endif %}\n    {% endif %}\n  {% endfor %}\n  \n  {% comment %} If no allowed quantity found, use first non-1 quantity {% endcomment %}\n  {% if base_price == null %}\n    {% for break in price_breaks %}\n      {% if break.quantity != 1 %}\n        {% assign base_price = break.price %}\n        {% break %}\n      {% endif %}\n    {% endfor %}\n  {% endif %}\n  \n  {% assign is_logged_in = customer %}\n\n  <div class=\"price-breaks-container\" style=\"margin: 20px 0;\">\n\n    <!-- SECTION 1: First N rows (EQP), where N = eqp_count -->\n    <h3 style=\"margin-bottom: 15px; color: #333; font-size: 18px; font-weight: 600;\">\n      Pricing Details\n    </h3>\n\n    <div class=\"price-breaks-table-wrapper\" style=\"overflow-x: auto;\">\n      <table class=\"frd-table\" style=\"width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);\">\n        <thead style=\"background-color: #e7eef5;\">\n          <tr>\n            <th style=\"padding: 12px 16px; text-align: left; border-top: 1px solid #e7eef5; border-bottom: 1px solid #e7eef5; border-left: 1px solid #e7eef5; border-right: 1px solid #e7eef5;\">Quantity</th>\n            <th style=\"padding: 12px 16px; text-align: right; border-top: 1px solid #e7eef5; border-bottom: 1px solid #e7eef5; border-right: 1px solid #e7eef5;\">Price Each</th>\n            <th style=\"padding: 12px 16px; text-align: right; border-top: 1px solid #e7eef5; border-bottom: 1px solid #e7eef5; border-right: 1px solid #e7eef5;\">You Save</th>\n          </tr>\n        </thead>\n        <tbody>\n          {% assign displayed_count = 0 %}\n          {% for break in price_breaks %}\n            {% if break.quantity != 1 and displayed_count < eqp_count %}\n              {% assign qty_5 = 5 %}\n              {% assign qty_12 = 12 %}\n              {% assign qty_24 = 24 %}\n              {% assign qty_48 = 48 %}\n              {% assign qty_100 = 100 %}\n              {% assign qty_120 = 120 %}\n              {% assign qty_150 = 150 %}\n              {% assign qty_200 = 200 %}\n              {% assign qty_300 = 300 %}\n              {% assign qty_500 = 500 %}\n              {% if break.quantity == qty_5 or break.quantity == qty_12 or break.quantity == qty_24 or break.quantity == qty_48 or break.quantity == qty_100 or break.quantity == qty_120 or break.quantity == qty_150 or break.quantity == qty_200 or break.quantity == qty_300 or break.quantity == qty_500 %}\n                {% assign displayed_count = displayed_count | plus: 1 %}\n                {% assign price = break.price %}\n                {% assign savings = base_price | minus: price %}\n                {% assign percent = savings | divided_by: base_price | times: 100 %}\n\n                <tr style=\"{% cycle 'background-color: #ffffff;', 'background-color: #e7eef5;' %}\">\n                  <td style=\"padding: 12px 16px; font-weight: 500; color: #007bff; border-bottom: 1px solid #e7eef5; border-left: 1px solid #e7eef5; border-right: 1px solid #e7eef5;\">{{ break.quantity }}+</td>\n                  <td style=\"padding: 12px 16px; text-align: right; font-weight: 600; color: #28a745; border-bottom: 1px solid #e7eef5; border-right: 1px solid #e7eef5;\">\n                    {% assign price_formatted = price | times: 100 | round | divided_by: 100.0 %}\n                    {% assign price_parts = price_formatted | split: '.' %}\n                    {% if price_parts.size == 1 %}\n                      ${{ price_formatted }}.00\n                    {% else %}\n                      {% assign decimals = price_parts[1] | size %}\n                      {% if decimals == 1 %}\n                        ${{ price_formatted }}0\n                      {% else %}\n                        ${{ price_formatted }}\n                      {% endif %}\n                    {% endif %}\n                  </td>\n                  <td style=\"padding: 12px 16px; text-align: right; border-bottom: 1px solid #e7eef5; border-right: 1px solid #e7eef5;\">\n                    {% if savings > 0 %}\n                      {% assign savings_formatted = savings | times: 100 | round | divided_by: 100.0 %}\n                      {% assign savings_parts = savings_formatted | split: '.' %}\n                      {% if savings_parts.size == 1 %}\n                        <span style=\"color: #28a745;\">${{ savings_formatted }}.00</span>\n                      {% else %}\n                        {% assign savings_decimals = savings_parts[1] | size %}\n                        {% if savings_decimals == 1 %}\n                          <span style=\"color: #28a745;\">${{ savings_formatted }}0</span>\n                        {% else %}\n                          <span style=\"color: #28a745;\">${{ savings_formatted }}</span>\n                        {% endif %}\n                      {% endif %}\n                      <span style=\"font-size: 12px; color: #6c757d;\">({{ percent | round: 1 }}%)</span>\n                    {% else %}\n                      —\n                    {% endif %}\n                  </td>\n                </tr>\n              {% endif %}\n            {% endif %}\n          {% endfor %}\n          \n          <!-- Setup Charge Section -->\n          {% if product.metafields.custom.setup_charges.value != blank %}\n            {% assign setup_charge_raw = product.metafields.custom.setup_charges.value %}\n            {% comment %} Extract number and any text after it (like \"(V)\") {% endcomment %}\n            {% assign setup_charge_clean = setup_charge_raw | remove: '$' | strip %}\n            {% comment %} Extract text in parentheses first {% endcomment %}\n            {% assign setup_suffix = '' %}\n            {% if setup_charge_clean contains '(' %}\n              {% assign paren_start = setup_charge_clean | split: '(' %}\n              {% if paren_start.size > 1 %}\n                {% assign paren_content = paren_start[1] | split: ')' %}\n                {% if paren_content.size > 0 %}\n                  {% assign setup_suffix = '(' | append: paren_content[0] | append: ')' %}\n                {% endif %}\n              {% endif %}\n            {% endif %}\n            {% comment %} Remove parentheses content to get just the number {% endcomment %}\n            {% assign setup_number_str = setup_charge_clean | remove: setup_suffix | strip %}\n            {% assign setup_number = setup_number_str | plus: 0 %}\n            {% comment %} Format the number with 2 decimal places {% endcomment %}\n            {% assign setup_formatted = setup_number | times: 100 | round | divided_by: 100.0 %}\n            {% assign setup_num_parts = setup_formatted | split: '.' %}\n            {% if setup_num_parts.size == 1 %}\n              {% assign setup_display = '$' | append: setup_formatted | append: '.00' %}\n            {% else %}\n              {% assign setup_decimals = setup_num_parts[1] | size %}\n              {% if setup_decimals == 1 %}\n                {% assign setup_display = '$' | append: setup_formatted | append: '0' %}\n              {% else %}\n                {% assign setup_display = '$' | append: setup_formatted %}\n              {% endif %}\n            {% endif %}\n            \n            <!-- Setup Charge Heading Row -->\n            <tr style=\"background-color: #e7eef5;\">\n              <td colspan=\"3\" style=\"padding: 12px 16px; font-weight: 600; color: #333; font-size: 16px; border-top: 1px solid #e7eef5; border-bottom: 1px solid #e7eef5; border-left: 1px solid #e7eef5; border-right: 1px solid #e7eef5;\">\n                Setup Charge\n              </td>\n            </tr>\n            <!-- Setup Charge Value Row -->\n            <tr style=\"background-color: #ffffff;\">\n              <td colspan=\"3\" style=\"padding: 12px 16px; font-weight: 600; color: #28a745; border-bottom: 1px solid #e7eef5; border-left: 1px solid #e7eef5; border-right: 1px solid #e7eef5;\">\n                {{ setup_display }}{{ setup_suffix }} each\n              </td>\n            </tr>\n          {% endif %}\n        </tbody>\n      </table>\n    </div>\n\n    <!-- SECTION 2: Remaining rows (EQP), only for logged-in users -->\n    {% assign eqp_displayed_count = 0 %}\n    {% for break in price_breaks %}\n      {% if break.quantity != 1 %}\n        {% assign qty_5 = 5 %}\n        {% assign qty_12 = 12 %}\n        {% assign qty_24 = 24 %}\n        {% assign qty_48 = 48 %}\n        {% assign qty_100 = 100 %}\n        {% assign qty_120 = 120 %}\n        {% assign qty_150 = 150 %}\n        {% assign qty_200 = 200 %}\n        {% assign qty_300 = 300 %}\n        {% assign qty_500 = 500 %}\n        {% if break.quantity == qty_5 or break.quantity == qty_12 or break.quantity == qty_24 or break.quantity == qty_48 or break.quantity == qty_100 or break.quantity == qty_120 or break.quantity == qty_150 or break.quantity == qty_200 or break.quantity == qty_300 or break.quantity == qty_500 %}\n          {% assign eqp_displayed_count = eqp_displayed_count | plus: 1 %}\n        {% endif %}\n      {% endif %}\n    {% endfor %}\n    \n    {% if is_logged_in and eqp_displayed_count > eqp_count %}\n      <div style=\"margin: 30px 0 10px 0; position: relative; text-align: center;\">\n        <hr style=\"border-top: 1px solid #ccc; margin:0\">\n        <span style=\"position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: white; padding: 2px 10px; border-radius: 12px; font-weight: bold; font-size: 13px; color: #28a745; border: 1px solid #28a745;\">\n          EQP\n        </span>\n      </div>\n\n      <table style=\"width: 100%; border-collapse: collapse; background-color: #212529; border-radius: 8px; overflow: hidden; color: #fff; margin-top:18px; border: 1px solid rgba(255, 255, 255, 0.2);\">\n        <thead>\n          <tr style=\"background-color: #343a40;\">\n            <th style=\"padding: 12px 16px; text-align: left;\">Beyond EQP Quantity</th>\n            <th style=\"padding: 12px 16px; text-align: right;\">Price Each</th>\n            <th style=\"padding: 12px 16px; text-align: right;color: #343a40;\">You Save</th>\n          </tr>\n        </thead>\n        <tbody>\n          {% assign eqp_count_displayed = 0 %}\n          {% for break in price_breaks %}\n            {% if break.quantity != 1 %}\n              {% assign qty_5 = 5 %}\n              {% assign qty_12 = 12 %}\n              {% assign qty_24 = 24 %}\n              {% assign qty_48 = 48 %}\n              {% assign qty_100 = 100 %}\n              {% assign qty_120 = 120 %}\n              {% assign qty_150 = 150 %}\n              {% assign qty_200 = 200 %}\n              {% assign qty_300 = 300 %}\n              {% assign qty_500 = 500 %}\n              {% if break.quantity == qty_5 or break.quantity == qty_12 or break.quantity == qty_24 or break.quantity == qty_48 or break.quantity == qty_100 or break.quantity == qty_120 or break.quantity == qty_150 or break.quantity == qty_200 or break.quantity == qty_300 or break.quantity == qty_500 %}\n                {% assign eqp_count_displayed = eqp_count_displayed | plus: 1 %}\n                {% if eqp_count_displayed > eqp_count %}\n                  <tr>\n                    <td style=\"padding: 14px 16px; font-weight: 600; color: #17a2b8; border-bottom: 1px solid #343a40;\">\n                      {{ break.quantity }}+\n                    </td>\n                    <td style=\"padding: 14px 16px; font-weight: 600; color: #28a745; text-align: right; border-bottom: 1px solid #343a40;\">\n                      {% assign eqp_price_formatted = break.price | times: 100 | round | divided_by: 100.0 %}\n                      {% assign eqp_price_parts = eqp_price_formatted | split: '.' %}\n                      {% if eqp_price_parts.size == 1 %}\n                        ${{ eqp_price_formatted }}.00\n                      {% else %}\n                        {% assign eqp_decimals = eqp_price_parts[1] | size %}\n                        {% if eqp_decimals == 1 %}\n                          ${{ eqp_price_formatted }}0\n                        {% else %}\n                          ${{ eqp_price_formatted }}\n                        {% endif %}\n                      {% endif %}\n                    </td>\n                    <td style=\"padding: 14px 16px; text-align: right; border-bottom: 1px solid #343a40;\">\n                      &nbsp;\n                    </td>\n                  </tr>\n                {% endif %}\n              {% endif %}\n            {% endif %}\n          {% endfor %}\n        </tbody>\n      </table>\n    {% endif %}\n\n  </div>\n{% endif %}"
+          }
+        },
+        "custom_liquid_UzJNyy": {
+          "type": "custom_liquid",
+          "name": "Pricing Details B2B",
+          "disabled": true,
+          "settings": {
+            "custom_liquid": "{% comment %}\n  B2B Price Breaks Table - Working Version\n  Displays quantity-based pricing from B2B catalog (if available) or b2b.price_breaks metafield\n{% endcomment %}\n\n{% assign variant = product.selected_or_first_available_variant %}\n{% assign use_catalog_pricing = false %}\n{% assign catalog_breaks = null %}\n\n{% comment %} DEBUG - Remove after testing {% endcomment %}\n{% if customer %}\n  <div style=\"background: #f0f0f0; padding: 15px; margin: 20px 0; border: 2px solid #007bff; font-family: monospace; font-size: 12px;\">\n    <h4 style=\"margin-top: 0;\">🔍 B2B Catalog Access Debug</h4>\n    <p><strong>Customer ID:</strong> {{ customer.id }}</p>\n    <p><strong>Customer Email:</strong> {{ customer.email }}</p>\n    <p><strong>Customer B2B?:</strong> {{ customer.b2b? }}</p>\n\n    {% if customer.company %}\n      <p><strong>Company:</strong> {{ customer.company.name }} ({{ customer.company.id }})</p>\n      <p><strong>Company Locations:</strong> {{ customer.company.locations.size }}</p>\n    {% else %}\n      <p><strong>Company:</strong> none</p>\n    {% endif %}\n\n    {% if customer.company_location %}\n      <p><strong>Active Location:</strong> {{ customer.company_location.name | default: customer.company_location.id }} ({{ customer.company_location.id }})</p>\n      <p><strong>Active Location Catalogs (raw):</strong> {{ customer.company_location.catalogs | json }}</p>\n    {% else %}\n      <p><strong>Active Location:</strong> none</p>\n    {% endif %}\n\n    {% if customer.company_contact %}\n      <p><strong>Company Contact ID:</strong> {{ customer.company_contact.id }}</p>\n    {% else %}\n      <p><strong>Company Contact ID:</strong> none</p>\n    {% endif %}\n\n    {% if customer.company and customer.company.locations.size > 0 %}\n      <hr style=\"margin: 10px 0;\">\n      <p><strong>Location Catalogs:</strong></p>\n      {% for location in customer.company.locations %}\n        <p><strong>Location:</strong> {{ location.name | default: location.id }} ({{ location.id }})</p>\n        {% if location.catalogs and location.catalogs.size > 0 %}\n          <ul style=\"margin: 4px 0 8px 18px; padding: 0;\">\n            {% for catalog in location.catalogs %}\n              <li>{{ catalog.title | default: catalog.name }} ({{ catalog.id }})</li>\n            {% endfor %}\n          </ul>\n        {% else %}\n          <p style=\"margin: 0 0 8px 0;\">No catalogs found for this location.</p>\n        {% endif %}\n      {% endfor %}\n    {% endif %}\n  </div>\n{% endif %}\n\n{% comment %} Priority 1: Check for B2B catalog quantity price breaks {% endcomment %}\n{% if customer and customer.b2b? %}\n  {% if variant.quantity_price_breaks_configured? and variant.quantity_price_breaks.size > 0 %}\n    {% assign use_catalog_pricing = true %}\n    {% assign catalog_breaks = variant.quantity_price_breaks %}\n  {% endif %}\n{% endif %}\n\n{% comment %} Priority 2: Fall back to metafield pricing {% endcomment %}\n{% unless use_catalog_pricing %}\n  {% assign price_breaks = product.metafields.b2b.price_breaks.value %}\n{% endunless %}\n\n{% comment %} Display B2B catalog price breaks if available {% endcomment %}\n{% if use_catalog_pricing and catalog_breaks.size > 0 %}\n  {% assign has_breaks = false %}\n  {% for break in catalog_breaks %}\n    {% if break.minimum_quantity > 1 %}\n      {% assign has_breaks = true %}\n      {% break %}\n    {% endif %}\n  {% endfor %}\n\n  {% if has_breaks %}\n    <div class=\"price-breaks-container\" style=\"margin: 20px 0;\">\n      <h3 style=\"margin-bottom: 15px; color: #333; font-size: 18px; font-weight: 600;\">\n        Pricing Details\n      </h3>\n\n      <div class=\"price-breaks-table-wrapper\" style=\"overflow-x: auto;\">\n        <table class=\"price-breaks-table\" style=\"width: 100%; border-collapse: collapse; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);\">\n          <thead>\n            <tr style=\"background-color: #f8f9fa;\">\n              <th style=\"padding: 12px 16px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600; color: #495057;\">\n                Quantity\n              </th>\n              <th style=\"padding: 12px 16px; text-align: right; border-bottom: 2px solid #dee2e6; font-weight: 600; color: #495057;\">\n                Price Each\n              </th>\n              <th style=\"padding: 12px 16px; text-align: right; border-bottom: 2px solid #dee2e6; font-weight: 600; color: #495057;\">\n                You Save\n              </th>\n            </tr>\n          </thead>\n          <tbody>\n            {% assign base_price = variant.price %}\n            {% for break in catalog_breaks %}\n              {% if break.minimum_quantity == 1 %}\n                {% assign base_price = break.price %}\n                {% break %}\n              {% endif %}\n            {% endfor %}\n\n            {% for break in catalog_breaks %}\n              {% if break.minimum_quantity > 1 %}\n                {% assign break_price = break.price %}\n                {% assign savings = base_price | minus: break_price %}\n                {% assign savings_percent = savings | times: 100.0 | divided_by: base_price %}\n\n                <tr style=\"{% cycle 'background-color: #ffffff;', 'background-color: #f8f9fa;' %} transition: background-color 0.2s ease;\">\n                  <td style=\"padding: 12px 16px; border-bottom: 1px solid #dee2e6;\">\n                    <span style=\"font-weight: 500; color: #007bff;\">{{ break.minimum_quantity }}+</span>\n                  </td>\n                  <td style=\"padding: 12px 16px; text-align: right; border-bottom: 1px solid #dee2e6;\">\n                    <span style=\"font-weight: 600; font-size: 16px; color: #28a745;\">\n                      {{ break_price | money }}\n                    </span>\n                  </td>\n                  <td style=\"padding: 12px 16px; text-align: right; border-bottom: 1px solid #dee2e6;\">\n                    {% if savings > 0 %}\n                      <span style=\"color: #28a745; font-weight: 500;\">\n                        {{ savings | money }}\n                        <span style=\"font-size: 12px; color: #6c757d;\">({{ savings_percent | round: 1 }}% off)</span>\n                      </span>\n                    {% else %}\n                      <span style=\"color: #6c757d; font-size: 14px;\">—</span>\n                    {% endif %}\n                  </td>\n                </tr>\n              {% endif %}\n            {% endfor %}\n          </tbody>\n        </table>\n      </div>\n\n      {% assign production_time = product.metafields.custom.production_time_in_days.value %}\n      {% if production_time and production_time != blank %}\n        <div class=\"price-breaks-note\" style=\"margin-top: 10px; padding: 8px 12px; background-color: #e7f3ff; border-left: 4px solid #007bff; border-radius: 4px;\">\n          <p style=\"margin: 0; font-size: 13px; color: #004085;\">\n            <strong>Normal Production Time: {{ production_time }} Working Days</strong>\n          </p>\n        </div>\n      {% endif %}\n\n      {% assign setup_charge = product.metafields.custom.setup_charges.value %}\n      {% if setup_charge and setup_charge != blank %}\n        <div class=\"setup-charge-note\" style=\"margin-top: 10px; padding: 8px 12px; background-color: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;\">\n          <p style=\"margin: 0; font-size: 13px; color: #856404;\">\n            <strong>Setup Charge: {{ setup_charge }}</strong>\n          </p>\n        </div>\n      {% endif %}\n\n      {% comment %} Additional Information Section {% endcomment %}\n      {% assign imprint_size = product.metafields.custom.imprint_size.value %}\n      {% assign prod_pack = product.metafields.custom.prod_pack.value %}\n      {% assign item_length = product.metafields.custom.item_length.value %}\n      {% assign item_height = product.metafields.custom.item_height.value %}\n      {% assign item_width = product.metafields.custom.item_width.value %}\n      {% assign add_prod_info = product.metafields.custom.add_prod_info.value %}\n\n      {% if imprint_size != blank or prod_pack != blank or item_length != blank or item_height != blank or item_width != blank or add_prod_info != blank %}\n        <div class=\"additional-info-section\" style=\"margin-top: 15px; padding: 12px 16px; background-color: #f8f9fa; border-left: 4px solid #6c757d; border-radius: 4px;\">\n          <h4 style=\"margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #495057;\">Additional Information</h4>\n          <ul style=\"margin: 0; padding-left: 16px; font-size: 13px; color: #495057; line-height: 1.4;\">\n            {% if imprint_size and imprint_size != blank %}\n              <li><strong>Imprint Area:</strong> {{ imprint_size }}</li>\n            {% endif %}\n            {% if prod_pack and prod_pack != blank %}\n              <li>{{ prod_pack }}</li>\n            {% endif %}\n            {% if item_length != blank or item_height != blank or item_width != blank %}\n              <li>\n                {% assign dimension_parts = '' %}\n                {% if item_length and item_length != blank %}\n                  {% assign dimension_parts = item_length | append: '&quot;L' %}\n                {% endif %}\n                {% if item_height and item_height != blank %}\n                  {% if dimension_parts != blank %}\n                    {% assign dimension_parts = dimension_parts | append: ' x ' | append: item_height | append: '&quot;H' %}\n                  {% else %}\n                    {% assign dimension_parts = item_height | append: '&quot;H' %}\n                  {% endif %}\n                {% endif %}\n                {% if item_width and item_width != blank %}\n                  {% if dimension_parts != blank %}\n                    {% assign dimension_parts = dimension_parts | append: ' x ' | append: item_width | append: '&quot;W' %}\n                  {% else %}\n                    {% assign dimension_parts = item_width | append: '&quot;W' %}\n                  {% endif %}\n                {% endif %}\n                {{ dimension_parts }}\n              </li>\n            {% endif %}\n            {% if add_prod_info and add_prod_info != blank %}\n              <li>{{ add_prod_info }}</li>\n            {% endif %}\n          </ul>\n        </div>\n      {% endif %}\n    </div>\n  {% endif %}\n{% endif %}\n\n{% comment %} Display price breaks from metafield if no catalog pricing {% endcomment %}\n{% if price_breaks and price_breaks.size > 0 %}\n  <div class=\"price-breaks-container\" style=\"margin: 20px 0;\">\n    <h3 style=\"margin-bottom: 15px; color: #333; font-size: 18px; font-weight: 600;\">\n      Pricing Details\n    </h3>\n\n    {% comment %} Check if there are actual quantity breaks (more than just base price) {% endcomment %}\n    {% assign has_breaks = false %}\n    {% for break in price_breaks %}\n      {% if break.quantity > 1 %}\n        {% assign has_breaks = true %}\n        {% break %}\n      {% endif %}\n    {% endfor %}\n\n    {% if has_breaks %}\n      <div class=\"price-breaks-table-wrapper\" style=\"overflow-x: auto;\">\n        <table class=\"price-breaks-table\" style=\"width: 100%; border-collapse: collapse; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);\">\n          <thead>\n            <tr style=\"background-color: #f8f9fa;\">\n              <th style=\"padding: 12px 16px; text-align: left; border-bottom: 2px solid #dee2e6; font-weight: 600; color: #495057;\">\n                Quantity\n              </th>\n              <th style=\"padding: 12px 16px; text-align: right; border-bottom: 2px solid #dee2e6; font-weight: 600; color: #495057;\">\n                Price Each\n              </th>\n              <th style=\"padding: 12px 16px; text-align: right; border-bottom: 2px solid #dee2e6; font-weight: 600; color: #495057;\">\n                You Save\n              </th>\n            </tr>\n          </thead>\n          <tbody>\n            {% assign base_price = price_breaks[0].price %}\n            {% for break in price_breaks %}\n              {% if break.quantity > 1 %}\n                {% assign savings = base_price | minus: break.price %}\n                {% assign savings_percent = savings | times: 100.0 | divided_by: base_price %}\n\n                <tr style=\"{% cycle 'background-color: #ffffff;', 'background-color: #f8f9fa;' %} transition: background-color 0.2s ease;\">\n                  <td style=\"padding: 12px 16px; border-bottom: 1px solid #dee2e6;\">\n                    <span style=\"font-weight: 500; color: #007bff;\">{{ break.quantity }}+</span>\n                  </td>\n                  <td style=\"padding: 12px 16px; text-align: right; border-bottom: 1px solid #dee2e6;\">\n                    <span style=\"font-weight: 600; font-size: 16px; color: #28a745;\">\n                      ${{ break.price | round: 2 }}\n                    </span>\n                  </td>\n                  <td style=\"padding: 12px 16px; text-align: right; border-bottom: 1px solid #dee2e6;\">\n                    {% if savings > 0 %}\n                      <span style=\"color: #28a745; font-weight: 500;\">\n                        ${{ savings | round: 2 }}\n                        <span style=\"font-size: 12px; color: #6c757d;\">({{ savings_percent | round: 1 }}% off)</span>\n                      </span>\n                    {% else %}\n                      <span style=\"color: #6c757d; font-size: 14px;\">—</span>\n                    {% endif %}\n                  </td>\n                </tr>\n              {% endif %}\n            {% endfor %}\n          </tbody>\n        </table>\n      </div>\n\n      {% assign production_time = product.metafields.custom.production_time_in_days.value %}\n      {% if production_time and production_time != blank %}\n        <div class=\"price-breaks-note\" style=\"margin-top: 10px; padding: 8px 12px; background-color: #e7f3ff; border-left: 4px solid #007bff; border-radius: 4px;\">\n          <p style=\"margin: 0; font-size: 13px; color: #004085;\">\n            <strong>Normal Production Time: {{ production_time }} Working Days</strong>\n          </p>\n        </div>\n      {% endif %}\n\n      {% assign setup_charge = product.metafields.custom.setup_charges.value %}\n      {% if setup_charge and setup_charge != blank %}\n        <div class=\"setup-charge-note\" style=\"margin-top: 10px; padding: 8px 12px; background-color: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;\">\n          <p style=\"margin: 0; font-size: 13px; color: #856404;\">\n            <strong>Setup Charge: {{ setup_charge }}</strong>\n          </p>\n        </div>\n      {% endif %}\n\n      {% comment %} Additional Information Section {% endcomment %}\n      {% assign imprint_size = product.metafields.custom.imprint_size.value %}\n      {% assign prod_pack = product.metafields.custom.prod_pack.value %}\n      {% assign item_length = product.metafields.custom.item_length.value %}\n      {% assign item_height = product.metafields.custom.item_height.value %}\n      {% assign item_width = product.metafields.custom.item_width.value %}\n      {% assign add_prod_info = product.metafields.custom.add_prod_info.value %}\n\n      {% if imprint_size != blank or prod_pack != blank or item_length != blank or item_height != blank or item_width != blank or add_prod_info != blank %}\n        <div class=\"additional-info-section\" style=\"margin-top: 15px; padding: 12px 16px; background-color: #f8f9fa; border-left: 4px solid #6c757d; border-radius: 4px;\">\n          <h4 style=\"margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #495057;\">Additional Information</h4>\n          <ul style=\"margin: 0; padding-left: 16px; font-size: 13px; color: #495057; line-height: 1.4;\">\n            {% if imprint_size and imprint_size != blank %}\n              <li><strong>Imprint Area:</strong> {{ imprint_size }}</li>\n            {% endif %}\n            {% if prod_pack and prod_pack != blank %}\n              <li>{{ prod_pack }}</li>\n            {% endif %}\n            {% if item_length != blank or item_height != blank or item_width != blank %}\n              <li>\n                {% assign dimension_parts = '' %}\n                {% if item_length and item_length != blank %}\n                  {% assign dimension_parts = item_length | append: '&quot;L' %}\n                {% endif %}\n                {% if item_height and item_height != blank %}\n                  {% if dimension_parts != blank %}\n                    {% assign dimension_parts = dimension_parts | append: ' x ' | append: item_height | append: '&quot;H' %}\n                  {% else %}\n                    {% assign dimension_parts = item_height | append: '&quot;H' %}\n                  {% endif %}\n                {% endif %}\n                {% if item_width and item_width != blank %}\n                  {% if dimension_parts != blank %}\n                    {% assign dimension_parts = dimension_parts | append: ' x ' | append: item_width | append: '&quot;W' %}\n                  {% else %}\n                    {% assign dimension_parts = item_width | append: '&quot;W' %}\n                  {% endif %}\n                {% endif %}\n                {{ dimension_parts }}\n              </li>\n            {% endif %}\n            {% if add_prod_info and add_prod_info != blank %}\n              <li>{{ add_prod_info }}</li>\n            {% endif %}\n          </ul>\n        </div>\n      {% endif %}\n    {% else %}\n      {% comment %} Only base price available {% endcomment %}\n      <div class=\"single-price-display\" style=\"padding: 15px; background-color: #f8f9fa; border-radius: 6px; border: 1px solid #dee2e6;\">\n        <p style=\"margin: 0; color: #495057; font-size: 14px;\">\n          <strong>Price:</strong>\n          <span style=\"font-size: 18px; font-weight: 600; color: #007bff;\">${{ price_breaks[0].price | round: 2 }}</span>\n        </p>\n      </div>\n    {% endif %}\n  </div>\n{% endif %}\n\n{% comment %} Responsive CSS {% endcomment %}\n<style>\n  .price-breaks-table tr:hover {\n    background-color: #e9ecef !important;\n  }\n\n  @media (max-width: 768px) {\n    .price-breaks-table th,\n    .price-breaks-table td {\n      padding: 8px 12px !important;\n      font-size: 14px !important;\n    }\n\n    .price-breaks-table th:last-child,\n    .price-breaks-table td:last-child {\n      display: none;\n    }\n\n    .price-breaks-container h3 {\n      font-size: 16px !important;\n    }\n  }\n\n  @media (max-width: 480px) {\n    .price-breaks-table {\n      font-size: 12px !important;\n    }\n\n    .price-breaks-table th,\n    .price-breaks-table td {\n      padding: 6px 8px !important;\n    }\n\n    .price-breaks-note {\n      font-size: 12px !important;\n    }\n  }\n</style>"
+          }
+        },
+        "discount_codes_FyMCbg": {
+          "type": "discount_codes",
+          "settings": {
+            "heading": "Discount Codes:"
+          }
+        },
+        "custom_liquid_FbHCrd": {
+          "type": "custom_liquid",
+          "name": "Apparel Sizes",
+          "settings": {
+            "custom_liquid": "{% if product.metafields.custom.apparel_size.value != blank %}\n  <p>\n    <b>Sizes:</b>\n    {{ product.metafields.custom.apparel_size.value | join: ', ' }}\n  </p>\n{% endif %}"
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button",
+            "swatch_type": "shopify_swatch",
+            "swatch_style": "square",
+            "swatch_size": 32,
+            "button_style": "normal",
+            "size_title": "Size",
+            "size_chart_from_page": ""
+          }
+        },
+        "imprintboard_ball_pro_customizer_button_qtzRWW": {
+          "type": "shopify://apps/imprintboard-ball-pro/blocks/customizer-button/019e4c36-1ccc-7542-ba74-7819752aa7f9",
+          "settings": {
+            "button_text": "Customize This Product",
+            "button_color": "#316951",
+            "text_color": "#ffffff",
+            "button_style": "solid",
+            "border_radius": 30,
+            "button_padding": 10,
+            "font_size": 16
+          }
+        },
+        "custom_liquid_TRJbFW": {
+          "type": "custom_liquid",
+          "name": "Custom Packaging Upgrade",
+          "settings": {
+            "custom_liquid": "{% assign custom_packaging_upgrade_image = product.metafields.custom.custom_packaging_upgrade.value %}\n\n{% if custom_packaging_upgrade_image %}\n<div class=\"cpk-wrapper\">\n  <button\n    type=\"button\"\n    class=\"cpk-button\"\n    aria-haspopup=\"dialog\"\n    aria-controls=\"cpk-modal\"\n    aria-expanded=\"false\"\n  >\n    Custom Packaging Upgrade\n  </button>\n\n  <div\n    id=\"cpk-modal\"\n    class=\"cpk-modal\"\n    role=\"dialog\"\n    aria-modal=\"true\"\n    aria-labelledby=\"cpk-modal-title\"\n    hidden\n  >\n    <div class=\"cpk-modal__overlay\" data-close-modal></div>\n\n    <div class=\"cpk-modal__content\">\n      <button\n        type=\"button\"\n        class=\"cpk-modal__close\"\n        aria-label=\"Close Custom Packaging Upgrade\"\n        data-close-modal\n      >\n        &times;\n      </button>\n\n      <h2 id=\"cpk-modal-title\" class=\"visually-hidden\">Custom Packaging Upgrade</h2>\n\n      <img\n        src=\"{{ custom_packaging_upgrade_image | image_url: width: 1100 }}\"\n        alt=\"Custom Packaging Upgrade\"\n        class=\"cpk-modal__image\"\n        loading=\"lazy\"\n      >\n    </div>\n  </div>\n</div>\n{% endif %}\n\n<style>\n  .cpk-button {\n    cursor: pointer;\n    padding: 10px 18px;\n    border: 1px solid #000;\n    background: #316951;\n    color: #FFF;\n    font-size: 14px;\n\twidth:100%;\n  }\n\n  .cpk-modal[hidden] {\n    display: none;\n  }\n.cpk-modal:not([hidden]) .cpk-modal__content {\n  transform: translateY(0);\n  opacity: 1;\n}\n.cpk-modal {\n  position: fixed;\n  inset: 0;\n  z-index: 9999;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.cpk-modal__overlay {\n  position: absolute;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.6);\n}\n\n.cpk-modal__content {\n  position: relative;\n  z-index: 1;\n\n  max-width: 80vw;\n  max-height: 800px;\n  border: solid 3px #316951;\n  background: #eee;\n  padding: 40px;\n  border-radius: 10px;\n transform: translateY(10px);\n  opacity: 0;\n  transition: all 0.2s ease;\n  overflow: auto;\n}\n\n  .cpk-modal__image {\n    display: block;\n    max-width: 100%;\n    height: auto;\n\tborder: solid 1px #555;\n  }\n\n  .cpk-modal__close {\n    position: absolute;\n    top: 1px;\n    right: 1px;\n    background: transparent;\n    border: 0;\n    font-size: 35px;\n    line-height: 1;\n    cursor: pointer;\n  }\n\n  .visually-hidden {\n    position: absolute !important;\n    width: 1px;\n    height: 1px;\n    padding: 0;\n    margin: -1px;\n    overflow: hidden;\n    clip: rect(0, 0, 0, 0);\n    white-space: nowrap;\n    border: 0;\n  }\n</style>\n\n<script>\n  document.addEventListener('DOMContentLoaded', function () {\n    const button = document.querySelector('.cpk-button');\n    const modal = document.getElementById('cpk-modal');\n    const closeTargets = modal.querySelectorAll('[data-close-modal]');\n\n    if (!button || !modal) return;\n\n    button.addEventListener('click', function () {\n      modal.hidden = false;\n      button.setAttribute('aria-expanded', 'true');\n      document.body.style.overflow = 'hidden';\n    });\n\n    closeTargets.forEach(function (el) {\n      el.addEventListener('click', function () {\n        modal.hidden = true;\n        button.setAttribute('aria-expanded', 'false');\n        document.body.style.overflow = '';\n      });\n    });\n\n    document.addEventListener('keydown', function (event) {\n      if (event.key === 'Escape' && !modal.hidden) {\n        modal.hidden = true;\n        button.setAttribute('aria-expanded', 'false');\n        document.body.style.overflow = '';\n      }\n    });\n  });\n</script>"
+          }
+        },
+        "custom_liquid_7FQMmq": {
+          "type": "custom_liquid",
+          "name": "Color Chart",
+          "settings": {
+            "custom_liquid": "{% assign color_chart_image = product.metafields.custom.color_chart.value %}\n\n{% if color_chart_image %}\n<div class=\"color-chart-wrapper\">\n  <button\n    type=\"button\"\n    class=\"color-chart-button\"\n    aria-haspopup=\"dialog\"\n    aria-controls=\"color-chart-modal\"\n    aria-expanded=\"false\"\n  >\n    Standard Imprint Colors\n\n\n  </button>\n\n  <div\n    id=\"color-chart-modal\"\n    class=\"color-chart-modal\"\n    role=\"dialog\"\n    aria-modal=\"true\"\n    aria-labelledby=\"color-chart-modal-title\"\n    hidden\n  >\n    <div class=\"color-chart-modal__overlay\" data-close-modal></div>\n\n    <div class=\"color-chart-modal__content\">\n      <button\n        type=\"button\"\n        class=\"color-chart-modal__close\"\n        aria-label=\"Close color chart\"\n        data-close-modal\n      >\n        &times;\n      </button>\n\n      <h2 id=\"color-chart-modal-title\" class=\"visually-hidden\">Color Chart</h2>\n\n      <img\n        src=\"{{ color_chart_image | image_url: width: 1200 }}\"\n        alt=\"Color Chart\"\n        class=\"color-chart-modal__image\"\n        loading=\"lazy\"\n      >\n    </div>\n  </div>\n</div>\n{% endif %}\n\n<style>\n  .color-chart-button {\n    cursor: pointer;\n    padding: 10px 18px;\n    border: 1px solid #000;\n    background: #316951;\n    color: #FFF;\n    font-size: 14px;\n\twidth:100%;\n  }\n\n  .color-chart-modal[hidden] {\n    display: none;\n  }\n.color-chart-modal:not([hidden]) .color-chart-modal__content {\n  transform: translateY(0);\n  opacity: 1;\n}\n.color-chart-modal {\n  position: fixed;\n  inset: 0;\n  z-index: 9999;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.color-chart-modal__overlay {\n  position: absolute;\n  inset: 0;\n  background: rgba(0, 0, 0, 0.6);\n}\n\n.color-chart-modal__content {\n  position: relative;\n  z-index: 1;\n\n  max-width: 90vw;\n  max-height: 90vh;\n  border: solid 3px #316951;\n  background: #eee;\n  padding: 40px;\n  border-radius: 10px;\n transform: translateY(10px);\n  opacity: 0;\n  transition: all 0.2s ease;\n  overflow: auto;\n}\n\n  .color-chart-modal__image {\n    display: block;\n    max-width: 100%;\n    height: auto;\n\tborder: solid 1px #555;\n  }\n\n  .color-chart-modal__close {\n    position: absolute;\n    top: 1px;\n    right: 1px;\n    background: transparent;\n    border: 0;\n    font-size: 35px;\n    line-height: 1;\n    cursor: pointer;\n  }\n\n  .visually-hidden {\n    position: absolute !important;\n    width: 1px;\n    height: 1px;\n    padding: 0;\n    margin: -1px;\n    overflow: hidden;\n    clip: rect(0, 0, 0, 0);\n    white-space: nowrap;\n    border: 0;\n  }\n</style>\n\n<script>\n  document.addEventListener('DOMContentLoaded', function () {\n    const button = document.querySelector('.color-chart-button');\n    const modal = document.getElementById('color-chart-modal');\n    const closeTargets = modal.querySelectorAll('[data-close-modal]');\n\n    if (!button || !modal) return;\n\n    button.addEventListener('click', function () {\n      modal.hidden = false;\n      button.setAttribute('aria-expanded', 'true');\n      document.body.style.overflow = 'hidden';\n    });\n\n    closeTargets.forEach(function (el) {\n      el.addEventListener('click', function () {\n        modal.hidden = true;\n        button.setAttribute('aria-expanded', 'false');\n        document.body.style.overflow = '';\n      });\n    });\n\n    document.addEventListener('keydown', function (event) {\n      if (event.key === 'Escape' && !modal.hidden) {\n        modal.hidden = true;\n        button.setAttribute('aria-expanded', 'false');\n        document.body.style.overflow = '';\n      }\n    });\n  });\n</script>"
+          }
+        },
+        "custom_liquid_XwYW4Q": {
+          "type": "custom_liquid",
+          "name": "Sizing Chart",
+          "settings": {
+            "custom_liquid": "{% render 'sizing-chart' %}"
+          }
+        },
+        "custom_liquid_y8Kb3t": {
+          "type": "custom_liquid",
+          "name": "Modal Buttons - Email Forms",
+          "settings": {
+            "custom_liquid": "<style>\n  .requestInfo, .emailProduct {\n    text-decoration: inherit;\n    background-color: #000;\n    color: #fff;\n    border-radius: 30px;\n    padding: 10px;\n    width: 100%;\n    text-align: center;\n    border: 1px solid #000;\n    display: block;\n    margin-bottom: 10px;\n  }\n  .requestInfo:hover, .emailProduct:hover {\n    background-color: #fff;\n    color: #000;\n    transition: 0.4s;\n    border: 1px solid #000;\n  }\n</style>\n\n<div style=\"display: flex; flex-direction: column; gap: 10px;\">\n  <button\n    class=\"requestInfo\"\n    aria-controls=\"requestInfoModal\"\n    aria-haspopup=\"dialog\"\n    type=\"button\"\n  >\n    Request More Info\n  </button>\n  \n  <button\n    class=\"emailProduct\"\n    aria-controls=\"emailProductModal\"\n    aria-haspopup=\"dialog\"\n    type=\"button\"\n  >\n    Email Product\n  </button>\n</div>"
+          }
+        },
+        "ups_rate_calculator_shipping_estimator_Jpwk4T": {
+          "type": "shopify://apps/ups-rate-calculator/blocks/shipping-estimator/019c1053-4166-7ffb-91b2-b6b6e2b41971",
+          "settings": {
+            "collection_handles": "",
+            "factory_flat_rate": "1.75",
+            "factory_flat_rate_message": "Shipping: $__RATE__ per dozen within the 48 contiguous states. For Hawaii and Alaska, please call for a freight quote.",
+            "markup_percentage": "5",
+            "origin_zip": "55422",
+            "content_alignment": "left",
+            "section_width": "full",
+            "button_color": "#000000",
+            "enabled_services": ""
+          }
+        },
+        "icon_with_text_UAYgQU": {
+          "type": "icon-with-text",
+          "disabled": true,
+          "settings": {
+            "layout": "vertical",
+            "title_font": "body",
+            "title_size": "text-base",
+            "icon_1": "car-simple",
+            "heading_1": "Free International Shipping over $500",
+            "icon_2": "arrow-up-left",
+            "heading_2": "Free Returns Within 30 days",
+            "icon_3": "star-four",
+            "heading_3": ""
+          }
+        },
+        "pickup_availability": {
+          "type": "pickup_availability",
+          "settings": {}
+        },
+        "complementary": {
+          "type": "complementary",
+          "settings": {
+            "block_heading": "Perfect Match With",
+            "heading_size": "h4",
+            "show_below_product_media": false,
+            "make_collapsible_row": false,
+            "icon": "tag",
+            "product_list_limit": 6,
+            "layout": "grid",
+            "columns": 3,
+            "image_ratio": "1/1",
+            "enable_quick_add": true
+          }
+        },
+        "inventory_by_date": {
+          "type": "inventory_by_date",
+          "settings": {
+            "heading": "Inventory by date",
+            "default_open": false,
+            "show_below_product_media": true
+          }
+        },
+        "collapsible-row-1": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Imprint Details",
+            "heading_size": "h4",
+            "icon": "none",
+            "content": "",
+            "custom_liquid": "{% if product.metafields.custom.price_includes.value %}\n\t<p><b>Price Includes:</b> {{ product.metafields.custom.price_includes.value }}</p>\n{% endif %}\n\n\n{% if product.metafields.custom.imprint_method.value %}\n\t<p><b>Standard Imprint Method:</b> {{ product.metafields.custom.imprint_method.value }}</p>\n{% endif %}\n\n\n{% if product.metafields.custom.imprint_size.value %}\n\t<p><b>Imprint Size:</b> {{ product.metafields.custom.imprint_size.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.number_of_locations.value %}\n\t<p><b>Standard Number of Locations:</b> {{ product.metafields.custom.number_of_locations.value }}</p>\n{% endif %}\n\n\n{% if product.metafields.custom.imprint_color_options.value %}\n\t<p><b>Approved Imprint Colors:</b> {{ product.metafields.custom.imprint_color_options.value }}</p>\n{% endif %}\n\n{%comment%}\n{% if product.metafields.custom.imprint_color_options.value %}\n\t<p>Imprint Color Options: {{ product.metafields.custom.imprint_color_options.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.imprint_method_guide.value %}\n\t<p>Imprint Method Guide: {{ product.metafields.custom.imprint_method_guide.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.imprint_size.value %}\n\t<p>Imprint Size: {{ product.metafields.custom.imprint_size.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.imprint_size_2nd_location.value %}\n\t<p>Imprint Size 2nd Location: {{ product.metafields.custom.imprint_size_2nd_location.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.imprint_size_3rd_location.value %}\n\t<p>Imprint Size 3rd Location: {{ product.metafields.custom.imprint_size_3rd_location.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.imprint_size_4th_location.value %}\n\t<p>Imprint Size 4th Location: {{ product.metafields.custom.imprint_size_4th_location.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.imprint_size_5th_location.value %}\n\t<p>Imprint Size 5th Location: {{ product.metafields.custom.imprint_size_5th_location.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.imprint_size_6th_location.value %}\n\t<p>Imprint Size 6th Location: {{ product.metafields.custom.imprint_size_6th_location.value }}</p>\n{% endif %}\n\n\n{% if product.metafields.custom.locations.value %}\n\t<p>Location: {{ product.metafields.custom.locations.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.location_2.value %}\n\t<p>Location 2: {{ product.metafields.custom.location_2.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.location_3.value %}\n\t<p>Location 3: {{ product.metafields.custom.location_3.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.location_4.value %}\n\t<p>Location 4: {{ product.metafields.custom.location_4.value }}</p>\n{% endif %}\n{%endcomment%}",
+            "page": "content",
+            "default_open": false,
+            "show_below_product_media": true
+          }
+        },
+        "collapsible-row-3": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Additional Charges",
+            "heading_size": "h4",
+            "icon": "none",
+            "content": "",
+            "custom_liquid": "{% if product.metafields.custom.addition_imprint_charges.value %}\n\t<p><b>Additional Imprint Charges:</b> {{ product.metafields.custom.addition_imprint_charges.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.imprint_method_upgrade.value %}\n\t<p><b>Additional Upgrade Options:</b> {{ product.metafields.custom.imprint_method_upgrade.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.ltm.value %}\n\t<p><b>LTM:</b> {{ product.metafields.custom.ltm.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.pms_charges.value %}\n\t<p><b>PMS Match Charge:</b> {{ product.metafields.custom.pms_charges.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.repeat_charge.value %}\n\t<p><b>Repeat Setup Charge:</b> {{ product.metafields.custom.repeat_charge.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.proof_charge.value %}\n\t<p><b>Proof Charge:</b> {{ product.metafields.custom.proof_charge.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.rush.value %}\n  <p>\n    <b>Rush Available:</b>\n    {% if product.metafields.custom.rush.value == 'Y' %}\n      Yes-QUR\n    {% elsif product.metafields.custom.rush.value == 'N' %}\n      N/A\n    {% endif %}\n  </p>\n{% endif %}\n\n\n{%comment%}\n{% if product.metafields.custom.ltm_charge.value %}\n\t<p>LTM Charge: {{ product.metafields.custom.ltm_charge.value }}</p>\n{% endif %}{%endcomment%}\n{%comment%}{% if product.metafields.custom.ship_handle_charge.value %}\n\t<p>Shipping & Handling Charge: {{ product.metafields.custom.ship_handle_charge.value }}</p>\n{% endif %}\n{%endcomment%}",
+            "page": "",
+            "default_open": false,
+            "show_below_product_media": true
+          }
+        },
+        "collapsible_tab_jcU9jd": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Product Details",
+            "heading_size": "h4",
+            "icon": "none",
+            "content": "",
+            "custom_liquid": "{% if product.metafields.custom.sold_as_01.value %}\n\t<p><b>Sold As:</b> {{ product.metafields.custom.sold_as_01.value }} {{ product.metafields.custom.sold_as_02.value }}</p>\n{% endif %}\n \n \n\n\n{%- liquid\n  assign item_length = product.metafields.custom.item_length.value\n  assign item_width = product.metafields.custom.item_width.value\n  assign item_height = product.metafields.custom.item_height.value\n\n  assign has_length = false\n  assign has_width = false\n  assign has_height = false\n\n  if item_length != blank and item_length != 0 and item_length != '0'\n    assign has_length = true\n  endif\n\n  if item_width != blank and item_width != 0 and item_width != '0'\n    assign has_width = true\n  endif\n\n  if item_height != blank and item_height != 0 and item_height != '0'\n    assign has_height = true\n  endif\n\n  assign dimension_count = 0\n  if has_length\n    assign dimension_count = dimension_count | plus: 1\n  endif\n  if has_width\n    assign dimension_count = dimension_count | plus: 1\n  endif\n  if has_height\n    assign dimension_count = dimension_count | plus: 1\n  endif\n\n  assign dimensions = ''\n-%}\n\n{% if dimension_count > 0 %}\n  {% if dimension_count == 3 %}\n    {%- assign dimensions = item_length | append: ' L x ' | append: item_width | append: ' W x ' | append: item_height | append: ' H' -%}\n\n  {% elsif dimension_count == 2 %}\n    {%- if has_length and has_width -%}\n      {%- assign dimensions = item_length | append: ' L x ' | append: item_width | append: ' W' -%}\n    {%- elsif has_length and has_height -%}\n      {%- assign dimensions = item_length | append: ' L x ' | append: item_height | append: ' H' -%}\n    {%- elsif has_width and has_height -%}\n      {%- assign dimensions = item_width | append: ' W x ' | append: item_height | append: ' H' -%}\n    {%- endif -%}\n\n  {% elsif dimension_count == 1 %}\n    {%- if has_width -%}\n      {%- assign dimensions = item_width -%}\n    {%- elsif has_length -%}\n      {%- assign dimensions = item_length -%}\n    {%- elsif has_height -%}\n      {%- assign dimensions = item_height -%}\n    {%- endif -%}\n  {% endif %}\n\n  <p><b>Product Dimensions:</b> {{ dimensions }}</p>\n{% endif %}\n\n\n\n{% if product.metafields.custom.add_prod_info.value %}\n\t<p><b>Additional Product Details:</b> {{ product.metafields.custom.add_prod_info.value }}</p>\n{% endif %}\n\n\n{% if product.metafields.custom.materials.value %}\n\t<p><b>Product Material:</b> {{ product.metafields.custom.materials.value }}</p>\n{% endif %}\n\n{% if product.metafields.custom.prod_pack.value %}\n\t<p><b>Product Packaging:</b> {{ product.metafields.custom.prod_pack.value }}</p>\n{% endif %}",
+            "page": "",
+            "default_open": false,
+            "show_below_product_media": true
+          }
+        },
+        "collapsible-row-2": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping Details",
+            "heading_size": "h4",
+            "icon": "none",
+            "content": "",
+            "custom_liquid": "{% if product.metafields.custom.carton_length.value %}\n  <p><b>Carton Length:</b> {{ product.metafields.custom.carton_length.value }}\"</p>\n{% endif %}\n\n{% if product.metafields.custom.carton_width.value %}\n  <p><b>Carton Width:</b> {{ product.metafields.custom.carton_width.value }}\"</p>\n{% endif %}\n\n{% if product.metafields.custom.carton_height.value %}\n  <p><b>Carton Height:</b> {{ product.metafields.custom.carton_height.value }}\"</p>\n{% endif %}\n\n{% if product.metafields.custom.units_per_carton.value %}\n  <p><b>Units per Carton:</b> {{ product.metafields.custom.units_per_carton.value }}</p>\n{% endif %}\n\n{% assign first_variant = product.variants.first %}\n{% assign weight_unit = first_variant.weight_unit %}\n\n{% if weight_unit == 'lb' %}\n  {% assign weight_unit = 'lbs.' %}\n{% endif %}\n\n{% if product.metafields.custom.carton_weight_lbs.value %}\n  <p><b>Carton Weight (lbs):</b> {{ product.metafields.custom.carton_weight_lbs.value }} {{ weight_unit }}</p>\n{% endif %}\n\n{% if first_variant.weight_in_unit > 0 %}\n  <p><b>Weight per Unit of Sale (lbs):</b> {{ first_variant.weight_in_unit }} {{ weight_unit }}</p>\n{% endif %}\n\n{% assign zip_code = product.metafields.custom.zip_code.value | append: '' %}\n{% if zip_code != blank %}\n  {% assign padded_zip = zip_code | prepend: '00000' | slice: -5, 5 %}\n  <p><b>FOB:</b> {{ padded_zip }}</p>\n{% endif %}\n\n\n{% if product.metafields.custom.shipping_disclaimer.value %}\n  <p>{{ product.metafields.custom.shipping_disclaimer.value }}</p>\n{% endif %}",
+            "page": "",
+            "default_open": false,
+            "show_below_product_media": true
+          }
+        },
+        "collapsible_tab_j9cEGj": {
+          "type": "collapsible_tab",
+          "disabled": true,
+          "settings": {
+            "heading": "Product Options",
+            "heading_size": "h4",
+            "icon": "none",
+            "content": "",
+            "custom_liquid": "{%- liquid\n  assign has_options = false\n  assign pms_charges = product.metafields.custom.pms_charges.value\n  assign addition_imprint_charges = product.metafields.custom.addition_imprint_charges.value\n  assign imprint_method_charge = product.metafields.custom.imprint_method_charge.value\n  \n  if pms_charges != blank or addition_imprint_charges != blank or imprint_method_charge != blank\n    assign has_options = true\n  endif\n-%}\n\n{%- if has_options -%}\n  <style>\n    .product-options-container {\n      border: 1px solid rgba(var(--color-foreground), 0.1);\n      border-radius: 4px;\n      padding: 20px;\n      margin-bottom: 20px;\n      background-color: rgba(var(--color-background), 1);\n    }\n    .product-options-container h3 {\n      margin-bottom: 15px;\n      font-size: 1.8rem;\n      font-weight: 600;\n    }\n    .product-options-container p {\n      margin-bottom: 8px;\n      font-size: 1.5rem;\n      color: rgba(var(--color-foreground), 0.8);\n    }\n  </style>\n\n  {%- if pms_charges != blank -%}\n    {%- liquid\n      assign pms_str = pms_charges | downcase\n      assign price_found = false\n      assign price_value = 0\n      assign unit_part = ''\n      \n      if pms_str contains '$'\n        assign parts = pms_charges | split: '$'\n        if parts.size > 1\n          assign price_part = parts[1] | split: '(' | first | split: ')' | first | split: ' ' | first\n          if price_part != blank\n            assign price_value = price_part | plus: 0\n            if price_value > 0\n              assign price_found = true\n              assign unit_part = pms_charges | remove: price_part | remove: '$' | remove: '(V)' | strip\n              if unit_part == blank\n                assign unit_parts = pms_str | split: 'per'\n                if unit_parts.size > 1\n                  assign unit_part = unit_parts[1] | strip\n                endif\n              endif\n            endif\n          endif\n        endif\n      endif\n    -%}\n    <div class=\"product-options-container\">\n      <h3>PMS Charge</h3>\n      {%- if price_found -%}\n        <p>Price: ${{ price_value }} {{ unit_part | downcase }}</p>\n      {%- else -%}\n        <p>{{ pms_charges }}</p>\n      {%- endif -%}\n    </div>\n  {%- endif -%}\n\n  {%- if addition_imprint_charges != blank -%}\n    {%- liquid\n      assign charges_str = addition_imprint_charges | downcase\n      assign container_title = '2nd Location Run Charge'\n      \n      if charges_str contains 'per color'\n        assign container_title = '2nd Color Run Charge'\n      elsif charges_str contains '2nd pole imprint'\n        assign container_title = '2nd Pole Golf Balls'\n      endif\n      \n      assign price_found = false\n      assign setup_found = false\n      assign main_price = 0\n      assign setup_price = 0\n      assign price_unit = 'each'\n      \n      if addition_imprint_charges contains '$'\n        assign dollar_parts = addition_imprint_charges | split: '$'\n        for part in dollar_parts\n          if forloop.first\n            continue\n          endif\n          \n          assign clean_part = part | strip\n          assign num_part = clean_part | split: '(' | first | split: '{' | first | split: ')' | first | split: ' ' | first\n          \n          if num_part != blank\n            assign num_value = num_part | plus: 0\n            if num_value > 0\n              assign lower_part = clean_part | downcase\n              if lower_part contains 'setup' or lower_part contains 'charge'\n                unless setup_found\n                  assign setup_price = num_value\n                  assign setup_found = true\n                endunless\n              else\n                unless price_found\n                  assign main_price = num_value\n                  assign price_found = true\n                  \n                  if lower_part contains 'dozen'\n                    assign price_unit = 'per dozen'\n                  else\n                    assign price_unit = 'each'\n                  endif\n                endunless\n              endif\n            endif\n          endif\n        endfor\n      endif\n    -%}\n    <div class=\"product-options-container\">\n      <h3>{{ container_title }}</h3>\n      {%- if price_found -%}\n        <p>Price: ${{ main_price }} {{ price_unit }}</p>\n      {%- endif -%}\n      {%- if setup_found -%}\n        {%- if container_title == '2nd Location Run Charge' -%}\n          <p>Setup Charge: ${{ setup_price }} per location</p>\n        {%- else -%}\n          <p>Setup Charge: ${{ setup_price }} each</p>\n        {%- endif -%}\n      {%- endif -%}\n      {%- unless price_found or setup_found -%}\n        <p>{{ addition_imprint_charges }}</p>\n      {%- endunless -%}\n    </div>\n  {%- endif -%}\n\n  {%- if imprint_method_charge != blank -%}\n    {%- liquid\n      assign price_found = false\n      assign setup_found = false\n      assign main_price = 0\n      assign setup_price = 0\n      \n      if imprint_method_charge contains '$'\n        assign dollar_parts = imprint_method_charge | split: '$'\n        for part in dollar_parts\n          if forloop.first\n            continue\n          endif\n          \n          assign clean_part = part | strip\n          assign num_part = clean_part | split: '(' | first | split: ' ' | first\n          \n          if num_part != blank\n            assign num_value = num_part | plus: 0\n            if num_value > 0\n              assign lower_part = clean_part | downcase\n              if lower_part contains 'setup' or lower_part contains 'charge'\n                unless setup_found\n                  assign setup_price = num_value\n                  assign setup_found = true\n                endunless\n              elsif lower_part contains 'per pc' or lower_part contains 'per piece'\n                unless price_found\n                  assign main_price = num_value\n                  assign price_found = true\n                endunless\n              endif\n            endif\n          endif\n        endfor\n      endif\n    -%}\n    <div class=\"product-options-container\">\n      <h3>FCD Upgrade Charge</h3>\n      {%- if price_found -%}\n        <p>Price: ${{ main_price }} each</p>\n      {%- endif -%}\n      {%- if setup_found -%}\n        <p>Setup Charge: ${{ setup_price }} each</p>\n      {%- endif -%}\n      {%- unless price_found or setup_found -%}\n        <p>{{ imprint_method_charge }}</p>\n      {%- endunless -%}\n    </div>\n  {%- endif -%}\n\n{%- else -%}\n  <p>No product options available for this product.</p>\n{%- endif -%}",
+            "page": "",
+            "default_open": false,
+            "show_below_product_media": true
+          }
+        },
+        "collapsible_tab_69TUGG": {
+          "type": "collapsible_tab",
+          "disabled": true,
+          "settings": {
+            "heading": "Sales Tools",
+            "heading_size": "h4",
+            "icon": "none",
+            "content": "",
+            "custom_liquid": "{%- liquid\n  assign product_title_lower = product.title | downcase\n  assign contains_golf_balls = false\n  assign contains_wilson_50 = false\n  assign contains_wilson_duo_soft = false\n  assign contains_callaway_dozen_box = false\n  assign contains_dozen_titleist = false\n  assign contains_baseball = false\n  assign contains_keychain = false\n  assign contains_acrylic = false\n  assign contains_bat = false\n  assign contains_cooler = false\n  assign contains_synthetic = false\n  assign show_golf_ball_template = false\n  assign show_baseball_template = false\n  assign template_shown = false\n  \n  if product_title_lower contains 'golf balls'\n    assign contains_golf_balls = true\n  endif\n  \n  if product_title_lower contains 'wilson 50'\n    assign contains_wilson_50 = true\n  endif\n  \n  if product_title_lower contains 'wilson duo soft'\n    assign contains_wilson_duo_soft = true\n  endif\n  \n  if product_title_lower contains 'callaway dozen box'\n    assign contains_callaway_dozen_box = true\n  endif\n  \n  if product_title_lower contains 'dozen titleist'\n    assign contains_dozen_titleist = true\n  endif\n  \n  if product_title_lower contains 'baseball'\n    assign contains_baseball = true\n  endif\n  \n  if product_title_lower contains 'keychain'\n    assign contains_keychain = true\n  endif\n  \n  if product_title_lower contains 'acrylic'\n    assign contains_acrylic = true\n  endif\n  \n  if product_title_lower contains 'bat'\n    assign contains_bat = true\n  endif\n  \n  if product_title_lower contains 'cooler'\n    assign contains_cooler = true\n  endif\n  \n  if product_title_lower contains 'synthetic'\n    assign contains_synthetic = true\n  endif\n  \n  if contains_golf_balls and contains_wilson_50 == false and contains_wilson_duo_soft == false\n    assign show_golf_ball_template = true\n    assign template_shown = true\n  endif\n  \n  if contains_callaway_dozen_box\n    assign show_golf_ball_template = true\n    assign template_shown = true\n  endif\n  \n  if contains_dozen_titleist\n    assign show_golf_ball_template = true\n    assign template_shown = true\n  endif\n  \n  if contains_baseball and contains_keychain == false and contains_acrylic == false and contains_bat == false and contains_cooler == false and contains_synthetic == false\n    assign show_baseball_template = true\n    assign template_shown = true\n  endif\n-%}\n\n<style>\n  .sales-tools-container {\n    border: 1px solid rgba(var(--color-foreground), 0.1);\n    border-radius: 4px;\n    padding: 20px;\n    background-color: rgba(var(--color-background), 1);\n    margin-top: 20px;\n  }\n  .sales-tools-container h3 {\n    margin-bottom: 15px;\n    font-size: 1.8rem;\n    font-weight: 600;\n  }\n  .sales-tools-container p {\n    margin-bottom: 15px;\n    font-size: 1.5rem;\n    color: rgba(var(--color-foreground), 0.8);\n  }\n  .sales-tools-container a {\n    color: rgba(var(--color-foreground), 1);\n    text-decoration: underline;\n    font-size: 1.6rem;\n    display: block;\n    margin-bottom: 10px;\n  }\n  .sales-tools-container .no-template {\n    color: rgba(var(--color-foreground), 0.6);\n    font-size: 1.5rem;\n    margin-bottom: 10px;\n  }\n</style>\n\n<div class=\"sales-tools-container\">\n  <h3>Artwork Templates</h3>\n  <p>Templates for artwork layout and margin information.</p>\n  \n  {%- if show_golf_ball_template -%}\n    <a href=\"https://s3.distributorcentral.com/uploads/6/E/6EA141D552BAB890BA6B424986067D97.pdf\" target=\"_blank\">View Golf Ball Template</a>\n  {%- endif -%}\n  \n  {%- if show_baseball_template -%}\n    <a href=\"https://s3.distributorcentral.com/uploads/0/C/0C560CA6CD4EFCAAA0BC14E6970CDE38.pdf\" target=\"_blank\">Template</a>\n  {%- endif -%}\n  \n  {%- unless template_shown -%}\n    <p class=\"no-template\">Template not available for this product.</p>\n  {%- endunless -%}\n</div>",
+            "page": "",
+            "default_open": false,
+            "show_below_product_media": true
+          }
+        },
+        "collapsible_tab_PmrKCe": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Sales Tools",
+            "heading_size": "h4",
+            "icon": "none",
+            "content": "",
+            "custom_liquid": "{%- assign sales_tool_templates = product.metafields.custom.sales_tool_template.value -%}\n{%- assign sales_tool_sales_sheet = product.metafields.custom['sales_tool_sales_sheet'] | default: '' | strip -%}\n\n{%- assign sales_sheet_filename = '' -%}\n{%- if sales_tool_sales_sheet != '' -%}\n  {%- assign sales_sheet_filename = sales_tool_sales_sheet | split: '/' | last -%}\n  {%- assign sales_sheet_filename = sales_sheet_filename | split: '?' | first -%}\n{%- endif -%}\n\n<style>\n  .sales-tools-container {\n    border: 1px solid rgba(var(--color-foreground), 0.1);\n    border-radius: 4px;\n    padding: 20px;\n    background-color: rgba(var(--color-background), 1);\n    margin-top: 20px;\n  }\n  .sales-tools-container h3 {\n    margin-bottom: 15px;\n    font-size: 1.8rem;\n    font-weight: 600;\n  }\n  .sales-tools-container p {\n    margin-bottom: 15px;\n    font-size: 1.5rem;\n    color: rgba(var(--color-foreground), 0.8);\n  }\n  .sales-tools-container a {\n    color: rgba(var(--color-foreground), 1);\n    text-decoration: underline;\n    font-size: 1.6rem;\n    display: block;\n    margin-bottom: 10px;\n  }\n  .no-template {\n    color: rgba(var(--color-foreground), 0.6);\n    font-size: 1.5rem;\n  }\n</style>\n\n<div class=\"sales-tools-container\">\n  {%- if sales_tool_templates != blank and sales_tool_templates.size > 0 -%}\n    <h3>Artwork Templates</h3>\n    <p>Templates for artwork layout and margin information.</p>\n    {%- for template_file in sales_tool_templates -%}\n      {%- assign tpl_url = template_file.url -%}\n      {%- assign tpl_display = template_file.alt -%}\n      {%- if tpl_display == blank -%}\n        {%- assign tpl_display = tpl_url | split: '/' | last | split: '?' | first -%}\n      {%- endif -%}\n      <a href=\"{{ tpl_url }}\" target=\"_blank\" rel=\"noopener\">\n        {{ tpl_display }}\n      </a>\n    {%- endfor -%}\n  {%- endif -%}\n\n  {%- if sales_tool_sales_sheet != '' -%}\n    <h3>Sales Sheet</h3>\n    <a href=\"{{ sales_tool_sales_sheet }}\" target=\"_blank\" rel=\"noopener\">\n      {{ sales_sheet_filename }}\n    </a>\n  {%- endif -%}\n\n  {%- if sales_tool_templates == blank and sales_tool_sales_sheet == '' -%}\n    <p class=\"no-template\">No sales tools for this product.</p>\n  {%- endif -%}\n</div>",
+            "page": "",
+            "default_open": false,
+            "show_below_product_media": true
+          }
+        },
+        "collapsible_tab_CG7Tb4": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Inventory",
+            "heading_size": "h4",
+            "icon": "none",
+            "content": "",
+            "custom_liquid": "{%- if product.variants.size > 0 -%}\n  <style>\n    .inventory-table {\n      width: 100%;\n      border-collapse: collapse;\n      margin-top: 20px;\n    }\n    .inventory-table th {\n      font-weight: 600;\n      text-align: left;\n      padding: 12px;\n      border: 1px solid rgba(var(--color-foreground), 0.1);\n    }\n    .inventory-table td {\n      padding: 12px;\n      border: 1px solid rgba(var(--color-foreground), 0.1);\n    }\n    .inventory-table tbody tr:hover {\n      background-color: rgba(var(--color-foreground), 0.05);\n    }\n  </style>\n  <div class=\"inventory-list\">\n    <table class=\"inventory-table\">\n      <thead>\n        <tr>\n          <th>Variant</th>\n          <th>SKU</th>\n          <th>Inventory</th>\n          <th>Status</th>\n        </tr>\n      </thead>\n      <tbody>\n        {%- for variant in product.variants -%}\n          {%- liquid\n            assign variant_title = variant.title | default: variant.name | default: 'Default'\n            assign variant_sku = variant.sku | default: 'N/A'\n            assign inventory_qty = 'N/A'\n            assign inventory_status = 'Unknown'\n            \n            if variant.inventory_management == 'shopify'\n              assign inventory_qty = variant.inventory_quantity\n              if variant.inventory_quantity > 0\n                if variant.inventory_quantity <= 10\n                  assign inventory_status = 'Low Stock'\n                else\n                  assign inventory_status = 'In Stock'\n                endif\n              else\n                if variant.inventory_policy == 'continue'\n                  assign inventory_status = 'Backorder'\n                else\n                  assign inventory_status = 'Out of Stock'\n                endif\n              endif\n            else\n              assign inventory_qty = 'Not Tracked'\n              if variant.available\n                assign inventory_status = 'Available'\n              else\n                assign inventory_status = 'Unavailable'\n              endif\n            endif\n          -%}\n          <tr>\n            <td>{{ variant_title }}</td>\n            <td>{{ variant_sku }}</td>\n            <td>{{ inventory_qty }}</td>\n            <td>{{ inventory_status }}</td>\n          </tr>\n        {%- endfor -%}\n      </tbody>\n    </table>\n  </div>\n{%- else -%}\n  <p>No variant information available.</p>\n{%- endif -%}",
+            "page": "",
+            "default_open": false,
+            "show_below_product_media": true
+          }
+        },
+        "divider_pPz3Kw": {
+          "type": "divider",
+          "disabled": true,
+          "settings": {
+            "show_below_product_media": false
+          }
+        },
+        "social_sharing": {
+          "type": "social_sharing",
+          "disabled": true,
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "badges",
+        "title",
+        "meta",
+        "custom_liquid_NeG9d7",
+        "price",
+        "icon_with_text",
+        "inventory",
+        "description",
+        "custom_liquid_TUNymW",
+        "custom_liquid_CFcxyw",
+        "pricing_details_NphPi7",
+        "pricing_details_v2_block",
+        "custom_liquid_McNW3C",
+        "custom_liquid_UzJNyy",
+        "discount_codes_FyMCbg",
+        "custom_liquid_FbHCrd",
+        "variant_picker",
+        "imprintboard_ball_pro_customizer_button_qtzRWW",
+        "custom_liquid_TRJbFW",
+        "custom_liquid_7FQMmq",
+        "custom_liquid_XwYW4Q",
+        "custom_liquid_y8Kb3t",
+        "ups_rate_calculator_shipping_estimator_Jpwk4T",
+        "icon_with_text_UAYgQU",
+        "pickup_availability",
+        "complementary",
+        "inventory_by_date",
+        "collapsible-row-1",
+        "collapsible-row-3",
+        "collapsible_tab_jcU9jd",
+        "collapsible-row-2",
+        "collapsible_tab_j9cEGj",
+        "collapsible_tab_69TUGG",
+        "collapsible_tab_PmrKCe",
+        "collapsible_tab_CG7Tb4",
+        "divider_pPz3Kw",
+        "social_sharing"
+      ],
+      "custom_css": [
+        "@media (min-width: 1280px) {.product {padding-inline: 5rem; }}"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "use_color_scheme_in_container": false,
+        "enable_sticky_info": true,
+        "media_size": "small",
+        "gallery_layout": "vertical-carousel",
+        "mobile_thumbnails": "show",
+        "show_image_border": false,
+        "enable_image_zoom": true,
+        "enable_video_looping": true,
+        "padding_top": 0,
+        "padding_bottom": 60
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "scheme-1",
+        "section_header_alignment": "left",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "You May Also Like",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h2",
+        "description": "",
+        "limit": 6,
+        "columns": 5,
+        "column_gap": "medium",
+        "row_gap": "inherit",
+        "enable_slider": true,
+        "navigation_position": "bottom",
+        "pcard_image_ratio": "",
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "show_progress_bar": true,
+        "padding_top": 60,
+        "padding_bottom": 62,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "testimonials_8JHr3L": {
+      "type": "testimonials",
+      "blocks": {
+        "testimonial_dhi3Xf": {
+          "type": "testimonial",
+          "settings": {
+            "icon": "none",
+            "heading": "Testimonials",
+            "text": "<p>“I am extremely happy about both design and comfort. I am a furniture designer myself, and your product makes me happy.”</p>",
+            "author": "Stephanie L.",
+            "bio": "Verified Buyer",
+            "product": ""
+          }
+        },
+        "testimonial_D7Mq7i": {
+          "type": "testimonial",
+          "settings": {
+            "icon": "none",
+            "heading": "Testimonials",
+            "text": "<p>The story behind, sustainable production, and the risk-free feeling with the free return policy make this a great choice.</p>",
+            "author": "Rachel M.",
+            "bio": "Verified Buyer",
+            "product": ""
+          }
+        },
+        "testimonial_33tAjm": {
+          "type": "testimonial",
+          "settings": {
+            "icon": "none",
+            "heading": "Testimonials",
+            "text": "<p>“High-quality furniture, crafted with passion and care, fantastic in appearance and use, reasonably priced, and excellent custome.”</p>",
+            "author": "Emily J.",
+            "bio": "Verified Buyer",
+            "product": ""
+          }
+        },
+        "testimonial_dDRMwy": {
+          "type": "testimonial",
+          "settings": {
+            "icon": "none",
+            "heading": "Testimonials",
+            "text": "<p>The craftsmanship, eco-friendly materials, and excellent customer service truly make this product an outstanding standout.</p>",
+            "author": "Sarah T.",
+            "bio": "Verified Buyer",
+            "product": ""
+          }
+        }
+      },
+      "block_order": [
+        "testimonial_dhi3Xf",
+        "testimonial_D7Mq7i",
+        "testimonial_33tAjm",
+        "testimonial_dDRMwy"
+      ],
+      "disabled": true,
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "scheme-3",
+        "section_header_alignment": "left",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "Clients Love Us",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h2",
+        "description": "",
+        "text_size": "text-base",
+        "layout": "standard",
+        "card_color_scheme": "",
+        "card_content_color_scheme": "",
+        "card_image_ratio": "adapt",
+        "card_heading_size": "h4",
+        "card_text_size": "text-base",
+        "author_info_layout": "vertical",
+        "card_trigger_behavior": "click",
+        "show_image": true,
+        "show_author_image": true,
+        "columns_desktop": 3,
+        "column_gap": "2xs",
+        "row_gap": "inherit",
+        "enable_slider": true,
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "show_progress_bar": true,
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "tabs_content_8rnbnj": {
+      "type": "tabs-content",
+      "blocks": {
+        "image_with_text_iLTdLe": {
+          "type": "image_with_text",
+          "settings": {
+            "navigation_title": "Specifications",
+            "image": "{{ product.featured_image }}",
+            "desktop_image_position": "left",
+            "image_aspect_ratio": "adapt",
+            "heading": "{{ product.title }}",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h3",
+            "subheading": "",
+            "description": "{{ product.description }}",
+            "description_size": "text-base",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "btn--primary",
+            "button_icon": "none",
+            "icon_1": "check",
+            "heading_1": "",
+            "icon_2": "check",
+            "heading_2": "",
+            "icon_3": "check",
+            "heading_3": ""
+          }
+        },
+        "image_with_text_LQUEir": {
+          "type": "image_with_text",
+          "settings": {
+            "navigation_title": "Golf Tournament Resources",
+            "image": "shopify://shop_images/courtney-cook-SsIIw_MET0E-unsplash.jpg",
+            "desktop_image_position": "left",
+            "image_aspect_ratio": "adapt",
+            "heading": "Golf Tournament Resources",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h3",
+            "subheading": "",
+            "description": "<p>Our Golf Tournament Planner provides a step-by-step approach to planning a successful event. Our Golf Tournament Promotional Product Guide helps you choose the right products to maximize branding opportunities. The Golf Glove Tournament Fitting Program offers an easy way to ensure the perfect fit for golf gloves.<br/><br/></p>",
+            "description_size": "text-base",
+            "button_label": "Learn More",
+            "button_link": "shopify://pages/golf-tournament-resources",
+            "button_style": "btn--primary",
+            "button_icon": "none",
+            "icon_1": "check",
+            "heading_1": "",
+            "icon_2": "check",
+            "heading_2": "",
+            "icon_3": "check",
+            "heading_3": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_with_text_iLTdLe",
+        "image_with_text_LQUEir"
+      ],
+      "custom_css": [
+        "@media (min-width: 1024px) {.tabs__panel {padding-inline: 5rem; }}"
+      ],
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "navigation_style": "headings",
+        "navigation_alignment": "start",
+        "padding_top": 60,
+        "padding_bottom": 0,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "multicolumn_Mxt4d3": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_ppme79": {
+          "type": "column",
+          "settings": {
+            "title": "Make it yours",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h4",
+            "text": "<p>Personalize your furniture to match your unique style, with customizable options for colors, finishes, materials, and fabrics.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "btn--underline",
+            "button_icon": "none"
+          }
+        },
+        "column_6eYcFq": {
+          "type": "column",
+          "settings": {
+            "title": "Climate footprint",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h4",
+            "text": "<p>Discover the eco-impact with insights into our materials, production processes, and commitment to sustainable practices.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "btn--underline",
+            "button_icon": "none"
+          }
+        },
+        "column_6mMR7m": {
+          "type": "column",
+          "settings": {
+            "title": "Sustainability",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h4",
+            "text": "<p>Learn how our furniture supports a greener future through responsible sourcing and eco-friendly manufacturing practices.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "btn--underline",
+            "button_icon": "none"
+          }
+        },
+        "column_Lix6qc": {
+          "type": "column",
+          "settings": {
+            "title": "All eco-certified",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h4",
+            "text": "<p>Rest assured knowing every piece is crafted with care, meeting rigorous eco-certification standards for sustainability.</p>",
+            "text_size": "text-base",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "btn--underline",
+            "button_icon": "none"
+          }
+        }
+      },
+      "block_order": [
+        "column_ppme79",
+        "column_6eYcFq",
+        "column_6mMR7m",
+        "column_Lix6qc"
+      ],
+      "disabled": true,
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "section_header_alignment": "center",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "Take A Closer Look",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h2",
+        "description": "",
+        "text_size": "text-base",
+        "button_label": "",
+        "button_link": "",
+        "button_style": "btn--underline",
+        "button_icon": "none",
+        "content_alignment": "left",
+        "show_col_count": true,
+        "show_image": true,
+        "columns_desktop": 4,
+        "column_gap": "medium",
+        "row_gap": "inherit",
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "padding_top": 60,
+        "padding_bottom": 0
+      }
+    },
+    "quick_comparison_table_p9rdxW": {
+      "type": "quick-comparison-table",
+      "blocks": {
+        "info_pEKVwb": {
+          "type": "info",
+          "settings": {
+            "show_view_details_button": true
+          }
+        },
+        "description_ym9hXF": {
+          "type": "description",
+          "settings": {
+            "text_line_limit": "3-lines",
+            "show_view_more_button": false
+          }
+        },
+        "price_adCEcV": {
+          "type": "price",
+          "settings": {}
+        },
+        "variants_Q6kD7j": {
+          "type": "variants",
+          "settings": {}
+        },
+        "vendor_kN7AnX": {
+          "type": "vendor",
+          "settings": {}
+        },
+        "type_ttCzqK": {
+          "type": "type",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "info_pEKVwb",
+        "description_ym9hXF",
+        "price_adCEcV",
+        "variants_Q6kD7j",
+        "vendor_kN7AnX",
+        "type_ttCzqK"
+      ],
+      "disabled": true,
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "scheme-1",
+        "section_header_alignment": "center",
+        "section_header_alignment_mobile": "inherit",
+        "heading": "Compare With Similar Items",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h2",
+        "description": "",
+        "description_size": "text-base",
+        "limit": 4,
+        "padding_top": 60,
+        "padding_bottom": 100,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "image_with_text_kqXfRQ": {
+      "type": "image-with-text",
+      "blocks": {
+        "subheading_taVjEY": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "Book Now"
+          }
+        },
+        "heading_ngPQi3": {
+          "type": "heading",
+          "settings": {
+            "heading": "Schedule Your Virtual Meeting Today",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h1"
+          }
+        },
+        "text_nF69XB": {
+          "type": "text",
+          "settings": {
+            "text": "<p>We offer convenient and personalized online consultations to meet your needs. Whether you're looking to discuss our products, services, or need support, we're here to help.</p>",
+            "subtext_color": true
+          }
+        },
+        "button_fQzFTq": {
+          "type": "button",
+          "settings": {
+            "button_label": "Learn More",
+            "button_link": "shopify://pages/virtual-meetings",
+            "button_style": "btn--primary",
+            "button_icon": "none"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_taVjEY",
+        "heading_ngPQi3",
+        "text_nF69XB",
+        "button_fQzFTq"
+      ],
+      "custom_css": [
+        "@media (min-width: 1024px) {.image-with-text__wrapper {padding-inline: 5rem; } .image-with-text__content {--text-margin-top: 2rem; }}",
+        ".image-with-text__content {max-width: 52rem;}"
+      ],
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "image": "shopify://shop_images/AdobeStock_378144124.jpg",
+        "image_position": "right",
+        "image_width": 50,
+        "desktop_content_position": "center",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "inherit",
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    },
+    "custom_content_aJPNXb": {
+      "type": "custom-content",
+      "blocks": {
+        "lookbook_card_hotspot_rJaXPd": {
+          "type": "lookbook_card_hotspot",
+          "settings": {
+            "icon_style": "dot",
+            "icon_color": "light",
+            "image_ratio": "adapt",
+            "product_1": "pasant-candle-copy",
+            "top_1": 60,
+            "left_1": 43,
+            "product_2": "pillar-table",
+            "top_2": 64,
+            "left_2": 88,
+            "product_3": "",
+            "top_3": 0,
+            "left_3": 0,
+            "product_4": "",
+            "top_4": 0,
+            "left_4": 0,
+            "width": "33%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "lookbook_card_hotspot_p44hjW": {
+          "type": "lookbook_card_hotspot",
+          "settings": {
+            "icon_style": "dot",
+            "icon_color": "light",
+            "image_ratio": "adapt",
+            "product_1": "ray-table-lamp-1",
+            "top_1": 17,
+            "left_1": 66,
+            "product_2": "ray-sofa-basic",
+            "top_2": 35,
+            "left_2": 2,
+            "product_3": "etruscan-jug-copy",
+            "top_3": 70,
+            "left_3": 50,
+            "product_4": "",
+            "top_4": 9,
+            "left_4": 63,
+            "width": "33%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        },
+        "lookbook_card_hotspot_3GJzqy": {
+          "type": "lookbook_card_hotspot",
+          "settings": {
+            "icon_style": "dot",
+            "icon_color": "light",
+            "image_ratio": "adapt",
+            "product_1": "arc-chair",
+            "top_1": 91,
+            "left_1": 20,
+            "product_2": "beam-table",
+            "top_2": 53,
+            "left_2": 61,
+            "product_3": "",
+            "top_3": 62,
+            "left_3": 43,
+            "product_4": "",
+            "top_4": 9,
+            "left_4": 63,
+            "width": "33%",
+            "alignment": "center",
+            "block_custom_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "lookbook_card_hotspot_rJaXPd",
+        "lookbook_card_hotspot_p44hjW",
+        "lookbook_card_hotspot_3GJzqy"
+      ],
+      "disabled": true,
+      "custom_css": [
+        ".swipe-mobile {--column-width-mobile: 82vw;}"
+      ],
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "scheme-3",
+        "enable_sticky_column": false,
+        "section_header_alignment": "center",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "Get Inspired by Spaces",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h2",
+        "description": "",
+        "text_size": "text-base",
+        "column_gap": "medium",
+        "row_gap": "large",
+        "swipe_on_mobile": true,
+        "columns_mobile": "1",
+        "padding_top": 60,
+        "padding_bottom": 100,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "multicolumn_icon_3qbxHn": {
+      "type": "multicolumn-icon",
+      "blocks": {
+        "column_9Xh69D": {
+          "type": "column",
+          "settings": {
+            "icon": "chat",
+            "max_width": 60,
+            "max_width_mb": 60,
+            "title": "Free Shipping",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h4",
+            "heading_font": "heading",
+            "text": "<p>All orders over $500 are delivered to your doorstep at no extra charge.</p>",
+            "text_size": "text-base",
+            "button_label": "Shipping Details",
+            "button_link": "",
+            "button_style": "btn--plain",
+            "button_icon": "caret-right"
+          }
+        },
+        "column_EapCmy": {
+          "type": "column",
+          "settings": {
+            "icon": "chat",
+            "max_width": 60,
+            "max_width_mb": 60,
+            "title": "30-Days Free Returns",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h4",
+            "heading_font": "heading",
+            "text": "<p>Enjoy the freedom of stress-free shopping with our hassle-free and return policy.</p>",
+            "text_size": "text-base",
+            "button_label": "Return Policy",
+            "button_link": "",
+            "button_style": "btn--plain",
+            "button_icon": "caret-right"
+          }
+        },
+        "column_y3rE9Y": {
+          "type": "column",
+          "settings": {
+            "icon": "chat",
+            "max_width": 60,
+            "max_width_mb": 60,
+            "title": "Secure Payment",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "h4",
+            "heading_font": "heading",
+            "text": "<p>Shop with confidence knowing your payments are secure and your information</p>",
+            "text_size": "text-base",
+            "button_label": "More About Payment",
+            "button_link": "",
+            "button_style": "btn--plain",
+            "button_icon": "caret-right"
+          }
+        }
+      },
+      "block_order": [
+        "column_9Xh69D",
+        "column_EapCmy",
+        "column_y3rE9Y"
+      ],
+      "disabled": true,
+      "custom_css": [
+        ".multicolumn-card__text p {max-width: 33rem;}"
+      ],
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "header_layout": "vertical",
+        "section_header_alignment": "center",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "Free shipping on almost everything",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h2",
+        "description": "",
+        "text_size": "text-base",
+        "button_label": "",
+        "button_link": "",
+        "button_style": "btn--underline",
+        "button_icon": "none",
+        "enable_sticky": false,
+        "card_color_scheme": "",
+        "content_alignment": "center",
+        "image_position": "top",
+        "icon_color": "#1d349a",
+        "columns_desktop": 3,
+        "column_gap": "large",
+        "row_gap": "inherit",
+        "show_divider_col": false,
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "scrolling_gallery_image_eqULib": {
+      "type": "scrolling-gallery-image",
+      "blocks": {
+        "gallery_RzbQhE": {
+          "type": "gallery",
+          "settings": {
+            "color_scheme": "",
+            "image_link": "",
+            "social_media": "instagram",
+            "heading": "thisisaaccount"
+          }
+        },
+        "gallery_WMR7mX": {
+          "type": "gallery",
+          "settings": {
+            "color_scheme": "",
+            "image_link": "",
+            "social_media": "instagram",
+            "heading": "furniturelover"
+          }
+        },
+        "gallery_FwhcHj": {
+          "type": "gallery",
+          "settings": {
+            "color_scheme": "",
+            "image_link": "",
+            "social_media": "instagram",
+            "heading": "thisisaaccount"
+          }
+        },
+        "gallery_EM4VKr": {
+          "type": "gallery",
+          "settings": {
+            "color_scheme": "",
+            "image_link": "",
+            "social_media": "instagram",
+            "heading": "baddyjam"
+          }
+        },
+        "gallery_gxWzJR": {
+          "type": "gallery",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "image_link": "",
+            "social_media": "instagram",
+            "heading": "liamwealthy"
+          }
+        },
+        "gallery_3CDe4q": {
+          "type": "gallery",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "image_link": "",
+            "social_media": "instagram",
+            "heading": "baddyjam"
+          }
+        },
+        "gallery_AtjdbC": {
+          "type": "gallery",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "image_link": "",
+            "social_media": "instagram",
+            "heading": "liamwealthy"
+          }
+        }
+      },
+      "block_order": [
+        "gallery_RzbQhE",
+        "gallery_WMR7mX",
+        "gallery_FwhcHj",
+        "gallery_EM4VKr",
+        "gallery_gxWzJR",
+        "gallery_3CDe4q",
+        "gallery_AtjdbC"
+      ],
+      "disabled": true,
+      "settings": {
+        "color_scheme": "scheme-2",
+        "section_header_alignment": "center",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "We’re on Gram",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h1",
+        "description": "",
+        "text_size": "text-base",
+        "show_button_on_top": false,
+        "button_label": "@garage_store",
+        "button_link": "",
+        "button_style": "btn--underline",
+        "button_icon": "none",
+        "direction": "left",
+        "speed": 0.1,
+        "pause_on_hover": true,
+        "column_gap": "medium",
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "collapsible_tabs_qVpDmL": {
+      "type": "collapsible-tabs",
+      "blocks": {
+        "collapsible_item_bTTtBC": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "none",
+            "heading": "Where do I send my orders?",
+            "content": "<p><a href=\"mailto:sales@ballpro.com\">sales@ballpro.com</a></p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": false
+          }
+        },
+        "collapsible_item_qbyMrr": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "none",
+            "heading": "How do I place a valid order?",
+            "content": "<p>To avoid delays, include your PO# and company name in the email subject line. Orders must be in PO format and include:</p><ul><li>Company Name, Address, Phone</li><li>ASI Number (if applicable)</li><li>Contact Name & Email</li><li>Ship-To Address</li><li>Special Shipping Instructions</li><li>Required In-Hands Date</li><li>Item Number(s), Quantity & Color</li><li>Proof Preference</li><li>Logo Description</li><li>PMS# for Imprint Colors</li><li>Logo Placement & Size</li><li>On Reorders - Previous PO# & Date</li></ul>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": false
+          }
+        },
+        "collapsible_item_dzbUBT": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "none",
+            "heading": "Where do I send quote requests, product info, or order status updates?",
+            "content": "<p><a href=\"mailto:sales@ballpro.com\">sales@ballpro.com</a>(requests forwarded to your assigned rep)</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": false
+          }
+        },
+        "collapsible_item_QTha6g": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "none",
+            "heading": "Do you offer rush service?",
+            "content": "<p>Yes. Orders must be received by 1 PM CST with approved PO, artwork, and credit. Proofs not available for rush orders.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": false
+          }
+        }
+      },
+      "block_order": [
+        "collapsible_item_bTTtBC",
+        "collapsible_item_qbyMrr",
+        "collapsible_item_dzbUBT",
+        "collapsible_item_QTha6g"
+      ],
+      "name": "t:sections.collapsible-tabs.name",
+      "settings": {
+        "container": "narrow",
+        "color_scheme": "scheme-info",
+        "header_layout": "vertical",
+        "section_header_alignment": "center",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "FAQ",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h1",
+        "description": "",
+        "text_size": "text-base",
+        "button_label": "",
+        "button_link": "",
+        "button_style": "btn--primary",
+        "button_icon": "none",
+        "column_gap": "large",
+        "row_gap": "inherit",
+        "item_style": "standard",
+        "item_color_scheme": "scheme-3",
+        "item_heading_font": "heading",
+        "item_heading_size": "h4",
+        "item_icon_size": "extra-large",
+        "padding_top": 84,
+        "padding_bottom": 100,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "1769802458fe83b2ae": {
+      "type": "apps",
+      "blocks": {
+        "ups_rate_calculator_shipping_estimator_QyNBG8": {
+          "type": "shopify://apps/ups-rate-calculator/blocks/shipping-estimator/019c1053-4166-7ffb-91b2-b6b6e2b41971",
+          "settings": {
+            "collection_handles": "",
+            "factory_flat_rate": "1.75",
+            "factory_flat_rate_message": "Shipping: $__RATE__ per dozen within the 48 contiguous states. For Hawaii and Alaska, please call for a freight quote.",
+            "markup_percentage": "5",
+            "origin_zip": "55423",
+            "content_alignment": "left",
+            "section_width": "full",
+            "button_color": "#0066cc",
+            "enabled_services": ""
+          }
+        }
+      },
+      "block_order": [
+        "ups_rate_calculator_shipping_estimator_QyNBG8"
+      ],
+      "disabled": true,
+      "settings": {
+        "include_margins": true,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    }
+  },
+  "order": [
+    "breadcrumbs",
+    "product_logo_customizer_h3qHQQ",
+    "main",
+    "related-products",
+    "testimonials_8JHr3L",
+    "tabs_content_8rnbnj",
+    "multicolumn_Mxt4d3",
+    "quick_comparison_table_p9rdxW",
+    "image_with_text_kqXfRQ",
+    "custom_content_aJPNXb",
+    "multicolumn_icon_3qbxHn",
+    "scrolling_gallery_image_eqULib",
+    "collapsible_tabs_qVpDmL",
+    "1769802458fe83b2ae"
+  ]
+}

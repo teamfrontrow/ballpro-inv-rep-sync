@@ -1,0 +1,80 @@
+<div class="logo-upload-widget" id="logo-upload-widget">
+  <div class="logo-upload-header">
+    <h3 class="logo-upload-title">{{ section.settings.title | default: 'Customize Your Product' }}</h3>
+    <p class="logo-upload-description">{{ section.settings.description | default: 'Upload your logo to see how it looks on this product' }}</p>
+  </div>
+
+  <div class="logo-upload-tabs">
+    <button class="tab-button active" data-tab="file-upload">Upload File</button>
+    <button class="tab-button" data-tab="url-input">Enter URL</button>
+  </div>
+
+  <!-- File Upload Tab -->
+  <div class="tab-content active" id="file-upload-tab">
+    <div class="file-upload-area" id="file-upload-area">
+      <input 
+        type="file" 
+        id="logo-file-input" 
+        accept="image/*" 
+        style="display: none;"
+      >
+      <div class="upload-placeholder">
+        <svg class="upload-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+        <p class="upload-text">Drag and drop your logo here</p>
+        <p class="upload-subtext">or</p>
+        <button type="button" class="btn btn-primary" id="browse-files-btn">Browse Files</button>
+        <p class="upload-formats">Supports: JPG, PNG, GIF, SVG (Max 10MB)</p>
+      </div>
+    </div>
+    <div class="file-preview" id="file-preview" style="display: none;">
+      <div class="preview-container">
+        <img id="preview-image" src="" alt="Logo preview">
+        <button type="button" class="remove-preview" id="remove-preview">×</button>
+      </div>
+      <p class="preview-filename" id="preview-filename"></p>
+    </div>
+  </div>
+
+  <!-- URL Input Tab -->
+  <div class="tab-content" id="url-input-tab">
+    <div class="url-input-group">
+      <label for="logo-url-input">Image URL</label>
+      <input 
+        type="url" 
+        id="logo-url-input" 
+        placeholder="https://example.com/logo.png"
+        class="url-input"
+      >
+      <button type="button" class="btn btn-secondary" id="validate-url-btn">Validate URL</button>
+    </div>
+    <div class="url-preview" id="url-preview" style="display: none;">
+      <div class="preview-container">
+        <img id="url-preview-image" src="" alt="Logo preview">
+        <button type="button" class="remove-preview" id="remove-url-preview">×</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Messages -->
+  <div class="error-message" id="error-message" style="display: none;"></div>
+
+  <!-- Action Buttons -->
+  <div class="logo-upload-actions">
+    <button type="button" class="btn btn-primary btn-generate" id="generate-sample-btn" disabled>
+      <span class="btn-text">Generate Customized Sample</span>
+      <span class="btn-loader" style="display: none;">
+        <svg class="spinner" width="20" height="20" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" opacity="0.25"></circle>
+          <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round">
+            <animateTransform attributeName="transform" type="rotate" dur="1s" values="0 12 12;360 12 12" repeatCount="indefinite"></animateTransform>
+          </path>
+        </svg>
+      </span>
+    </button>
+  </div>
+</div>
+

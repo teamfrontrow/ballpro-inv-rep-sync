@@ -1,0 +1,68 @@
+{% comment %}
+  Product Logo Customizer Section
+  Allows users to upload logos and generate customized product samples
+{% endcomment %}
+
+{% if section.settings.enable_customizer %}
+  <div class="product-logo-customizer-section" id="product-logo-customizer-{{ section.id }}">
+    {% render 'logo-upload-widget' %}
+    {% render 'product-sample-modal' %}
+  </div>
+
+  <script>
+    // Pass configuration to JavaScript
+    window.logoCustomizerConfig = {
+      apiProxyUrl: {{ section.settings.api_proxy_url | json }},
+      productAssetId: {{ section.settings.product_asset_id | json | default: '77ADAF4B723BC485CABE56964B763A50' }}
+    };
+  </script>
+
+  {{ 'logo-customizer.css' | asset_url | stylesheet_tag }}
+  {{ 'logo-customizer.js' | asset_url | script_tag }}
+{% endif %}
+
+{% schema %}
+{
+  "name": "Product Logo Customizer",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_customizer",
+      "label": "Enable Logo Customizer",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Customize Your Product"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Section Description",
+      "default": "Upload your logo to see how it looks on this product"
+    },
+    {
+      "type": "text",
+      "id": "api_proxy_url",
+      "label": "API Proxy URL",
+      "info": "URL to your ZoomCatalog API proxy endpoint",
+      "default": "/apps/zoomcatalog-proxy"
+    },
+    {
+      "type": "text",
+      "id": "product_asset_id",
+      "label": "Product Asset ID",
+      "info": "ZoomCatalog product asset identifier",
+      "default": "77ADAF4B723BC485CABE56964B763A50"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Logo Customizer"
+    }
+  ]
+}
+{% endschema %}
+

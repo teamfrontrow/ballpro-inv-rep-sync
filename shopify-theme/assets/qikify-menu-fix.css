@@ -1,0 +1,26 @@
+/*
+ * Qikify mega-menu mobile scroll fix
+ * ----------------------------------
+ * The Qikify app ("qikify-mega-menu-navigation") replaces the theme's mobile
+ * menu contents. It injects its <li> items directly into the drawer's
+ * <nav id="qikify-tmenu-mobilemenu" class="overflow-hidden flex-grow ...">,
+ * removing the theme's own scroll region (.menu-drawer__menus.v-scrollable).
+ *
+ * Because that <nav> keeps the theme's `.overflow-hidden` utility, a menu
+ * taller than the viewport is clipped with no scroll of its own — and the
+ * page behind it is scroll-locked (<body> gets `.modal-show` -> overflow:hidden)
+ * while the drawer is open. Result: the menu opens but can't be scrolled.
+ *
+ * Restore an internal vertical scroll on the Qikify nav. The `#id` selector
+ * outranks the `.overflow-hidden` class, so no !important is needed. The nav is
+ * a flex-grow child of the height-constrained .drawer__content column, so
+ * min-height:0 lets it shrink to the available space and scroll its overflow.
+ */
+#qikify-tmenu-mobilemenu {
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  /* Breathing room so the last item clears the bottom edge / iOS safe area. */
+  padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+}

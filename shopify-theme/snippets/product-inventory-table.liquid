@@ -1,0 +1,101 @@
+{%- liquid
+  assign inventory = product.metafields.custom.inventory_by_date.value
+  assign inventory_is_valid = false
+
+  if inventory.schema == 1 and inventory.styles != blank and inventory.styles.first != blank and inventory.colors != blank
+    assign inventory_is_valid = true
+  endif
+-%}
+
+{%- if inventory_is_valid -%}
+  {%- capture inventory_tables -%}
+    {%- for color in inventory.colors -%}
+      {%- capture inventory_rows -%}
+        {%- for size in color.sizes -%}
+          {%- if size.size != blank -%}
+            <tr>
+              <th scope="row">{{ size.size | escape }}</th>
+              <td>
+                {%- if size.current == nil -%}
+                  &ndash;
+                {%- else -%}
+                  {{- size.current -}}{%- if size.capped -%}+{%- endif -%}
+                {%- endif -%}
+              </td>
+              {%- for inventory_date in inventory.dates -%}
+                {%- if inventory_date != blank -%}
+                  {%- liquid
+                    assign future_quantity = nil
+                    assign future_is_capped = false
+                    for future_inventory in size.future
+                      if future_inventory.date == inventory_date
+                        assign future_quantity = future_inventory.qty
+                        assign future_is_capped = future_inventory.capped
+                        break
+                      endif
+                    endfor
+                  -%}
+                  <td>
+                    {%- if future_quantity == nil -%}
+                      &ndash;
+                    {%- else -%}
+                      {{- future_quantity -}}{%- if future_is_capped -%}+{%- endif -%}
+                    {%- endif -%}
+                  </td>
+                {%- endif -%}
+              {%- endfor -%}
+            </tr>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- assign inventory_rows = inventory_rows | strip -%}
+
+      {%- if color.color != blank and inventory_rows != blank -%}
+        <div class="product-inventory__color">
+          <h3 class="product-inventory__color-heading h5">{{ color.color | escape }}</h3>
+          <div class="product-inventory__table-wrap">
+            <table class="product-inventory__table">
+              <thead>
+                <tr>
+                  <th scope="col">Size</th>
+                  <th scope="col">Available Now</th>
+                  {%- for inventory_date in inventory.dates -%}
+                    {%- if inventory_date != blank -%}
+                      <th scope="col">{{ inventory_date | escape }}</th>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </tr>
+              </thead>
+              <tbody>
+                {{- inventory_rows -}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+  {%- assign inventory_tables = inventory_tables | strip -%}
+
+  {%- if inventory_tables != blank -%}
+    <details
+      id="Details-{{ block.id }}-{{ section_id }}"
+      class="accordion-details product-inventory"
+      is="accordion-group"
+      {% if block.settings.default_open %}
+        open
+        aria-expanded="true"
+      {% else %}
+        aria-expanded="false"
+      {% endif %}
+    >
+      <summary class="accordion-details__summary flex items-center justify-between">
+        <h2 class="h4 inline-richtext">{{ block.settings.heading | default: 'Inventory by date' | escape }}</h2>
+        {%- render 'icon-plus-toggle' -%}
+      </summary>
+      <div class="accordion-details__content product-inventory__content">
+        {{- inventory_tables -}}
+      </div>
+    </details>
+  {%- endif -%}
+{%- endif -%}

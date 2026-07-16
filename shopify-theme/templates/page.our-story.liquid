@@ -1,0 +1,263 @@
+{% comment %}
+  Our Story page template - mimics Titleist Story page layout
+  Full-width hero banner, alternating image/text sections with scroll animations
+{% endcomment %}
+
+<style>
+  .our-story-hero {
+    position: relative;
+    width: 100%;
+    min-height: 70vh;
+    display: flex;
+    align-items: flex-end;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .our-story-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.35) 20%, transparent 100%);
+  }
+  @media (max-width: 899px) {
+    .our-story-hero::before {
+      background: rgba(0,0,0,0.35);
+    }
+  }
+  .our-story-hero__content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    padding: 40px 20px 60px;
+    color: #fff;
+  }
+  .our-story-hero__title {
+    font-size: clamp(2rem, 5vw, 4.5rem);
+    font-weight: 700;
+    text-transform:uppercase;
+    margin: 0 0 16px;
+    line-height: 1.15;
+    color:#FFF;
+  }
+  .our-story-hero__text {
+    font-size: clamp(1rem, 2vw, 1.7rem);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .our-story-section {
+    padding: 60px 0;
+  }
+  .our-story-section__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 40px;
+  }
+  .our-story-section__inner--reverse {
+    flex-direction: row-reverse;
+  }
+  .our-story-section__image {
+    flex: 1 1 45%;
+    min-width: 280px;
+  }
+  .our-story-section__image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .our-story-section__text {
+    flex: 1 1 45%;
+    min-width: 280px;
+  }
+  .our-story-section__label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #888;
+    margin: 0 0 8px;
+  }
+  .our-story-section__heading {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700;
+    margin: 0 0 20px;
+    line-height: 1.2;
+  }
+  .our-story-section__body p {
+    margin: 0 0 16px;
+    line-height: 1.7;
+    color: #444;
+  }
+  .our-story-section__body p:last-child {
+    margin-bottom: 0;
+  }
+
+  .our-story-callout {
+    padding: 60px 20px;
+    text-align: center;
+    background: #f7f7f7;
+  }
+  .our-story-callout__text {
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    line-height: 1.6;
+    color: #222;
+    font-style: italic;
+  }
+
+  .our-story-final {
+    background: #000;
+    color: #fff;
+    text-align: center;
+    padding: 80px 20px;
+  }
+  .our-story-final__text {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 700;
+    margin: 0;
+  }
+
+  /* Scroll-triggered animations */
+  .our-story-animate {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+  .our-story-animate.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .our-story-animate--slide-left {
+    transform: translateX(-80px);
+  }
+  .our-story-animate--slide-right {
+    transform: translateX(80px);
+  }
+  .our-story-animate--slide-left.is-visible,
+  .our-story-animate--slide-right.is-visible {
+    transform: translateX(0);
+  }
+  .our-story-animate--delay-1 { transition-delay: 0.15s; }
+  .our-story-animate--delay-2 { transition-delay: 0.3s; }
+
+  @media (max-width: 768px) {
+    .our-story-section { padding: 40px 0; }
+    .our-story-section__inner,
+    .our-story-section__inner--reverse {
+      flex-direction: column;
+    }
+    .our-story-hero { min-height: 50vh; }
+    .our-story-animate--slide-left,
+    .our-story-animate--slide-right {
+      transform: translateY(30px);
+    }
+    .our-story-animate--slide-left.is-visible,
+    .our-story-animate--slide-right.is-visible {
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<!-- Hero Banner -->
+<div class="our-story-hero" style="background-image: url('{{ 'tim-hanson.jpg' | asset_url }}');">
+  <div class="our-story-hero__content">
+    <h1 class="our-story-hero__title">{{ page.title }}</h1>
+    <p class="our-story-hero__text">Ball Pro exists to serve the promotional industry distributor by owning the process from start to finish, delivering the quality control our customers need at the speed their business demands.</p>
+  </div>
+</div>
+
+<!-- Section 1: Tim Hanson - Founding Story -->
+<div class="our-story-section">
+  <div class="our-story-section__inner">
+    <div class="our-story-section__image our-story-animate our-story-animate--slide-left">
+      <img src="{{ 'tim-hanson.jpg' | asset_url }}" alt="Tim Hanson, founder of Ball Pro" loading="lazy">
+    </div>
+    <div class="our-story-section__text our-story-animate our-story-animate--delay-1">
+      <p class="our-story-section__label">Our Beginning</p>
+      <h2 class="our-story-section__heading">The Founding Story</h2>
+      <div class="our-story-section__body">
+        <p>When Ball Pro founder Tim Hanson acquired Pro Ball, he quickly recognized an opportunity to improve the process. As he took a closer look, it became clear that everything was being done backwards. Custom golf balls were produced at factories, with standard turnaround times often exceeding a month, leaving the promotional industry underserved in both speed and service. Tim saw an opportunity to do things differently. Starting with the name, he changed it from Pro Ball to Ball Pro, reflecting a commitment to turning the entire process around.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 2: Speed & Technology -->
+<div class="our-story-section">
+  <div class="our-story-section__inner our-story-section__inner--reverse">
+    <div class="our-story-section__image our-story-animate our-story-animate--slide-right">
+      <img src="https://placehold.co/600x550/1a1a1a/ffffff?text=Printing+Technology" alt="Ball Pro printing technology" loading="lazy">
+    </div>
+    <div class="our-story-section__text our-story-animate our-story-animate--delay-1">
+      <p class="our-story-section__label">Speed & Quality</p>
+      <h2 class="our-story-section__heading">Invested in Technology</h2>
+      <div class="our-story-section__body">
+        <p>Recognizing the need for greater speed and tighter quality control, we invested in our own inventory and printing technology, bringing factory services in-house and taking ownership of the process from start to finish. As a result, standard turnaround times dropped from one month to just five days, driven by our belief that customers deserved faster, better service.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Callout: 30 Years Later -->
+<div class="our-story-callout our-story-animate">
+  <p class="our-story-callout__text">More than thirty years later, that belief still drives us. Three-day turns are now standard, and we continue to push the industry forward with a free 24-hour rush program.</p>
+</div>
+
+<!-- Section 3: Diversified Ad-Tee Acquisition (2017) -->
+<div class="our-story-section">
+  <div class="our-story-section__inner">
+    <div class="our-story-section__image our-story-animate our-story-animate--slide-left">
+      <img src="https://placehold.co/600x550/1a1a1a/ffffff?text=Ad-Tee+Acquisition" alt="Diversified Ad-Tee acquisition" loading="lazy">
+    </div>
+    <div class="our-story-section__text our-story-animate our-story-animate--delay-1">
+      <p class="our-story-section__label">Growth</p>
+      <h2 class="our-story-section__heading">2017 — Diversified Ad-Tee Acquisition</h2>
+      <div class="our-story-section__body">
+        <p>Our growth has been driven by a commitment to expand product offerings while maintaining the same focus on speed and quality. In 2017, we acquired Diversified Ad-Tee, adding kitchen and drinkware to our product lineup and broadening the promotional solutions we offer to our customers. While continuing to deliver the reliability and service our customers need.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 4: Branded Apparel Acquisition (2025) -->
+<div class="our-story-section">
+  <div class="our-story-section__inner our-story-section__inner--reverse">
+    <div class="our-story-section__image our-story-animate our-story-animate--slide-right">
+      <img src="https://placehold.co/600x550/1a1a1a/ffffff?text=Branded+Apparel" alt="Branded Apparel acquisition" loading="lazy">
+    </div>
+    <div class="our-story-section__text our-story-animate our-story-animate--delay-1">
+      <p class="our-story-section__label">Expansion</p>
+      <h2 class="our-story-section__heading">2025 — Branded Apparel Acquisition</h2>
+      <div class="our-story-section__body">
+        <p>In 2025, we entered the apparel market by acquiring Branded Apparel, a natural fit that expanded our capabilities and strengthened our position in the apparel category. This addition allowed us to offer unique premium brands while continuing to build on the speed, service, and reliability our customers expect. It marked another step forward in our commitment to providing a true one-stop shop.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Final Section -->
+<div class="our-story-final our-story-animate">
+  <p class="our-story-final__text">Your trusted Pros in promo.</p>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.our-story-animate').forEach(function(el) {
+      observer.observe(el);
+    });
+  });
+</script>

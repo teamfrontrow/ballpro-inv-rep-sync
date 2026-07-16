@@ -1,0 +1,382 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "container": "fixed",
+        "text_alignment": "center",
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "custom_landing_hero_Qg7Bip": {
+      "type": "custom-landing-hero",
+      "name": "Custom Landing Hero",
+      "settings": {
+        "container": "full",
+        "container_max_width": 1500,
+        "background_image": "shopify://shop_images/8B5E411C21049B4977AC882BDFA4E6C0.jpg",
+        "image_alt": "",
+        "background_position": "center center",
+        "overlay_color": "#000000",
+        "gradient_direction": "right",
+        "gradient_strength": 60,
+        "gradient_midpoint": 30,
+        "height": 600,
+        "mobile_height": 600,
+        "content_width": 640,
+        "text_alignment": "left",
+        "text_color": "theme",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "eyebrow": "PROFESSIONAL GRADE",
+        "heading": "Golf Tournament Glove Fitting Program",
+        "heading_size": "h1",
+        "text": "<p>Elevate your tournament with premium Cabretta leather gloves. Engineered for professional fit, durability, and a soft natural grip that elite golfers demand.</p>",
+        "primary_button_label": "Request Information",
+        "primary_button_link": "mailto:salesteam@ballpro.com",
+        "primary_button_style": "btn--primary",
+        "primary_button_icon": "arrow-right",
+        "secondary_button_label": "Learn More",
+        "secondary_button_link": "#program-highlights",
+        "secondary_button_style": "btn--secondary",
+        "secondary_button_icon": "none",
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "css_id": ""
+      }
+    },
+    "collapsible_tabs_6teHQf": {
+      "type": "collapsible-tabs",
+      "blocks": {
+        "collapsible_item_pkYgKB": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "none",
+            "heading": "How does it work?",
+            "content": "<p>Each golfer at the tournament receives a logo'd golf glove. It's a great way to attract sponsors and raise funds for the tournament.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": false
+          }
+        },
+        "collapsible_item_y4GTyG": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "none",
+            "heading": "How do I figure the sizing?",
+            "content": "<p>You don't have to. We've taken the guesswork out of it. We ship 20% more gloves based on the typical glove size mix: S: 3%, M: 10%, ML: 32%, L: 33%, XL: 15%, XXL: 3% (left hand to accommodate right-handed golfers).</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": false
+          }
+        },
+        "collapsible_item_diAd7p": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "none",
+            "heading": "How quickly will they ship?",
+            "content": "<p>Standard production time is 3–5 days. Rush options are available, contact us for availability.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": false
+          }
+        },
+        "collapsible_item_7EcaqW": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "none",
+            "heading": "Who hands out the gloves?",
+            "content": "<p>This would be someone from your event staff; we do not hand them out.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": false
+          }
+        },
+        "collapsible_item_8z6dbz": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "none",
+            "heading": "Do you accommodate for special size requests?",
+            "content": "<p>Yes, options are available. Contact us for availability.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": false
+          }
+        },
+        "collapsible_item_JKAc9E": {
+          "type": "collapsible_item",
+          "settings": {
+            "icon": "none",
+            "heading": "Can another brand of golf glove, like Titleist, FootJoy or Callaway be used?",
+            "content": "<p>No, this program is exclusively for Glove Branders Gloves.</p>",
+            "custom_liquid": "",
+            "page": "",
+            "open": false,
+            "use_subtext_color": false
+          }
+        }
+      },
+      "block_order": [
+        "collapsible_item_pkYgKB",
+        "collapsible_item_y4GTyG",
+        "collapsible_item_diAd7p",
+        "collapsible_item_7EcaqW",
+        "collapsible_item_8z6dbz",
+        "collapsible_item_JKAc9E"
+      ],
+      "name": "t:sections.collapsible-tabs.name",
+      "settings": {
+        "container": "narrow",
+        "color_scheme": "scheme-info",
+        "header_layout": "vertical",
+        "section_header_alignment": "center",
+        "section_header_alignment_mobile": "inherit",
+        "subheading": "",
+        "heading": "Frequently Asked Questions",
+        "highlight_style": "none",
+        "highlight_font_style": "italic",
+        "highlight_style_color": "",
+        "highlight_text_color": "",
+        "heading_size": "h1",
+        "description": "",
+        "text_size": "text-base",
+        "button_label": "",
+        "button_link": "",
+        "button_style": "btn--primary",
+        "button_icon": "none",
+        "column_gap": "large",
+        "row_gap": "inherit",
+        "item_style": "standard",
+        "item_color_scheme": "",
+        "item_heading_font": "heading",
+        "item_heading_size": "h4",
+        "item_icon_size": "extra-large",
+        "padding_top": 100,
+        "padding_bottom": 100,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "custom_features_QPq8QJ": {
+      "type": "custom-features",
+      "blocks": {
+        "feature_BJwiNg": {
+          "type": "feature",
+          "settings": {
+            "icon": "check",
+            "title": "20% Extra Gloves",
+            "text": "Includes 20% extra gloves to ensure everyone finds their perfect size."
+          }
+        },
+        "feature_yfLhzb": {
+          "type": "feature",
+          "settings": {
+            "icon": "check",
+            "title": "Flexible Returns",
+            "text": "Return leftover gloves with no restocking fee."
+          }
+        },
+        "feature_UXxJch": {
+          "type": "feature",
+          "settings": {
+            "icon": "check",
+            "title": "Quick Turnaround",
+            "text": "Fast production and shipping make it ideal for last-minute tournament gifts."
+          }
+        },
+        "feature_diz3VT": {
+          "type": "feature",
+          "settings": {
+            "icon": "check",
+            "title": "Size Replacements",
+            "text": "Out of a size? Replacements ship the next day."
+          }
+        },
+        "feature_pXtLcz": {
+          "type": "feature",
+          "settings": {
+            "icon": "check",
+            "title": "Bonus Ball Markers",
+            "text": "Keep all extra ball markers - ideal for sponsor branding opportunities."
+          }
+        },
+        "specification_XkxyM9": {
+          "type": "specification",
+          "settings": {
+            "icon": "manufacturing",
+            "text": "Made with premium Cabretta leather offering an exceptional soft natural grip that provides a comfortable and stable fit."
+          }
+        },
+        "specification_Ue99bg": {
+          "type": "specification",
+          "settings": {
+            "icon": "air",
+            "text": "The TruVent airflow system delivers ventilation between the fingers and knuckles for flexibility and coolness."
+          }
+        },
+        "specification_3fyLBw": {
+          "type": "specification",
+          "settings": {
+            "icon": "water",
+            "text": "Absorbsoft wrist band designed to wick away moisture."
+          }
+        }
+      },
+      "block_order": [
+        "feature_BJwiNg",
+        "feature_yfLhzb",
+        "feature_UXxJch",
+        "feature_diz3VT",
+        "feature_pXtLcz",
+        "specification_XkxyM9",
+        "specification_Ue99bg",
+        "specification_3fyLBw"
+      ],
+      "name": "Custom Features",
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "heading": "The Benefits of the Glove Fitting Program",
+        "heading_size": "h2",
+        "features_heading": "PROGRAM FEATURES",
+        "specifications_heading": "GLOVE SPECIFICATIONS",
+        "image": "shopify://shop_images/golfglovefitting.jpg",
+        "image_alt": "Detail of glove with removable ball marker",
+        "image_position": "left",
+        "image_width": 70,
+        "show_image_glow": true,
+        "image_glow_color": "#1d349a",
+        "image_glow_opacity": 10,
+        "show_callout": true,
+        "callout_heading": "Removable Ball Marker",
+        "callout_text": "<p>Integrated magnetic ball marker for convenient on-course access and branding.</p>",
+        "callout_background": "#ffffff",
+        "callout_border": "#e7eef5",
+        "button_1_label": "Sales Flyer",
+        "button_1_link": "https://cdn.shopify.com/s/files/1/0590/2152/5072/files/Glove_Fitting_Flyer.pdf?v=1780425972",
+        "button_1_style": "btn--primary",
+        "button_1_icon": "download",
+        "button_2_label": "Left v Right Guide",
+        "button_2_link": "https://cdn.shopify.com/s/files/1/0590/2152/5072/files/LVR.pdf?v=1780425968",
+        "button_2_style": "btn--outline",
+        "button_2_icon": "arrow-right",
+        "accent_color": "#316951",
+        "spec_accent_color": "#1d349a",
+        "column_gap": 64,
+        "padding_top": 120,
+        "padding_bottom": 120,
+        "show_section_divider": false,
+        "divider_width": "full",
+        "css_id": "program-highlights"
+      }
+    },
+    "custom_highlights_tnb6Yn": {
+      "type": "custom-highlights",
+      "blocks": {
+        "highlight_CtTXy8": {
+          "type": "highlight",
+          "settings": {
+            "icon": "local_shipping",
+            "title": "Extra Gloves Shipped",
+            "text": "<p>Program ships 20% extra gloves to your event, ensuring everyone gets the right fit without stockouts.</p>"
+          }
+        },
+        "highlight_QCWEFy": {
+          "type": "highlight",
+          "settings": {
+            "icon": "verified",
+            "title": "Quality Glove",
+            "text": "<p>Premium Cabretta leather offering an exceptional soft natural grip and unparalleled breathability.</p>"
+          }
+        },
+        "highlight_c3NxEn": {
+          "type": "highlight",
+          "settings": {
+            "icon": "celebration",
+            "title": "Enhances Experience",
+            "text": "<p>The blueprint for a successful event starts with giving the golfers memorable, high-performance keepsakes.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "highlight_CtTXy8",
+        "highlight_QCWEFy",
+        "highlight_c3NxEn"
+      ],
+      "disabled": true,
+      "name": "Custom Highlights",
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "heading": "Program Highlights",
+        "heading_size": "h2",
+        "show_heading_divider": true,
+        "card_heading_size": "h5",
+        "columns_desktop": 3,
+        "divider_color": "#0d8756",
+        "card_background": "#e0eee9",
+        "card_border": "#c0c9c1",
+        "card_heading_color": "#191c1a",
+        "card_text_color": "#404943",
+        "icon_background": "#0d8756",
+        "icon_color": "#ffffff",
+        "card_radius": 12,
+        "card_padding": 32,
+        "padding_top": 64,
+        "padding_bottom": 64,
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "css_id": "program-highlights"
+      }
+    },
+    "custom_prefooter_cta_gCLeFw": {
+      "type": "custom-prefooter-cta",
+      "name": "Custom Prefooter CTA",
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "heading": "Ready to upgrade your tournament?",
+        "heading_size": "h2",
+        "text": "<p>Contact our equipment specialists to customize your glove fitting program today.</p>",
+        "text_width": 560,
+        "button_1_label": "Get in Touch",
+        "button_1_link": "mailto:salesteam@ballpro.com",
+        "button_1_style": "btn--white",
+        "button_1_icon": "none",
+        "button_2_label": "Schedule Virtual Meeting",
+        "button_2_link": "https://ballpro.com/pages/virtual-meetings",
+        "button_2_style": "btn--outline",
+        "button_2_icon": "none",
+        "padding_top": 64,
+        "padding_bottom": 64,
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "css_id": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "custom_landing_hero_Qg7Bip",
+    "collapsible_tabs_6teHQf",
+    "custom_features_QPq8QJ",
+    "custom_highlights_tnb6Yn",
+    "custom_prefooter_cta_gCLeFw"
+  ]
+}

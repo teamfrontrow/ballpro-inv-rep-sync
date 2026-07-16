@@ -1,0 +1,234 @@
+{% comment %}
+  Renders the "Sizing Chart" button + modal on the product page.
+
+  Source: product.metafields.custom.sizing_chart (a File reference).
+  Supports BOTH a PDF (rendered in a scrollable <iframe>) and an image
+  (rendered in a scrollable <img> wrapper).
+
+  The modal is moved to <body> on load so it escapes the product
+  section's stacking context — this keeps it above the sticky header
+  and the "You May Also Like" related products.
+
+  Usage: {% render 'sizing-chart' %}
+{% endcomment %}
+
+{%- liquid
+  assign sizing_chart = product.metafields.custom.sizing_chart
+  assign sizing_chart_value = sizing_chart.value
+  assign sizing_chart_url = ''
+  assign sizing_chart_is_pdf = false
+
+  if sizing_chart_value != blank
+    # Generic files (PDF, etc.) expose a .url; image references do not.
+    assign sizing_chart_url = sizing_chart_value.url
+    if sizing_chart_url == blank
+      assign sizing_chart_url = sizing_chart_value | image_url: width: 1600
+    endif
+
+    assign sizing_chart_url_lower = sizing_chart_url | downcase
+    if sizing_chart_url_lower contains '.pdf'
+      assign sizing_chart_is_pdf = true
+    endif
+  endif
+-%}
+
+{%- if sizing_chart_value != blank and sizing_chart_url != blank -%}
+  <div class="sizing-chart-wrapper">
+    <button
+      type="button"
+      class="sizing-chart-button"
+      aria-haspopup="dialog"
+      aria-controls="sizing-chart-modal"
+      aria-expanded="false"
+    >
+      Sizing Chart
+    </button>
+
+    <div
+      id="sizing-chart-modal"
+      class="sizing-chart-modal{% if sizing_chart_is_pdf %} sizing-chart-modal--pdf{% endif %}"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="sizing-chart-modal-title"
+      hidden
+    >
+      <div class="sizing-chart-modal__overlay" data-close-modal></div>
+
+      <div class="sizing-chart-modal__content">
+        <button
+          type="button"
+          class="sizing-chart-modal__close"
+          aria-label="Close sizing chart"
+          data-close-modal
+        >
+          &times;
+        </button>
+
+        <h2 id="sizing-chart-modal-title" class="visually-hidden">Sizing Chart</h2>
+
+        {%- if sizing_chart_is_pdf -%}
+          <iframe
+            src="{{ sizing_chart_url }}#view=FitH"
+            class="sizing-chart-modal__pdf"
+            title="Sizing Chart PDF"
+            loading="lazy"
+          ></iframe>
+        {%- else -%}
+          <img
+            src="{{ sizing_chart_url }}"
+            alt="Sizing Chart"
+            class="sizing-chart-modal__image"
+            loading="lazy"
+          >
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .sizing-chart-button {
+      cursor: pointer;
+      padding: 10px 18px;
+      border: 1px solid #000;
+      background: #316951;
+      color: #fff;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    .sizing-chart-modal[hidden] {
+      display: none;
+    }
+
+    .sizing-chart-modal {
+      position: fixed;
+      inset: 0;
+      /* Sits above the sticky header (z-index 30) and theme drawers (32). */
+      z-index: 100000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sizing-chart-modal:not([hidden]) .sizing-chart-modal__content {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .sizing-chart-modal__overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .sizing-chart-modal__content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      width: min(90vw, 1000px);
+      max-width: 90vw;
+      max-height: 90vh;
+      border: solid 3px #316951;
+      background: #eee;
+      padding: 40px;
+      border-radius: 10px;
+      transform: translateY(10px);
+      opacity: 0;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      /* Tall images scroll here; PDFs scroll inside their own viewer. */
+      overflow: auto;
+    }
+
+    /* Give the PDF viewer a large, fixed viewport so it fills the modal
+       and scrolls internally for vertically long documents. */
+    .sizing-chart-modal--pdf .sizing-chart-modal__content {
+      width: min(92vw, 1100px);
+      height: 90vh;
+      padding: 40px 16px 16px;
+      overflow: hidden;
+    }
+
+    .sizing-chart-modal__pdf {
+      flex: 1 1 auto;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      border: solid 1px #555;
+      background: #fff;
+    }
+
+    .sizing-chart-modal__image {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      border: solid 1px #555;
+    }
+
+    .sizing-chart-modal__close {
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      background: transparent;
+      border: 0;
+      font-size: 35px;
+      line-height: 1;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var button = document.querySelector('.sizing-chart-button');
+      var modal = document.getElementById('sizing-chart-modal');
+
+      if (!button || !modal) return;
+
+      // Portal the modal to <body> so it escapes the product section's
+      // stacking context (otherwise it renders under the related products
+      // and the sticky header).
+      if (modal.parentElement !== document.body) {
+        document.body.appendChild(modal);
+      }
+
+      var closeTargets = modal.querySelectorAll('[data-close-modal]');
+
+      function openModal() {
+        modal.hidden = false;
+        button.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        modal.hidden = true;
+        button.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+
+      button.addEventListener('click', openModal);
+
+      closeTargets.forEach(function (el) {
+        el.addEventListener('click', closeModal);
+      });
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !modal.hidden) {
+          closeModal();
+        }
+      });
+    });
+  </script>
+{%- endif -%}

@@ -1,0 +1,333 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "container": "fixed",
+        "text_alignment": "center",
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "image_with_text_CCmPpX": {
+      "type": "image-with-text",
+      "blocks": {
+        "subheading_QqCpe9": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "MATCHBOOK PROGRAM"
+          }
+        },
+        "heading_wbWFyz": {
+          "type": "heading",
+          "settings": {
+            "heading": "Grow Your Golf Business With Our Matchbook Program",
+            "highlight_style": "none",
+            "highlight_font_style": "italic",
+            "highlight_style_color": "",
+            "highlight_text_color": "",
+            "heading_size": "hd2"
+          }
+        },
+        "text_pqjNj7": {
+          "type": "text",
+          "settings": {
+            "text": "<h4><strong>Gain 7 new customers for $10.00 guaranteed</strong></h4><p>Golf rounds played are up at historical rates and they are expected to keep climbing. The golf direct mail program is an excellent opportunity to grow your golf business. The program is designed to help you increase your golf sales with very little effort and a money-back guarantee.<br/><br/></p>",
+            "subtext_color": false
+          }
+        },
+        "button_aedYM3": {
+          "type": "button",
+          "settings": {
+            "button_label": "How It Works",
+            "button_link": "#how-it-works",
+            "button_style": "btn--primary",
+            "button_icon": "none"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_QqCpe9",
+        "heading_wbWFyz",
+        "text_pqjNj7",
+        "button_aedYM3"
+      ],
+      "name": "t:sections.image-with-text.name",
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "scheme-6",
+        "image": "shopify://shop_images/F2F06EAF0843F97C7A2878ADA3B2D031.jpg",
+        "image_position": "right",
+        "image_width": 50,
+        "desktop_content_position": "center",
+        "desktop_content_alignment": "left",
+        "mobile_content_alignment": "inherit",
+        "show_section_divider": false,
+        "divider_width": "fixed",
+        "padding_top": 120,
+        "padding_bottom": 120
+      }
+    },
+    "custom_how_it_works_eqdgPP": {
+      "type": "custom-how-it-works",
+      "blocks": {
+        "step_NHFjML": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/AdobeStock_1879970224.jpg",
+            "title": "Select Leads",
+            "text": "<p><br/>Choose 10 prospective customers. Focus on businesses or contacts that could benefit from branded golf products.<br/><br/></p>"
+          }
+        },
+        "step_9LDqek": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/AdobeStock_254923500.jpg",
+            "title": "Mail Package",
+            "text": "<p><br/>Send each prospect a complete mailer. Include a personalized matchbook tee holder, a sales letter, and a top-selling golf product flyer.<br/><br/></p>"
+          }
+        },
+        "step_CAmDQr": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/AdobeStock_524695849.jpg",
+            "title": "Email Follow-up",
+            "text": "<p><br/>Follow up with an email. Let them know you’ll be calling in one week to discuss their golf marketing needs.<br/><br/></p>"
+          }
+        },
+        "step_WfexQQ": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/AdobeStock_66411287.jpg",
+            "title": "Direct Contact",
+            "text": "<p><br/>Call one week later. Use the call to answer questions, share ideas, and help turn interest into new business.<br/><br/></p>"
+          }
+        }
+      },
+      "block_order": [
+        "step_NHFjML",
+        "step_9LDqek",
+        "step_CAmDQr",
+        "step_WfexQQ"
+      ],
+      "name": "Custom How It Works",
+      "settings": {
+        "css_id": "how-it-works",
+        "container": "fixed",
+        "color_scheme": "",
+        "heading": "How Does It Work?",
+        "text": "<p>Follow these four simple instructions to start seeing results in your golf marketing efforts.</p>",
+        "heading_size": "h2",
+        "card_heading_size": "h5",
+        "columns_desktop": 4,
+        "card_background": "#ffffff",
+        "card_border": "#e5e5e5",
+        "image_background": "#f2f2f2",
+        "image_ratio": "1 / 1",
+        "padding_top": 80,
+        "padding_bottom": 60,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "custom_ordering_W6QqyV": {
+      "type": "custom-ordering",
+      "blocks": {
+        "feature_qMy6Bp": {
+          "type": "feature",
+          "settings": {
+            "icon": "✅",
+            "text": "4x Golf Tees"
+          }
+        },
+        "feature_kTh8QT": {
+          "type": "feature",
+          "settings": {
+            "icon": "✅",
+            "text": "1x  Ball Marker"
+          }
+        },
+        "feature_EUJY63": {
+          "type": "feature",
+          "settings": {
+            "icon": "✅",
+            "text": "1x Divot Tool"
+          }
+        },
+        "feature_PwETeW": {
+          "type": "feature",
+          "settings": {
+            "icon": "✅",
+            "text": "Full Color Branding"
+          }
+        }
+      },
+      "block_order": [
+        "feature_qMy6Bp",
+        "feature_kTh8QT",
+        "feature_EUJY63",
+        "feature_PwETeW"
+      ],
+      "name": "Custom Ordering",
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "section_background": "#ffffff",
+        "heading": "How to order your direct mail matchbooks:",
+        "text": "<ol><li>Send your artwork and purchase order for item number <strong>PM411-PROMO</strong> to <a><strong>sales@ballpro.com</strong></a>. Your order will ship directly to you.<br/></li><li>If you have any questions regarding the program, contact us at <a href=\"mailto:salesteam@ballpro.com\"><strong>salesteam@ballpro.com</strong></a>.<br/></li></ol><p></p><p><br/>Each matchbook includes 4 golf tees, 1 ball marker, and 1 divot tool. Your full-color artwork will be featured on the front and back of the matchbook, as well as on the ball marker and divot tool. Please provide artwork for all components. Shipping is not included.<br/><br/></p><h2></h2>",
+        "heading_size": "h2",
+        "note": "",
+        "note_icon": "",
+        "primary_button_label": "Contact Sales",
+        "primary_button_link": "mailto:sales@ballpro.com",
+        "primary_button_style": "btn--white",
+        "primary_button_icon": "none",
+        "secondary_button_label": "",
+        "secondary_button_link": "#",
+        "secondary_button_style": "btn--secondary",
+        "secondary_button_icon": "none",
+        "item_code": "Matchbook",
+        "item_label": "Includes",
+        "panel_background": "#215b43",
+        "panel_text": "#ffffff",
+        "accent_color": "#ffffff",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "custom_resources_pqge6q": {
+      "type": "custom-resources",
+      "blocks": {
+        "resource_nJEzPT": {
+          "type": "resource",
+          "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Jun_2_2026_02_27_25_PM.png",
+            "title": "Sample Sales Letter",
+            "description": "<p>A pre-written template designed to convert prospects. Just add your details.</p>",
+            "button_label": "Download",
+            "button_link": "https://cdn.shopify.com/s/files/1/0590/2152/5072/files/Sample_Letter.docx?v=1780429937",
+            "button_style": "btn--outline",
+            "button_icon": "download"
+          }
+        },
+        "resource_f4JgGj": {
+          "type": "resource",
+          "settings": {
+            "image": "shopify://shop_images/topsellers.jpg",
+            "title": "Top Sellers Sheet",
+            "description": "<p>Showcase our highest performing golf products to your new clients.</p>",
+            "button_label": "Download PDF",
+            "button_link": "https://cdn.shopify.com/s/files/1/0590/2152/5072/files/MatchbookProgram.pdf?v=1781011450",
+            "button_style": "btn--outline",
+            "button_icon": "download"
+          }
+        },
+        "resource_GUzbBH": {
+          "type": "resource",
+          "settings": {
+            "image": "shopify://shop_images/matchbook.jpg",
+            "title": "Matchbook Template",
+            "description": "<p>Matchbook design template for preparing your brand's artwork.</p>",
+            "button_label": "Download Template",
+            "button_link": "https://cdn.shopify.com/s/files/1/0590/2152/5072/files/Matchbook_Template.pdf?v=1780428304",
+            "button_style": "btn--outline",
+            "button_icon": "download"
+          }
+        }
+      },
+      "block_order": [
+        "resource_nJEzPT",
+        "resource_f4JgGj",
+        "resource_GUzbBH"
+      ],
+      "name": "Custom Resources",
+      "settings": {
+        "container": "fixed",
+        "color_scheme": "",
+        "heading": "Support to help grow your golf sales!",
+        "text": "<p><br/>To further aid you in your efforts with the Distributor Direct Mail Matchbook Tee Program, we will extend end-column pricing to you for all non-golf ball items, along with special golf ball pricing. Please contact us for special golf ball pricing. <br/><br/>Need help or have questions? Contact us at <a href=\"mailto:salesteam@ballpro.com\">salesteam@ballpro.com</a>.<br/><br/></p>",
+        "heading_size": "h2",
+        "card_heading_size": "h5",
+        "button_label": "",
+        "button_link": "https://ballpro.com/pages/distributor-resources",
+        "button_style": "btn--plain",
+        "button_icon": "arrow-right",
+        "card_background": "#ffffff",
+        "card_border": "#e5e5e5",
+        "media_background": "#f2f2f2",
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    },
+    "custom_column_pricing_dUzrxd": {
+      "type": "custom-column-pricing",
+      "blocks": {
+        "card_pyL9kg": {
+          "type": "card",
+          "settings": {
+            "card_style": "translucent",
+            "eyebrow": "Pricing Support",
+            "title": "End-Column Rates",
+            "link_label": "Contact For Details",
+            "link_url": "mailto:salesteam@ballpro.com",
+            "link_new_tab": false
+          }
+        },
+        "card_Q3Vqkz": {
+          "type": "card",
+          "settings": {
+            "card_style": "solid",
+            "eyebrow": "Premium Balls",
+            "title": "Special Rates",
+            "link_label": "Request Quote",
+            "link_url": "mailto:salesteam@ballpro.com",
+            "link_new_tab": false
+          }
+        }
+      },
+      "block_order": [
+        "card_pyL9kg",
+        "card_Q3Vqkz"
+      ],
+      "disabled": true,
+      "name": "Custom Column Pricing",
+      "settings": {
+        "css_id": "",
+        "container": "fixed",
+        "color_scheme": "",
+        "heading": "Exclusive Partner Pricing",
+        "heading_size": "h2",
+        "text": "<p>To further aide your efforts, we will extend <strong>end-column pricing</strong> to you for all non-golf ball items and special pricing on premium golf balls.</p>",
+        "panel_background": "#000000",
+        "panel_text_color": "#ffffff",
+        "panel_radius": 24,
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "show_section_divider": false,
+        "divider_width": "fixed"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "image_with_text_CCmPpX",
+    "custom_how_it_works_eqdgPP",
+    "custom_ordering_W6QqyV",
+    "custom_resources_pqge6q",
+    "custom_column_pricing_dUzrxd"
+  ]
+}

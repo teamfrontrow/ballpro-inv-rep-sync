@@ -1,0 +1,71 @@
+{% comment %}
+  MyLiveChat inline widget
+  Loads the chat widget on all pages.
+
+  NOTE: The Wildix Kite widget code below is kept for reference but disabled.
+  To switch to Wildix Kite, uncomment that section and comment out the MyLiveChat section.
+{% endcomment %}
+
+<!-- MyLiveChat Widget -->
+<script>
+  function add_chatinline() {
+    var hccid = 67644443;
+    var nt = document.createElement("script");
+    nt.async = true;
+    nt.src = "https://mylivechat.com/chatinline.aspx?hccid=" + hccid;
+    var ct = document.getElementsByTagName("script")[0];
+    ct.parentNode.insertBefore(nt, ct);
+  }
+  add_chatinline();
+</script>
+<!-- End MyLiveChat Widget -->
+
+{% comment %}
+  ============================================================
+  Wildix Kite Widget (DISABLED - kept for reference)
+  To enable: remove the comment tags around the <script> block
+  ============================================================
+
+  <script>
+    function add_wildixchat() {
+      window.kiteConfig = {
+        host: "kite.wildix.com",
+        src: "static/js/libs/widget.min.js",
+        serialOrPbxName: "ballpro",
+        extension: "5",
+        language: "en",
+        autoConnect: true,
+        autoLogin: false,
+        autoLoginName: "newDesign",
+        autoLoginEmail: "noreply@ballpro.com",
+        askGeolocation: false,
+        askNotification: true,
+        isExpanded: true,
+        expandTimeout: "35",
+        openInNewWindow: false,
+        position: "bottom",
+        newDesign: true,
+        hoverTitle: "Chat With Us",
+        buttonIcon: "chat",
+        buttonIconColor: "#225a3f",
+        bottomOffset: "50px",
+        rightOffset: "160px",
+      };
+
+      var t = kiteConfig.host;
+      var n = document.getElementsByTagName("script")[0];
+      var r = document.createElement("script");
+      r.async = 1;
+      r.setAttribute("charset", "utf-8");
+      r.src = "https://" + t + "/" + kiteConfig.src;
+      r.type = "text/javascript";
+      var i = document.createElement("link");
+      i.rel = "stylesheet";
+      i.type = "text/css";
+      i.href = "https://" + t + "/static/css/widget.css";
+      n.parentNode.insertBefore(r, n);
+      n.parentNode.insertBefore(i, n);
+    }
+    add_wildixchat();
+  </script>
+{% endcomment %}

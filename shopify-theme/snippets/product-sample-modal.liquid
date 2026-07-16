@@ -1,0 +1,56 @@
+<div class="product-sample-modal" id="product-sample-modal" style="display: none;">
+  <div class="modal-overlay" id="modal-overlay"></div>
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2 class="modal-title">Customized Product Sample</h2>
+      <button type="button" class="modal-close" id="modal-close" aria-label="Close modal">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <!-- Loading State -->
+      <div class="modal-loading" id="modal-loading">
+        <div class="loading-spinner">
+          <svg class="spinner" width="48" height="48" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" opacity="0.25"></circle>
+            <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round">
+              <animateTransform attributeName="transform" type="rotate" dur="1s" values="0 12 12;360 12 12" repeatCount="indefinite"></animateTransform>
+            </path>
+          </svg>
+        </div>
+        <p class="loading-text">Generating your customized product sample...</p>
+        <p class="loading-subtext">This may take a few moments</p>
+      </div>
+
+      <!-- Sample Display -->
+      <div class="modal-sample" id="modal-sample" style="display: none;">
+        <div class="sample-container">
+          <img id="sample-image" src="" alt="Customized product sample" class="sample-image">
+        </div>
+        <div class="sample-actions">
+          <button type="button" class="btn btn-secondary" id="regenerate-sample-btn">Try Another Logo</button>
+          <button type="button" class="btn btn-primary" id="add-to-cart-sample-btn">Add to Cart</button>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div class="modal-error" id="modal-error" style="display: none;">
+        <div class="error-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <h3 class="error-title">Unable to Generate Sample</h3>
+        <p class="error-message" id="modal-error-message"></p>
+        <button type="button" class="btn btn-primary" id="error-retry-btn">Try Again</button>
+      </div>
+    </div>
+  </div>
+</div>
+

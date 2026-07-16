@@ -1,0 +1,852 @@
+{{ 'component-article-card.css' | asset_url | stylesheet_tag }}
+{{ 'section-main-blog.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign columns_desktop = section.settings.columns_desktop
+  assign columns_tablet = columns_desktop
+  if columns_desktop > 3
+    assign columns_tablet = columns_desktop | divided_by: 2.0 | ceil
+  endif
+
+  assign show_tags = section.settings.show_tags
+  assign show_author = section.settings.show_author
+  assign show_date = section.settings.show_date
+  assign show_excerpt = section.settings.show_excerpt
+  assign show_button = section.settings.show_button
+  assign article_layout = 'standard'
+  if columns_desktop == 1
+    assign article_layout = 'horizontal'
+  endif
+
+  assign featured_post_block = section.blocks | where: 'type', 'featured_post'
+  assign heading_block = section.blocks | where: 'type', 'heading' | first
+  assign post_limit = section.settings.post_limit
+  assign paginate_limit = post_limit
+  assign offset = 0
+  assign current_blog = blogs[blog.handle]
+  if current_blog == blank
+    assign current_blog = blog
+  endif
+
+  assign archive_filter = blank
+  if request.query_string != blank
+    assign query_params = request.query_string | split: '&'
+    for query_param in query_params
+      assign query_parts = query_param | split: '='
+      assign query_key = query_parts | first
+      if query_key == 'archive'
+        assign archive_filter = query_parts | last | url_decode
+      endif
+    endfor
+  endif
+
+  if archive_filter != blank
+    assign paginate_limit = 50
+  endif
+
+  if featured_post_block != blank and archive_filter == blank
+    assign post_limit = post_limit | plus: 1
+    assign offset = 1
+  endif
+%}
+{% style %}
+  .section-{{ section.id }} {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --f-columns-mobile: 1;
+    --f-columns-md: {{ columns_tablet }};
+    --f-columns-xl: {{ columns_desktop }};
+  }
+
+  .section-{{ section.id }} .main-blog__layout {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .section-{{ section.id }} .main-blog__content {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .section-{{ section.id }} .main-blog__sidebar {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .section-{{ section.id }} .main-blog__sidebar-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .section-{{ section.id }} .main-blog__sidebar-block > *:first-child {
+    margin-top: 0;
+  }
+
+  .section-{{ section.id }} .main-blog__sidebar-block > *:last-child {
+    margin-bottom: 0;
+  }
+
+  .section-{{ section.id }} .main-blog__sidebar-heading {
+    margin: 0 0 1rem;
+  }
+
+  .section-{{ section.id }} .main-blog__search-form {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .section-{{ section.id }} .main-blog__search-input {
+    width: 100%;
+    min-height: 4.4rem;
+    padding: 0.9rem 1.2rem;
+    border: 0.1rem solid rgba(var(--color-foreground), 0.2);
+    border-radius: var(--inputs-radius, 0);
+    background: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
+  }
+
+  .section-{{ section.id }} .main-blog__sidebar-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .section-{{ section.id }} .main-blog__sidebar-list li + li {
+    margin-top: 1rem;
+  }
+
+  .section-{{ section.id }} .main-blog__sidebar-meta {
+    display: block;
+    margin-top: 0.25rem;
+    opacity: 0.75;
+  }
+
+  .section-{{ section.id }} .main-blog__categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .section-{{ section.id }} .main-blog__category-link,
+  .section-{{ section.id }} .main-blog__archive-link {
+    text-decoration: none;
+  }
+
+  .section-{{ section.id }} .main-blog__archive-link.is-active {
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  @media screen and (min-width: 768px) {
+    .section-{{ section.id }} .main-blog__items .article-card--horizontal:has(.article-card__media) {
+      column-gap: 2rem;
+    }
+
+    .section-{{ section.id }} .main-blog__items .article-card--horizontal .article-card__media {
+      width: 30%;
+    }
+
+    .section-{{ section.id }} .main-blog__items .article-card--horizontal .article-card__content {
+      width: 70%;
+    }
+
+    .section-{{ section.id }} .main-blog__items .article-card--horizontal .article-card__content-inner {
+      width: 100%;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .section-{{ section.id }} .main-blog__layout {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+
+    .section-{{ section.id }} .main-blog__content {
+      width: 75%;
+      flex: 0 0 75%;
+    }
+
+    .section-{{ section.id }} .main-blog__sidebar {
+      width: 25%;
+      flex: 0 0 25%;
+      position: sticky;
+      top: 2rem;
+      padding-left: 2rem;
+      border-left: 0.1rem solid rgba(var(--color-foreground), 0.15);
+    }
+  }
+{% endstyle %}
+{%- paginate blog.articles by paginate_limit -%}
+  {% liquid
+    assign featured_post = blog.articles | first
+  %}
+  <div
+    class="main-blog section section--padding section-{{ section.id }}"
+    {% if section.settings.css_id != blank %}id="{{ section.settings.css_id | escape }}"{% endif %}
+  >
+    <div class="section__container page-width page-width--{{ section.settings.container }}">
+      <h1 class="section__heading text-{{ heading_block.settings.content_alignment }} {{ heading_block.settings.heading_size }}{% if blog.articles_count > 0 %} visually-hidden{% endif %}">
+        {{- blog.title | escape -}}
+      </h1>
+      {%- if blog.articles_count > 0 -%}
+        <div class="main-blog__layout">
+          <div class="main-blog__content">
+            {%- for block in section.blocks -%}
+              {%- liquid
+                assign block_class = 'main-blog__block main-blog__' | append: block.type
+                if forloop.first
+                  assign block_class = block_class | append: ' main-blog__block-first'
+                endif
+              -%}
+              {%- case block.type -%}
+                {%- when 'featured_post' -%}
+                  {% if archive_filter == blank %}
+                    <div
+                      class="{{ block_class }}"
+                      {{ block.shopify_attributes }}
+                    >
+                      {%- render 'card-article',
+                        article: featured_post,
+                        show_tags: true,
+                        show_author: true,
+                        show_date: true,
+                        show_excerpt: true,
+                        show_button: true,
+                        title_size: block.settings.heading_size,
+                        button_style: 'btn--primary',
+                        image_ratio: block.settings.featured_image_ratio,
+                        meta_size: 'text-base',
+                        layout: 'horizontal'
+                      -%}
+                      {% render 'divider', show_divider: block.settings.show_section_divider, divider_width: 'full' %}
+                    </div>
+                  {% endif %}
+                {%- when 'tags' -%}
+                  <div
+                    class="{{ block_class }} main-blog__tags swipe-mobile text-{{ block.settings.alignment }}"
+                    {{ block.shopify_attributes }}
+                  >
+                    <ul class="inline-flex items-center flex-nowrap md:flex-wrap font-navigation gap-2">
+                      <li>
+                        <a
+                          href="{{ blog.url }}"
+                          class="main-blog__tag flex btn btn--icon{% unless current_tags %} btn--active{% endunless %}"
+                        >
+                          <span class="btn__text">{{ 'sections.main-blog.all_posts' | t }}</span>
+                        </a>
+                      </li>
+                      {% if blog.tags.size > 0 %}
+                        {% for tag in blog.tags limit: block.settings.limit %}
+                          <li>
+                            <a
+                              href="{{ blog.url }}/tagged/{{ tag | handle }}"
+                              class="main-blog__tag flex btn btn--icon{% if current_tags contains tag %} btn--active{% endif %}"
+                            >
+                              <span class="btn__text">{{- tag -}}</span>
+                            </a>
+                          </li>
+                        {% endfor %}
+                      {% endif %}
+                    </ul>
+                  </div>
+                {%- when 'heading' -%}
+                  <div
+                    class="{{ block_class }} main-blog__heading text-{{ block.settings.content_alignment }}"
+                    {{ block.shopify_attributes }}
+                  >
+                    <h2 class="{{ block.settings.heading_size }}">
+                      {{ blog.title | escape }}
+                    </h2>
+                  </div>
+              {%- endcase -%}
+            {%- endfor -%}
+            {% liquid
+              assign visible_posts = 0
+            %}
+            <div class="main-blog__block main-blog__items f-grid f-grid--gap-{{ section.settings.column_gap }} f-grid--row-gap-{{ section.settings.row_gap }}">
+              {%- for article in blog.articles offset: offset -%}
+                {% assign article_archive_key = article.published_at | date: '%Y-%m' %}
+                {% if archive_filter == blank or article_archive_key == archive_filter %}
+                  {% assign visible_posts = visible_posts | plus: 1 %}
+                  <div class="f-column main-blog__article" data-published-month="{{ article_archive_key }}">
+                    {%- render 'card-article',
+                      article: article,
+                      show_tags: show_tags,
+                      show_author: show_author,
+                      show_date: show_date,
+                      show_excerpt: show_excerpt,
+                      show_button: show_button,
+                      index: forloop.index,
+                      layout: article_layout,
+                      title_size: section.settings.card_title_size,
+                      button_style: 'btn--icon'
+                    -%}
+                  </div>
+                {% endif %}
+              {%- endfor -%}
+            </div>
+
+            {% if archive_filter != blank and visible_posts == 0 %}
+              <p class="main-blog__archive-empty">No posts found for this month.</p>
+            {% endif %}
+
+            {%- if paginate.pages > 1 and archive_filter == blank -%}
+              <div class="main-blog__pagination">
+                {%- render 'pagination', paginate: paginate -%}
+              </div>
+            {%- endif -%}
+          </div>
+
+          <aside class="main-blog__sidebar" aria-label="Blog sidebar">
+            <div class="main-blog__sidebar-inner">
+              {% if section.settings.sidebar_description != blank %}
+                <div class="main-blog__sidebar-block rte">
+                  {{ section.settings.sidebar_description }}
+                </div>
+              {% endif %}
+
+              <div class="main-blog__sidebar-block">
+                <form action="{{ routes.search_url }}" method="get" role="search" class="main-blog__search-form">
+                  <input type="hidden" name="type" value="article">
+                  <input type="hidden" name="options[prefix]" value="last">
+                  <input
+                    type="search"
+                    name="q"
+                    value="{{ search.terms | escape }}"
+                    class="main-blog__search-input"
+                    placeholder="{{ section.settings.search_placeholder | escape }}"
+                    aria-label="{{ section.settings.search_placeholder | escape }}"
+                  >
+                  <button type="submit" class="btn btn--primary">
+                    {{ section.settings.search_button_label }}
+                  </button>
+                </form>
+              </div>
+
+              <div class="main-blog__sidebar-block">
+                <h3 class="main-blog__sidebar-heading h5">{{ section.settings.recent_posts_heading }}</h3>
+                <ul class="main-blog__sidebar-list">
+                  {% for article in current_blog.articles limit: 5 %}
+                    <li>
+                      <a href="{{ article.url }}">{{ article.title | escape }}</a>
+                      <span class="main-blog__sidebar-meta">{{ article.published_at | date: '%B %d, %Y' }}</span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+
+              {% if current_blog.tags.size > 0 %}
+                <div class="main-blog__sidebar-block">
+                  <h3 class="main-blog__sidebar-heading h5">{{ section.settings.categories_heading }}</h3>
+                  <div class="main-blog__categories">
+                    {% for tag in current_blog.tags %}
+                      <a class="main-blog__category-link btn btn--secondary btn--small" href="{{ blog.url }}/tagged/{{ tag | handle }}">
+                        {{ tag }}
+                      </a>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endif %}
+
+              {% liquid
+                assign seen_archive_keys = '|'
+                assign has_archives = false
+              %}
+              {% capture archive_links %}{% endcapture %}
+              {% for article in current_blog.articles %}
+                {% liquid
+                  assign archive_key = article.published_at | date: '%Y-%m'
+                  assign archive_label = article.published_at | date: '%B %Y'
+                  assign archive_token = '|' | append: archive_key | append: '|'
+                %}
+                {% unless seen_archive_keys contains archive_token %}
+                  {% liquid
+                    assign seen_archive_keys = seen_archive_keys | append: archive_key | append: '|'
+                    assign has_archives = true
+                  %}
+                  {% capture archive_links %}
+                    {{ archive_links }}
+                    <li>
+                      <a class="main-blog__archive-link{% if archive_filter == archive_key %} is-active{% endif %}" href="{{ blog.url }}?archive={{ archive_key }}">
+                        {{ archive_label }}
+                      </a>
+                    </li>
+                  {% endcapture %}
+                {% endunless %}
+              {% endfor %}
+
+              {% if has_archives %}
+                <div class="main-blog__sidebar-block">
+                  <h3 class="main-blog__sidebar-heading h5">{{ section.settings.archive_heading }}</h3>
+                  <ul class="main-blog__sidebar-list">
+                    {{ archive_links }}
+                  </ul>
+                </div>
+              {% endif %}
+            </div>
+          </aside>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Custom Blog Posts",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:general.general.name"
+    },
+    {
+      "type": "select",
+      "id": "container",
+      "options": [
+        {
+          "value": "full",
+          "label": "t:general.container.options__full.label"
+        },
+        {
+          "value": "fixed",
+          "label": "t:general.container.options__fixed.label"
+        }
+      ],
+      "default": "fixed",
+      "label": "t:general.container.label"
+    },
+    {
+      "type": "text",
+      "id": "css_id",
+      "label": "CSS ID"
+    },
+    {
+      "type": "header",
+      "content": "t:general.blog.label"
+    },
+    {
+      "type": "header",
+      "content": "Sidebar"
+    },
+    {
+      "type": "richtext",
+      "id": "sidebar_description",
+      "label": "Description",
+      "default": "<p>Add a short introduction, announcement, or promotional message for your blog sidebar.</p>"
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder",
+      "default": "Search blog posts"
+    },
+    {
+      "type": "text",
+      "id": "search_button_label",
+      "label": "Search button label",
+      "default": "Search"
+    },
+    {
+      "type": "text",
+      "id": "recent_posts_heading",
+      "label": "Recent posts heading",
+      "default": "Recent Posts"
+    },
+    {
+      "type": "text",
+      "id": "categories_heading",
+      "label": "Categories heading",
+      "default": "Categories"
+    },
+    {
+      "type": "text",
+      "id": "archive_heading",
+      "label": "Archive heading",
+      "default": "Archive"
+    },
+    {
+      "type": "range",
+      "id": "post_limit",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 6,
+      "label": "t:sections.featured-blog.settings.post_limit.label"
+    },
+    {
+      "type": "header",
+      "content": "t:general.grid.name"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "label": "t:general.grid.columns_desktop.label"
+    },
+    {
+      "type": "select",
+      "id": "column_gap",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:general.grid.gap.options__none.label"
+        },
+        {
+          "value": "2xs",
+          "label": "t:general.grid.gap.options__2xs.label"
+        },
+        {
+          "value": "extra-small",
+          "label": "t:general.grid.gap.options__xs.label"
+        },
+        {
+          "value": "small",
+          "label": "t:general.grid.gap.options__sm.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:general.grid.gap.options__md.label"
+        },
+        {
+          "value": "large",
+          "label": "t:general.grid.gap.options__lg.label"
+        },
+        {
+          "value": "extra-large",
+          "label": "t:general.grid.gap.options__xl.label"
+        }
+      ],
+      "default": "medium",
+      "label": "t:general.grid.column_gap.label"
+    },
+    {
+      "type": "select",
+      "id": "row_gap",
+      "options": [
+        {
+          "value": "inherit",
+          "label": "t:general.grid.gap.options__inherit.label"
+        },
+        {
+          "value": "none",
+          "label": "t:general.grid.gap.options__none.label"
+        },
+        {
+          "value": "2xs",
+          "label": "t:general.grid.gap.options__2xs.label"
+        },
+        {
+          "value": "extra-small",
+          "label": "t:general.grid.gap.options__xs.label"
+        },
+        {
+          "value": "small",
+          "label": "t:general.grid.gap.options__sm.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:general.grid.gap.options__md.label"
+        },
+        {
+          "value": "large",
+          "label": "t:general.grid.gap.options__lg.label"
+        },
+        {
+          "value": "extra-large",
+          "label": "t:general.grid.gap.options__xl.label"
+        }
+      ],
+      "default": "large",
+      "label": "t:general.grid.row_gap.label"
+    },
+    {
+      "type": "header",
+      "content": "t:general.header__card_settings.content"
+    },
+    {
+      "type": "select",
+      "id": "card_title_size",
+      "label": "t:general.text_size.heading.label",
+      "default": "h4",
+      "options": [
+        {
+          "value": "h5",
+          "label": "t:general.text_size.options__h5.label"
+        },
+        {
+          "value": "h4",
+          "label": "t:general.text_size.options__h4.label"
+        },
+        {
+          "value": "h3",
+          "label": "t:general.text_size.options__h3.label"
+        },
+        {
+          "value": "h2",
+          "label": "t:general.text_size.options__h2.label"
+        },
+        {
+          "value": "h1",
+          "label": "t:general.text_size.options__h1.label"
+        },
+        {
+          "value": "hd2",
+          "label": "t:general.text_size.options__hd2.label"
+        },
+        {
+          "value": "hd1",
+          "label": "t:general.text_size.options__hd1.label"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "t:general.blog.show_tags.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "default": false,
+      "label": "t:general.blog.show_excerpt.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "default": true,
+      "label": "t:general.blog.show_date.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "t:general.blog.show_author.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "default": false,
+      "label": "t:general.blog.show_button.label"
+    },
+    {
+      "type": "header",
+      "content": "t:general.padding.section_heading.content"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "t:general.padding.top.label",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "t:general.padding.bottom.label",
+      "default": 50
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tags",
+      "name": "t:sections.main-blog.blocks.tags.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "range",
+          "id": "limit",
+          "min": 2,
+          "max": 8,
+          "step": 1,
+          "default": 4,
+          "label": "t:sections.featured-blog.blocks.tags.settings.limit.label"
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "options": [
+            {
+              "value": "left",
+              "label": "t:general.text_alignment.options__1.label"
+            },
+            {
+              "value": "center",
+              "label": "t:general.text_alignment.options__2.label"
+            },
+            {
+              "value": "right",
+              "label": "t:general.text_alignment.options__3.label"
+            }
+          ],
+          "default": "left",
+          "label": "t:general.text_alignment.label"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "name": "t:general.heading.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "header",
+          "content": "t:general.general.name"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "t:general.text_size.heading.label",
+          "default": "h1",
+          "options": [
+            {
+              "value": "h5",
+              "label": "t:general.text_size.options__h5.label"
+            },
+            {
+              "value": "h4",
+              "label": "t:general.text_size.options__h4.label"
+            },
+            {
+              "value": "h3",
+              "label": "t:general.text_size.options__h3.label"
+            },
+            {
+              "value": "h2",
+              "label": "t:general.text_size.options__h2.label"
+            },
+            {
+              "value": "h1",
+              "label": "t:general.text_size.options__h1.label"
+            },
+            {
+              "value": "hd2",
+              "label": "t:general.text_size.options__hd2.label"
+            },
+            {
+              "value": "hd1",
+              "label": "t:general.text_size.options__hd1.label"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "content_alignment",
+          "label": "t:general.content_alignment.label",
+          "default": "left",
+          "options": [
+            {
+              "value": "left",
+              "label": "t:general.content_alignment.options__1.label"
+            },
+            {
+              "value": "center",
+              "label": "t:general.content_alignment.options__2.label"
+            },
+            {
+              "value": "right",
+              "label": "t:general.content_alignment.options__3.label"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "featured_post",
+      "name": "t:sections.main-blog.blocks.featured_post.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "t:sections.main-blog.blocks.featured_post.paragraph"
+        },
+        {
+          "type": "select",
+          "id": "featured_image_ratio",
+          "label": "t:general.image_ratio.label",
+          "default": "adapt",
+          "options": [
+            {
+              "value": "adapt",
+              "label": "t:general.image_ratio.options__1.label"
+            },
+            {
+              "value": "1/1",
+              "label": "t:general.image_ratio.options__2.label"
+            },
+            {
+              "value": "3/4",
+              "label": "t:general.image_ratio.options__3.label"
+            },
+            {
+              "value": "4/3",
+              "label": "t:general.image_ratio.options__4.label"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "t:general.text_size.heading.label",
+          "default": "h1",
+          "options": [
+            {
+              "value": "h5",
+              "label": "t:general.text_size.options__h5.label"
+            },
+            {
+              "value": "h4",
+              "label": "t:general.text_size.options__h4.label"
+            },
+            {
+              "value": "h3",
+              "label": "t:general.text_size.options__h3.label"
+            },
+            {
+              "value": "h2",
+              "label": "t:general.text_size.options__h2.label"
+            },
+            {
+              "value": "h1",
+              "label": "t:general.text_size.options__h1.label"
+            },
+            {
+              "value": "hd2",
+              "label": "t:general.text_size.options__hd2.label"
+            },
+            {
+              "value": "hd1",
+              "label": "t:general.text_size.options__hd1.label"
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "Block divider"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_section_divider",
+          "default": true,
+          "label": "t:general.divider.show_divider.label"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,404 @@
+{% style %}
+  .section-{{ section.id }} {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --custom-cp-panel-background: {{ section.settings.panel_background }};
+    --custom-cp-panel-color: {{ section.settings.panel_text_color }};
+    --custom-cp-panel-radius: {{ section.settings.panel_radius }}px;
+  }
+
+  .section-{{ section.id }} .custom-cp__panel {
+    background: var(--custom-cp-panel-background);
+    color: var(--custom-cp-panel-color);
+    border-radius: var(--custom-cp-panel-radius);
+    padding: 4rem 2.4rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .section-{{ section.id }} .custom-cp__heading {
+    margin: 0 0 1.6rem;
+    color: var(--custom-cp-panel-color);
+  }
+
+  .section-{{ section.id }} .custom-cp__text {
+    margin: 0;
+    color: var(--custom-cp-panel-color);
+    opacity: 0.9;
+    line-height: 1.6;
+  }
+
+  .section-{{ section.id }} .custom-cp__text p {
+    margin: 0 0 1.2rem;
+  }
+
+  .section-{{ section.id }} .custom-cp__text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .section-{{ section.id }} .custom-cp__text strong {
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  .section-{{ section.id }} .custom-cp__cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .section-{{ section.id }} .custom-cp__card {
+    padding: 2.4rem;
+    border-radius: 1.6rem;
+    transition: transform var(--duration-default), box-shadow var(--duration-default);
+  }
+
+  .section-{{ section.id }} .custom-cp__card:hover {
+    transform: translateY(-0.3rem);
+  }
+
+  .section-{{ section.id }} .custom-cp__card--translucent {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    color: var(--custom-cp-panel-color);
+  }
+
+  .section-{{ section.id }} .custom-cp__card--solid {
+    background: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
+    box-shadow: 0 1.8rem 4rem rgba(0, 0, 0, 0.2);
+  }
+
+  .section-{{ section.id }} .custom-cp__card-eyebrow {
+    display: block;
+    margin: 0 0 1rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.2rem;
+    text-transform: uppercase;
+    opacity: 0.65;
+  }
+
+  .section-{{ section.id }} .custom-cp__card-title {
+    margin: 0 0 1.8rem;
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .section-{{ section.id }} .custom-cp__card--solid .custom-cp__card-title {
+    color: rgb(var(--color-button));
+  }
+
+  .section-{{ section.id }} .custom-cp__card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .section-{{ section.id }} .custom-cp__card--solid .custom-cp__card-link {
+    color: var(--custom-cp-panel-background);
+  }
+
+  .section-{{ section.id }} .custom-cp__card-link:hover {
+    text-decoration: underline;
+  }
+
+  .section-{{ section.id }} .custom-cp__card-link svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }} .custom-cp__panel {
+      padding: 6.4rem 4rem;
+    }
+
+    .section-{{ section.id }} .custom-cp__cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .section-{{ section.id }} .custom-cp__panel {
+      grid-template-columns: 1fr 1fr;
+      padding: 6.4rem 8rem;
+    }
+
+    .section-{{ section.id }} .custom-cp__cards {
+      justify-content: flex-end;
+    }
+  }
+{% endstyle %}
+
+{% render 'divider',
+  show_divider: section.settings.show_section_divider,
+  divider_width: section.settings.divider_width
+%}
+
+<div
+  class="section section-{{ section.id }} section--padding custom-cp color-{{ section.settings.color_scheme }}"
+  {% if section.settings.css_id != blank %}
+    id="{{ section.settings.css_id }}"
+  {% endif %}
+>
+  <div class="section__container page-width page-width--{{ section.settings.container }}">
+    <div class="custom-cp__panel">
+      <div class="custom-cp__content">
+        {% if section.settings.heading != blank %}
+          <h2 class="custom-cp__heading {{ section.settings.heading_size }}">{{ section.settings.heading }}</h2>
+        {% endif %}
+        {% if section.settings.text != blank %}
+          <div class="custom-cp__text rte">{{ section.settings.text }}</div>
+        {% endif %}
+      </div>
+
+      {% if section.blocks.size > 0 %}
+        <div class="custom-cp__cards">
+          {% for block in section.blocks %}
+            <div
+              class="custom-cp__card custom-cp__card--{{ block.settings.card_style }}"
+              {{ block.shopify_attributes }}
+            >
+              {% if block.settings.eyebrow != blank %}
+                <span class="custom-cp__card-eyebrow">{{ block.settings.eyebrow }}</span>
+              {% endif %}
+              {% if block.settings.title != blank %}
+                <div class="custom-cp__card-title">{{ block.settings.title }}</div>
+              {% endif %}
+              {% if block.settings.link_label != blank %}
+                <a
+                  class="custom-cp__card-link"
+                  href="{{ block.settings.link_url | default: '#' }}"
+                  {% if block.settings.link_new_tab %}target="_blank" rel="noopener"{% endif %}
+                >
+                  {{ block.settings.link_label }}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="7" y1="17" x2="17" y2="7"></line>
+                    <polyline points="7 7 17 7 17 17"></polyline>
+                  </svg>
+                </a>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom Column Pricing",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["footer", "header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "text",
+      "id": "css_id",
+      "label": "CSS ID",
+      "info": "Add a unique ID to this section for anchor links (e.g. pricing). Do not include the # symbol."
+    },
+    {
+      "type": "select",
+      "id": "container",
+      "label": "Container",
+      "default": "fixed",
+      "options": [
+        { "value": "full", "label": "Full width" },
+        { "value": "fixed", "label": "Fixed width" }
+      ]
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Exclusive Partner Pricing"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "Large" },
+        { "value": "h2", "label": "Medium" },
+        { "value": "h3", "label": "Small" }
+      ]
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>To further aide your efforts, we extend <strong>end-column pricing</strong> to you for all non-golf ball items and special pricing on premium golf balls.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Panel style"
+    },
+    {
+      "type": "color",
+      "id": "panel_background",
+      "label": "Panel background",
+      "default": "#1a3a6e"
+    },
+    {
+      "type": "color",
+      "id": "panel_text_color",
+      "label": "Panel text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "panel_radius",
+      "label": "Panel corner radius",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "header",
+      "content": "Divider"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_section_divider",
+      "label": "Show section divider",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "divider_width",
+      "label": "Divider width",
+      "default": "fixed",
+      "options": [
+        { "value": "fixed", "label": "Fixed width" },
+        { "value": "full", "label": "Full width" }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Pricing card",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "select",
+          "id": "card_style",
+          "label": "Card style",
+          "default": "translucent",
+          "options": [
+            { "value": "translucent", "label": "Translucent (matches panel)" },
+            { "value": "solid", "label": "Solid (light)" }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow label",
+          "default": "Pricing Support"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Card title",
+          "default": "End-Column Rates"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link label",
+          "default": "Contact For Details"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Link URL"
+        },
+        {
+          "type": "checkbox",
+          "id": "link_new_tab",
+          "label": "Open link in new tab",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Column Pricing",
+      "blocks": [
+        {
+          "type": "card",
+          "settings": {
+            "card_style": "translucent",
+            "eyebrow": "Pricing Support",
+            "title": "End-Column Rates",
+            "link_label": "Contact For Details"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "card_style": "solid",
+            "eyebrow": "Premium Balls",
+            "title": "Special Rates",
+            "link_label": "Request Quote"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
