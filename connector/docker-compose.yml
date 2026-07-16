@@ -23,6 +23,11 @@ services:
     env_file: .env
     environment:
       CONNECTOR_DATABASE_URL: postgresql://ballpro:${POSTGRES_PASSWORD}@connector-db:5432/ballpro_connector
+      # Docker sets HOSTNAME to the container id; Next.js standalone binds to it,
+      # so it would listen only on the container IP. Force all interfaces so the
+      # localhost healthcheck and Traefik routing both reach it.
+      HOSTNAME: "0.0.0.0"
+      PORT: "3000"
     depends_on:
       connector-db:
         condition: service_healthy
