@@ -16,6 +16,9 @@ export interface BuildInventoryPayloadInput {
   future: RepSparkFutureRow[];
   cap: number | null;
   horizonDays: number;
+  // When false, the brand is "ATS only": current availability is published but
+  // future restock dates are omitted entirely. Defaults to true when unset.
+  showFutureInventory?: boolean;
   now?: Date;
   maxSourceAgeDays?: number;
 }
@@ -101,9 +104,15 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
   const today = new Date(`${now.toISOString().slice(0, 10)}T00:00:00.000Z`);
   const horizon = new Date(today);
   horizon.setUTCDate(horizon.getUTCDate() + input.horizonDays);
+  // ATS-only brands publish no future inventory at all. Drop future rows before
+  // any of them can reach the payload or raise an invalid_date failure — the
+  // dates are irrelevant to this brand, so a malformed one must not fail it.
+  const includeFuture = input.showFutureInventory !== false;
   const requested = new Set(input.styles.map((style) => canonicalStyleKey(style.brandName, style.productNumber)));
   const current = input.current.filter((row) => requested.has(canonicalStyleKey(row.brandName, row.productNumber)));
-  const future = input.future.filter((row) => requested.has(canonicalStyleKey(row.brandName, row.productNumber)));
+  const future = includeFuture
+    ? input.future.filter((row) => requested.has(canonicalStyleKey(row.brandName, row.productNumber)))
+    : [];
   const issues: PayloadIssue[] = [];
 
   const usableCurrent = current.filter((row) => row.variantId && row.color?.trim() && row.size?.trim());

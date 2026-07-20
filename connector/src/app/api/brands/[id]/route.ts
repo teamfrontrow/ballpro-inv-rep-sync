@@ -6,7 +6,11 @@ import { connectorDb } from "@/lib/db";
 const updateSchema = z.object({
   enabled: z.boolean().optional(),
   maxDisplayCap: z.number().int().min(0).nullable().optional(),
-}).refine((value) => value.enabled !== undefined || value.maxDisplayCap !== undefined, "No changes supplied");
+  showFutureInventory: z.boolean().optional(),
+}).refine(
+  (value) => value.enabled !== undefined || value.maxDisplayCap !== undefined || value.showFutureInventory !== undefined,
+  "No changes supplied",
+);
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const id = Number((await params).id);
@@ -25,10 +29,14 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       values.push(parsed.data.maxDisplayCap);
       assignments.push(`max_display_cap = $${values.length}`);
     }
+    if (parsed.data.showFutureInventory !== undefined) {
+      values.push(parsed.data.showFutureInventory);
+      assignments.push(`show_future_inventory = $${values.length}`);
+    }
     assignments.push("updated_at = now()");
     const result = await connectorDb().query(
       `UPDATE brands SET ${assignments.join(", ")} WHERE id = $1
-       RETURNING id, brand_slug, brand_name, shopify_vendor, enabled, max_display_cap, updated_at`,
+       RETURNING id, brand_slug, brand_name, shopify_vendor, enabled, max_display_cap, show_future_inventory, updated_at`,
       values,
     );
     if (!result.rows[0]) return NextResponse.json({ error: "Brand not found" }, { status: 404 });
