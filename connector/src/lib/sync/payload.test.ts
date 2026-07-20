@@ -165,6 +165,39 @@ describe("buildInventoryPayload", () => {
     });
   });
 
+  it("omits future inventory entirely when showFutureInventory is false (ATS only)", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [current({ size: "M", quantity: 10 })],
+      future: [future({ size: "M", quantity: 20 })],
+      cap: null,
+      horizonDays: 90,
+      showFutureInventory: false,
+      now: NOW,
+    });
+
+    expect(result.issues).toEqual([]);
+    expect(result.payload?.dates).toEqual([]);
+    expect(result.payload?.colors[0].sizes).toEqual([{ size: "M", current: 10 }]);
+  });
+
+  it("does not fail an ATS-only brand on a malformed future date", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [current()],
+      future: [future({ availabilityDate: "not-a-date" })],
+      cap: null,
+      horizonDays: 90,
+      showFutureInventory: false,
+      now: NOW,
+    });
+
+    expect(result.issues).toEqual([]);
+    expect(result.payload?.colors[0].sizes[0]).toEqual({ size: "M", current: 10 });
+  });
+
   it.each(["2/29/2025", "13/1/2026", "2026-02-30", "2026-8-01", "8-1-2026"])(
     "rejects impossible or non-contract date %s",
     (availabilityDate) => {
