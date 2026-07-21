@@ -157,4 +157,18 @@ describe("ShopifyAdminClient", () => {
     const parsed = parseProductBulkJsonl(`${JSON.stringify(product)}\n${JSON.stringify(variant)}\n`);
     expect(parsed[0].variants.nodes[0]).toMatchObject({ id: variant.id, sku: "SKU" });
   });
+
+  it("does not select 'code' on metafieldsDelete userErrors (base UserError has no code)", async () => {
+    let sentQuery = "";
+    const fetchImpl = vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+      sentQuery = (JSON.parse(String(init?.body)) as { query: string }).query;
+      return graphQLResponse({ metafieldsDelete: { deletedMetafields: [{ ownerId: "gid://shopify/Product/1" }], userErrors: [] } });
+    });
+    const client = new ShopifyAdminClient({ shopDomain: "ballproplusdev.myshopify.com", accessToken: "token", fetchImpl });
+    await client.deleteInventoryMetafields(["gid://shopify/Product/1"]);
+    expect(sentQuery).toContain("metafieldsDelete");
+    // `code` exists on MetafieldsSetUserError but NOT on the base UserError that
+    // metafieldsDelete returns; selecting it makes Shopify reject the query.
+    expect(sentQuery).not.toContain("code");
+  });
 });

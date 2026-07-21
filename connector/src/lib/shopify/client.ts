@@ -345,7 +345,7 @@ export class ShopifyAdminClient {
         mutation DeleteInventoryMetafields($metafields: [MetafieldIdentifierInput!]!) {
           metafieldsDelete(metafields: $metafields) {
             deletedMetafields { ownerId namespace key }
-            userErrors { field message code }
+            userErrors { field message }
           }
         }
       `, { metafields: batch.map((ownerId) => ({ ownerId, namespace: INVENTORY_METAFIELD_NAMESPACE, key: INVENTORY_METAFIELD_KEY })) });
@@ -394,7 +394,7 @@ export class ShopifyAdminClient {
       mutation BulkReadProducts($query: String!) {
         bulkOperationRunQuery(query: $query) {
           bulkOperation { id status }
-          userErrors { field message code }
+          userErrors { field message }
         }
       }
     `, { query: productQuery });
@@ -587,6 +587,11 @@ export async function createShopifyAdminClient(): Promise<ShopifyAdminClient> {
   });
 }
 
+// `code` is present only on specific user-error types (MetafieldsSetUserError,
+// MetafieldDefinition*UserError, ProductVariantsBulkCreateUserError). The base
+// `UserError` returned by metafieldsDelete and bulkOperationRunQuery has only
+// field + message — do NOT select `code` in those mutations or Shopify rejects
+// the whole query. `code` stays optional here so both shapes fit this type.
 export interface ShopifyUserError { field?: string[]; message: string; code?: string }
 export interface ShopHealth { id: string; name: string; myshopifyDomain: string; primaryDomain: { host: string; url: string } }
 export interface MetafieldDefinition { id: string; namespace: string; key: string; name: string; ownerType: string; type: { name: string } }
