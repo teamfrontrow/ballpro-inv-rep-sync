@@ -28,6 +28,7 @@ interface MappingRow extends QueryResultRow {
   brandName: string | null;
   brandEnabled: boolean;
   matchStatus: string;
+  vendorIgnored: boolean;
   maxDisplayCap: number | null;
   defaultCap: number | null;
   horizonDays: number;
@@ -91,6 +92,19 @@ function parseStyles(value: MappingRow["styles"]): MappingStyleRow[] {
   });
 }
 
+/**
+ * True when a mapping is intentionally out of scope for sync — its Shopify vendor
+ * is ignored, it was marked 'ignored', or its RepSpark brand is disabled (which
+ * includes products with no RepSpark brand at all, e.g. Ball Pro). Such mappings,
+ * when never previously synced, produce no run item at all rather than a 'skipped'
+ * row, so house/Shopify-only products don't clutter run results.
+ */
+export function isExcludedMapping(
+  mapping: Pick<MappingRow, "vendorIgnored" | "matchStatus" | "brandEnabled">,
+): boolean {
+  return mapping.vendorIgnored || mapping.matchStatus === "ignored" || !mapping.brandEnabled;
+}
+
 function activeStyles(mapping: MappingRow): RepSparkStyleKey[] {
   if (!mapping.brandEnabled || !mapping.brandName || !["auto", "manual", "partial"].includes(mapping.matchStatus)) return [];
   const styles = new Map<string, RepSparkStyleKey>();
@@ -137,6 +151,7 @@ async function loadMappings(
             b.brand_name AS "brandName",
             COALESCE(b.enabled, false) AS "brandEnabled",
             pm.match_status AS "matchStatus",
+            (iv.shopify_vendor IS NOT NULL) AS "vendorIgnored",
             b.max_display_cap AS "maxDisplayCap",
             COALESCE(b.show_future_inventory, true) AS "showFutureInventory",
             settings.default_cap AS "defaultCap",
@@ -146,6 +161,7 @@ async function loadMappings(
             COALESCE(styles.values, '[]'::jsonb) AS styles
        FROM product_mappings pm
        LEFT JOIN brands b ON b.id = pm.brand_id
+       LEFT JOIN ignored_vendors iv ON iv.shopify_vendor = pm.shopify_vendor
        CROSS JOIN app_settings settings
        LEFT JOIN LATERAL (
          SELECT jsonb_agg(jsonb_build_object(
@@ -360,8 +376,12 @@ export async function runSyncWithDependencies(
       const mappingId = Number(mapping.id);
       const styles = stylesByMapping.get(mappingId) ?? [];
       if (!styles.length) {
+        // Previously-synced products always get a row so a now-out-of-scope one
+        // is cleaned up (its metafield removed). Never-synced products that are
+        // intentionally excluded (ignored vendor/status, disabled or absent brand)
+        // produce no row at all; only genuinely in-scope-but-unmatched ones do.
         if (mapping.lastSyncedAt) stale.push(mapping);
-        else items.push({ mappingId, ownerId: mapping.shopifyProductGid, status: "skipped", payloadHash: null, error: "mapping is disabled, ignored, or has no matched styles", metafieldId: null });
+        else if (!isExcludedMapping(mapping)) items.push({ mappingId, ownerId: mapping.shopifyProductGid, status: "skipped", payloadHash: null, error: "no matched styles for an in-scope product", metafieldId: null });
         continue;
       }
       const rows = inventoryForStyles(styles, groupedInventory);
