@@ -16,6 +16,7 @@ export function RunDetail({ id }: { id: string }) {
   const [run, setRun] = useState<Run | null>(null);
   const [items, setItems] = useState<RunItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const toast = useToast();
   const load = useCallback(async (quiet = false) => {
     try {
@@ -34,6 +35,16 @@ export function RunDetail({ id }: { id: string }) {
   const processed = run.products_written + run.products_unchanged + run.products_skipped + run.products_failed;
   const percent = run.products_total ? Math.min(100, Math.round((processed / run.products_total) * 100)) : run.status === "completed" ? 100 : 0;
 
+  // Result-type filter. Products with no matching RepSpark brand (e.g. Shopify-
+  // only vendors like Ball Pro) land in "skipped" every run, so let the admin
+  // narrow the (often long) list to the statuses they care about.
+  const STATUS_ORDER = ["written", "unchanged", "skipped", "failed"] as const;
+  const counts = items.reduce<Record<string, number>>((acc, item) => {
+    acc[item.status] = (acc[item.status] ?? 0) + 1;
+    return acc;
+  }, {});
+  const shown = statusFilter === "all" ? items : items.filter((item) => item.status === statusFilter);
+
   return (
     <div className="stack">
       <PageHeader title={`Sync run #${run.id}`} description={`${run.dry_run ? "Dry run" : "Live write"} · ${run.kind.replaceAll("_", " ")} · requested ${formatDate(run.requested_at)}`} actions={<><Link className="btn" href="/runs"><ArrowLeft size={15} />All runs</Link><button className="icon-btn" onClick={() => load()} title="Refresh run" aria-label="Refresh run"><RefreshCw size={16} /></button></>} />
@@ -48,9 +59,20 @@ export function RunDetail({ id }: { id: string }) {
       </div>
       {run.error_summary || run.last_error ? <div className="error-box">{run.error_summary || run.last_error}</div> : null}
       <div className="card">
-        <div className="card-header"><div><h2 className="section-title">Product results</h2><p className="section-desc">One row per reconciled Shopify product.</p></div><span className="badge">{items.length} items</span></div>
+        <div className="card-header"><div><h2 className="section-title">Product results</h2><p className="section-desc">One row per reconciled Shopify product.</p></div><span className="badge">{statusFilter === "all" ? `${items.length} items` : `${shown.length} of ${items.length}`}</span></div>
+        {items.length > 0 && (
+          <div className="card-body row" style={{ gap: 6, flexWrap: "wrap", paddingTop: 0 }}>
+            <button className={`btn btn-sm ${statusFilter === "all" ? "btn-primary" : ""}`} onClick={() => setStatusFilter("all")}>All {items.length}</button>
+            {STATUS_ORDER.filter((status) => counts[status]).map((status) => (
+              <button key={status} className={`btn btn-sm ${statusFilter === status ? "btn-primary" : ""}`} onClick={() => setStatusFilter(status)}>
+                {status.charAt(0).toUpperCase() + status.slice(1)} {counts[status]}
+              </button>
+            ))}
+          </div>
+        )}
         {items.length === 0 ? <EmptyState title={run.status === "queued" ? "Waiting for worker" : "No product results"} description={run.status === "queued" ? "The queued job will populate results after a worker claims it." : "This run did not produce item-level records."} />
-        : <div className="table-wrap"><table className="data-table"><thead><tr><th>Product</th><th>Status</th><th>Payload hash</th><th>Shopify metafield</th><th>Error</th></tr></thead><tbody>{items.map((item) => <tr key={item.id}>
+        : shown.length === 0 ? <EmptyState title="No matching items" description={`No ${statusFilter} results in this run.`} />
+        : <div className="table-wrap"><table className="data-table"><thead><tr><th>Product</th><th>Status</th><th>Payload hash</th><th>Shopify metafield</th><th>Error</th></tr></thead><tbody>{shown.map((item) => <tr key={item.id}>
           <td><div style={{ fontWeight: 650 }}>{item.shopify_title}</div><div className="muted" style={{ fontSize: 11 }}>{item.shopify_vendor} <span className="mono">/{item.shopify_handle}</span></div></td>
           <td><StatusBadge status={item.status} /></td>
           <td className="mono muted">{item.payload_hash ? `${item.payload_hash.slice(0, 12)}…` : "None"}</td>
