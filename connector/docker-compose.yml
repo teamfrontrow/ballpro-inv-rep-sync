@@ -34,10 +34,12 @@ services:
     expose:
       - "3000"
     healthcheck:
-      # Liveness only — must NOT depend on RepSpark/Shopify, or a restarted
-      # external dependency marks this container unhealthy and Traefik stops
-      # routing (a 504 for the whole UI). Dependency status is in /api/health.
-      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:3000/api/health/live').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      # Pure liveness: alive if the web server answers HTTP at all. We accept ANY
+      # response (even a 404) and only fail on a connection error, so a missing
+      # route, an app-level error, or a slow RepSpark/Shopify dependency can never
+      # mark the container unhealthy and get it deregistered (a 404/504 for the
+      # whole UI). Dependency status lives in /api/health for the dashboard.
+      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:3000/api/health/live').then(()=>process.exit(0)).catch(()=>process.exit(1))\""]
       interval: 15s
       timeout: 5s
       retries: 10
