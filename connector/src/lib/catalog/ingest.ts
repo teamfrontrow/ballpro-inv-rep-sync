@@ -1,12 +1,25 @@
 import type { Pool } from "pg";
 
-import { repsparkDb, transaction } from "@/lib/db";
+import { connectorDb, repsparkDb, transaction } from "@/lib/db";
 import { createShopifyAdminClient, type ShopifyAdminClient } from "@/lib/shopify/client";
 
 import { persistCatalog } from "./persist";
 import { reconcileCatalog, DEFAULT_BRAND_ALIASES } from "./reconcile";
 import { readinessFailureMessage, readRepSparkCatalog, reportSourceReadiness } from "./source";
-import type { BrandAliasMap, CatalogIngestReport, SourceReadinessReport } from "./types";
+import type { BrandAlias, BrandAliasMap, CatalogIngestReport, SourceReadinessReport } from "./types";
+
+// Vendor -> RepSpark-brand aliases taken from the connector's own brands table,
+// so discovery can match Shopify products whose vendor differs from the RepSpark
+// brand name (e.g. vendor "Swannies Golf" -> brand "Swannies") from editable
+// config rather than a hardcoded list.
+export async function readBrandVendorAliases(): Promise<BrandAlias[]> {
+  const result = await connectorDb().query<{ shopify_vendor: string; brand_name: string }>(
+    `SELECT shopify_vendor, brand_name FROM brands
+      WHERE nullif(btrim(shopify_vendor), '') IS NOT NULL
+        AND nullif(btrim(brand_name), '') IS NOT NULL`,
+  );
+  return result.rows.map((row) => ({ shopifyVendor: row.shopify_vendor, repsparkBrand: row.brand_name }));
+}
 
 export class CatalogSourceNotReadyError extends Error {
   constructor(public readonly report: SourceReadinessReport) {
