@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { BarChart3, Building2, GitMerge, History, Menu, Moon, Settings, Sun, Tags, X } from "lucide-react";
+import { BarChart3, Building2, GitMerge, History, Menu, Moon, Settings, ShieldCheck, Sun, Tags, X } from "lucide-react";
 
 const sections = [
   { label: "Overview", items: [{ href: "/dashboard", label: "Dashboard", icon: BarChart3 }] },
@@ -14,6 +14,7 @@ const sections = [
   ] },
   { label: "Operations", items: [
     { href: "/runs", label: "Sync runs", icon: History },
+    { href: "/verify", label: "Verify", icon: ShieldCheck },
     { href: "/settings", label: "Settings", icon: Settings },
   ] },
 ];
