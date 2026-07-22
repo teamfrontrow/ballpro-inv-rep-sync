@@ -28,6 +28,10 @@ function MappingEditor({ mapping, brands, onSaved }: { mapping: Mapping; brands:
   const toast = useToast();
 
   const brandName = brands.find((brand) => brand.id === brandId)?.brand_name ?? mapping.brand_name;
+  // This product's Shopify SKUs are the bridge to RepSpark: a SKU normally equals
+  // the RepSpark product number. Seed the picker with them so it opens on the
+  // matching style(s) instead of every style in the brand.
+  const productSkus = [...new Set((mapping.styles ?? []).map((style) => (style.normalized_sku || "").trim().toUpperCase()).filter(Boolean))];
 
   const loadPicker = useCallback(async (term: string) => {
     if (!brandName) { toast("Assign a brand first, then browse its RepSpark styles", "error"); return; }
@@ -42,7 +46,11 @@ function MappingEditor({ mapping, brands, onSaved }: { mapping: Mapping; brands:
   function togglePicker() {
     const next = !pickerOpen;
     setPickerOpen(next);
-    if (next) loadPicker(pickerQuery);
+    if (next) {
+      const seed = pickerQuery || productSkus[0] || "";
+      setPickerQuery(seed);
+      loadPicker(seed);
+    }
   }
 
   function addPicked(style: RepSparkStyle) {
@@ -85,6 +93,11 @@ function MappingEditor({ mapping, brands, onSaved }: { mapping: Mapping; brands:
             <div className="search-wrap" style={{ flex: 1 }}><Search size={14} /><input className="input" placeholder={brandName ? `Search ${brandName} styles by number or name…` : "Assign a brand first"} value={pickerQuery} onChange={(event) => setPickerQuery(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") loadPicker(pickerQuery); }} disabled={!brandName} /></div>
             <button className="btn btn-sm" onClick={() => loadPicker(pickerQuery)} disabled={!brandName || pickerLoading}>{pickerLoading ? <LoaderCircle className="spinner" size={14} /> : "Search"}</button>
           </div>
+          <p className="field-help" style={{ marginBottom: 8 }}>
+            {productSkus.length
+              ? <>Pre-filtered to this product&apos;s SKU{productSkus.length === 1 ? "" : "s"} (<span className="mono">{productSkus.join(", ")}</span>). One RepSpark product number holds all of its colors — add that single row to bring in every color. Clear the search to browse all {brandName} styles.</>
+              : <>This product has no Shopify SKUs to match on, so every {brandName} style is listed. Search by product number or name. One RepSpark product number holds all of its colors.</>}
+          </p>
           {pickerLoading ? <div className="secondary" style={{ fontSize: 12 }}>Reading RepSpark…</div>
           : pickerStyles.length === 0 ? <div className="secondary" style={{ fontSize: 12 }}>No RepSpark styles found for {brandName ?? "this brand"}{pickerQuery ? ` matching “${pickerQuery}”` : ""}.</div>
           : <div className="table-wrap" style={{ maxHeight: 260, overflowY: "auto" }}><table className="data-table"><thead><tr><th>Product #</th><th>Name</th><th>Colors</th><th>Sizes</th><th></th></tr></thead><tbody>
