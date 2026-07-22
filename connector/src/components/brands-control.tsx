@@ -15,6 +15,7 @@ type Brand = {
 export function BrandsControl() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [caps, setCaps] = useState<Record<string, string>>({});
+  const [vendors, setVendors] = useState<Record<string, string>>({});
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
@@ -25,12 +26,13 @@ export function BrandsControl() {
       const data = await apiJson<{ brands: Brand[] }>("/api/brands");
       setBrands(data.brands);
       setCaps(Object.fromEntries(data.brands.map((brand) => [brand.id, brand.max_display_cap === null ? "" : String(brand.max_display_cap)])));
+      setVendors(Object.fromEntries(data.brands.map((brand) => [brand.id, brand.shopify_vendor ?? ""])));
     } catch (error) { toast(error instanceof Error ? error.message : "Unable to load brands", "error"); }
     finally { setLoading(false); }
   }, [toast]);
   useEffect(() => { load(); }, [load]);
 
-  async function update(id: string, changes: { enabled?: boolean; maxDisplayCap?: number | null; showFutureInventory?: boolean }) {
+  async function update(id: string, changes: { enabled?: boolean; maxDisplayCap?: number | null; showFutureInventory?: boolean; shopifyVendor?: string }) {
     setSaving(id);
     try {
       const data = await apiJson<{ brand: Partial<Brand> }>(`/api/brands/${id}`, {
@@ -57,7 +59,15 @@ export function BrandsControl() {
           {visible.map((brand) => {
             const readyPercent = brand.product_count ? Math.round((brand.ready_count / brand.product_count) * 100) : 0;
             return <tr key={brand.id}>
-              <td><div style={{ fontWeight: 650 }}>{brand.brand_name}</div><div className="muted" style={{ fontSize: 11.5 }}>{brand.shopify_vendor} <span className="mono">/{brand.brand_slug}</span></div></td>
+              <td>
+                <div style={{ fontWeight: 650 }}>{brand.brand_name} <span className="muted mono" style={{ fontSize: 11 }}>/{brand.brand_slug}</span></div>
+                <div className="row" style={{ gap: 4, marginTop: 4 }}>
+                  <span className="muted" style={{ fontSize: 11 }}>Shopify vendor</span>
+                  <input className="input" style={{ minWidth: 150, height: 26, fontSize: 12, padding: "2px 7px" }} value={vendors[brand.id] ?? ""} placeholder="Shopify vendor" onChange={(event) => setVendors((current) => ({ ...current, [brand.id]: event.target.value }))} />
+                  <button className="icon-btn" title="Save Shopify vendor" aria-label={`Save Shopify vendor for ${brand.brand_name}`} disabled={saving === brand.id || !(vendors[brand.id] ?? "").trim() || (vendors[brand.id] ?? "").trim() === brand.shopify_vendor} onClick={() => update(brand.id, { shopifyVendor: (vendors[brand.id] ?? "").trim() })}><Save size={14} /></button>
+                </div>
+                <div className="field-help">Must match the Shopify Vendor so discovery can match this brand&apos;s products.</div>
+              </td>
               <td style={{ minWidth: 170 }}><div className="spread" style={{ marginBottom: 5 }}><span className="muted" style={{ fontSize: 11 }}>{brand.ready_count}/{brand.product_count} ready</span><span className="mono muted">{readyPercent}%</span></div><div className="progress-track"><div className="progress-fill" style={{ width: `${readyPercent}%` }} /></div>{brand.unmatched_count > 0 ? <div style={{ color: "var(--warning)", fontSize: 11, marginTop: 4 }}>{brand.unmatched_count} need review</div> : null}</td>
               <td style={{ width: 170 }}><div className="row"><input className="input" style={{ minWidth: 90 }} type="number" min="0" placeholder="Default" value={caps[brand.id] ?? ""} onChange={(event) => setCaps((current) => ({ ...current, [brand.id]: event.target.value }))} /><button className="icon-btn" title="Save display cap" aria-label={`Save cap for ${brand.brand_name}`} disabled={saving === brand.id} onClick={() => update(brand.id, { maxDisplayCap: caps[brand.id] === "" ? null : Math.max(0, Number.parseInt(caps[brand.id], 10) || 0) })}>{saving === brand.id ? <LoaderCircle className="spinner" size={15} /> : <Save size={15} />}</button></div><div className="field-help">Blank uses global default</div></td>
               <td><button className={`toggle ${brand.show_future_inventory ? "on" : ""}`} role="switch" aria-checked={brand.show_future_inventory} aria-label={`${brand.show_future_inventory ? "Hide" : "Show"} future restock dates for ${brand.brand_name}`} disabled={saving === brand.id} onClick={() => update(brand.id, { showFutureInventory: !brand.show_future_inventory })} /><div className="field-help">Off = ATS only</div></td>

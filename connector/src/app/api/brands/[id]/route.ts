@@ -7,8 +7,9 @@ const updateSchema = z.object({
   enabled: z.boolean().optional(),
   maxDisplayCap: z.number().int().min(0).nullable().optional(),
   showFutureInventory: z.boolean().optional(),
+  shopifyVendor: z.string().trim().min(1).max(255).optional(),
 }).refine(
-  (value) => value.enabled !== undefined || value.maxDisplayCap !== undefined || value.showFutureInventory !== undefined,
+  (value) => value.enabled !== undefined || value.maxDisplayCap !== undefined || value.showFutureInventory !== undefined || value.shopifyVendor !== undefined,
   "No changes supplied",
 );
 
@@ -32,6 +33,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     if (parsed.data.showFutureInventory !== undefined) {
       values.push(parsed.data.showFutureInventory);
       assignments.push(`show_future_inventory = $${values.length}`);
+    }
+    if (parsed.data.shopifyVendor !== undefined) {
+      values.push(parsed.data.shopifyVendor);
+      assignments.push(`shopify_vendor = $${values.length}`);
     }
     assignments.push("updated_at = now()");
     const result = await connectorDb().query(

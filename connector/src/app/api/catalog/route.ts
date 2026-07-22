@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { CatalogSourceNotReadyError, getCatalogIngestReport, ingestCatalog } from "@/lib/catalog";
+import { CatalogSourceNotReadyError, DEFAULT_BRAND_ALIASES, getCatalogIngestReport, ingestCatalog, readBrandVendorAliases } from "@/lib/catalog";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +15,10 @@ export async function GET() {
 
 export async function POST() {
   try {
-    const report = await ingestCatalog();
+    // Brands-table vendor aliases override the built-in defaults on conflict, so
+    // a brand's configured Shopify vendor drives matching.
+    const brandAliases = await readBrandVendorAliases();
+    const report = await ingestCatalog({ aliases: [...DEFAULT_BRAND_ALIASES, ...brandAliases] });
     return NextResponse.json({ status: "completed", report }, { status: 200 });
   } catch (error) {
     if (error instanceof CatalogSourceNotReadyError) {
