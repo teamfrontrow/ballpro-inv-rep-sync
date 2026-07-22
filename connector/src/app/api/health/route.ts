@@ -4,10 +4,22 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
+const PROBE_TIMEOUT_MS = 5_000;
+
+// A stale pooled connection to a restarted dependency can hang far longer than
+// the pool's connect timeout, so bound each probe: report it failed rather than
+// letting the whole endpoint hang.
+function withTimeout<T>(operation: () => Promise<T>): Promise<T> {
+  return Promise.race([
+    operation(),
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error(`probe timed out after ${PROBE_TIMEOUT_MS}ms`)), PROBE_TIMEOUT_MS)),
+  ]);
+}
+
 async function probe(name: string, operation: () => Promise<unknown>) {
   const startedAt = Date.now();
   try {
-    await operation();
+    await withTimeout(operation);
     return { name, ok: true, latencyMs: Date.now() - startedAt };
   } catch (error) {
     return {
