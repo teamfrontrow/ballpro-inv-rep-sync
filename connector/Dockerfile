@@ -5,6 +5,11 @@ RUN npm ci
 
 FROM dependencies AS build
 COPY . .
+# Give the build headroom: `next build` OOM-kills at "Collecting build traces"
+# on the memory-constrained build host as the app grows. Raise Node's heap so
+# trace collection can finish. If the build container has a hard memory limit
+# below this, raise that limit in Coolify instead — this only lifts the JS heap.
+ENV NODE_OPTIONS=--max-old-space-size=4096
 RUN npm run build
 
 FROM node:22-slim AS runtime
