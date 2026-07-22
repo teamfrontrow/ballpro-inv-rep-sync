@@ -193,11 +193,15 @@ async function assertRepSparkReady(
 async function fetchInventorySnapshot(
   keys: RepSparkStyleKey[],
   db: Queryable,
+  assertReady = true,
 ): Promise<RepSparkInventory> {
   const { brands, productNumbers } = keyRows(keys);
   if (brands.length === 0) return { current: [], future: [] };
   const columns = await sourceColumns(db);
-  await assertRepSparkReady(db, columns, brands);
+  // The read-only verification view passes assertReady=false so it can show the
+  // latest scraped numbers even while a scrape is running or a brand is not yet
+  // "ready" — the sync engine keeps the default (fail closed).
+  if (assertReady) await assertRepSparkReady(db, columns, brands);
   const sizeColumn = quoteIdentifier(columns.sizeCode);
   const sequence = columns.sizeSequence ? `vs.${quoteIdentifier(columns.sizeSequence)}` : "NULL::integer";
   // Parent timestamps cannot prove that child quantities were refreshed or removed.
@@ -244,14 +248,16 @@ async function fetchInventorySnapshot(
 export async function fetchRepSparkInventory(
   keys: RepSparkStyleKey[],
   db: Pool = repsparkDb(),
+  options: { assertReady?: boolean } = {},
 ): Promise<RepSparkInventory> {
+  const assertReady = options.assertReady ?? true;
   if (keys.length === 0) return { current: [], future: [] };
-  if (typeof db.connect !== "function") return fetchInventorySnapshot(keys, db);
+  if (typeof db.connect !== "function") return fetchInventorySnapshot(keys, db, assertReady);
 
   const client = await db.connect();
   try {
     await client.query("BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY");
-    const inventory = await fetchInventorySnapshot(keys, client);
+    const inventory = await fetchInventorySnapshot(keys, client, assertReady);
     await client.query("COMMIT");
     return inventory;
   } catch (error) {

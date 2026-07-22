@@ -335,6 +335,31 @@ export class ShopifyAdminClient {
     return result;
   }
 
+  // Read the live inventory metafield *value* (not just the digest) for the
+  // verification view. Returns null for a product that has no such metafield.
+  async readInventoryMetafields(ownerIds: string[]): Promise<Map<string, { value: string; updatedAt: string } | null>> {
+    const result = new Map<string, { value: string; updatedAt: string } | null>();
+    if (!ownerIds.length) return result;
+    const data = await this.request<{
+      nodes: Array<null | { id: string; metafield: null | { value: string; updatedAt: string } }>;
+    }>(`#graphql
+      query InventoryMetafieldValues($ids: [ID!]!) {
+        nodes(ids: $ids) {
+          ... on Product {
+            id
+            metafield(namespace: "${INVENTORY_METAFIELD_NAMESPACE}", key: "${INVENTORY_METAFIELD_KEY}") {
+              value
+              updatedAt
+            }
+          }
+        }
+      }
+    `, { ids: ownerIds });
+    for (const node of data.nodes) if (node) result.set(node.id, node.metafield ? { value: node.metafield.value, updatedAt: node.metafield.updatedAt } : null);
+    for (const ownerId of ownerIds) if (!result.has(ownerId)) result.set(ownerId, null);
+    return result;
+  }
+
   async deleteInventoryMetafields(ownerIds: string[]): Promise<string[]> {
     const deleted: string[] = [];
     for (let index = 0; index < ownerIds.length; index += MAX_METAFIELDS_SET_BATCH_SIZE) {
