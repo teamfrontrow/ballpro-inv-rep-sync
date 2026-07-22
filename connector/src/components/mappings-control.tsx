@@ -8,6 +8,7 @@ import { apiJson, EmptyState, formatDate, StatusBadge, useToast } from "@/compon
 
 type Brand = { id: string; brand_name: string };
 type Style = { id?: number; normalized_sku: string; repspark_product_number: string | null; match_status: "auto" | "manual" | "unmatched" | "ignored"; match_source: string };
+type RepSparkStyle = { product_number: string; product_name: string | null; colors: string[]; size_count: number; in_stock_sizes: number };
 type Mapping = {
   id: string; shopify_product_gid: string; shopify_handle: string; shopify_vendor: string; shopify_title: string;
   brand_id: string | null; brand_name: string | null; match_status: "auto" | "manual" | "partial" | "unmatched" | "ignored";
@@ -20,7 +21,40 @@ function MappingEditor({ mapping, brands, onSaved }: { mapping: Mapping; brands:
   const [source, setSource] = useState(mapping.match_source);
   const [styles, setStyles] = useState<Style[]>(mapping.styles);
   const [saving, setSaving] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerQuery, setPickerQuery] = useState("");
+  const [pickerStyles, setPickerStyles] = useState<RepSparkStyle[]>([]);
+  const [pickerLoading, setPickerLoading] = useState(false);
   const toast = useToast();
+
+  const brandName = brands.find((brand) => brand.id === brandId)?.brand_name ?? mapping.brand_name;
+
+  const loadPicker = useCallback(async (term: string) => {
+    if (!brandName) { toast("Assign a brand first, then browse its RepSpark styles", "error"); return; }
+    setPickerLoading(true);
+    try {
+      const data = await apiJson<{ styles: RepSparkStyle[] }>(`/api/repspark/styles?brand=${encodeURIComponent(brandName)}${term.trim() ? `&query=${encodeURIComponent(term.trim())}` : ""}`);
+      setPickerStyles(data.styles);
+    } catch (error) { toast(error instanceof Error ? error.message : "Unable to load RepSpark styles", "error"); }
+    finally { setPickerLoading(false); }
+  }, [brandName, toast]);
+
+  function togglePicker() {
+    const next = !pickerOpen;
+    setPickerOpen(next);
+    if (next) loadPicker(pickerQuery);
+  }
+
+  function addPicked(style: RepSparkStyle) {
+    setStyles((current) => {
+      if (current.some((existing) => (existing.repspark_product_number ?? "").toUpperCase() === style.product_number.toUpperCase())) {
+        toast(`${style.product_number} is already mapped`);
+        return current;
+      }
+      toast(`Added ${style.product_number} (${style.colors.length} color${style.colors.length === 1 ? "" : "s"})`);
+      return [...current, { normalized_sku: style.product_number, repspark_product_number: style.product_number, match_status: "manual", match_source: "repspark-picker" }];
+    });
+  }
 
   function patchStyle(index: number, changes: Partial<Style>) { setStyles((current) => current.map((style, styleIndex) => styleIndex === index ? { ...style, ...changes } : style)); }
   async function save() {
@@ -44,7 +78,29 @@ function MappingEditor({ mapping, brands, onSaved }: { mapping: Mapping; brands:
         <div><label className="label">Match source</label><input className="input" value={source} onChange={(event) => setSource(event.target.value)} /></div>
         <div><label className="label">Shopify product GID</label><input className="input mono" value={mapping.shopify_product_gid} disabled /></div>
       </div>
-      <div className="spread" style={{ marginBottom: 10 }}><div><h3 className="section-title">RepSpark styles</h3><p className="section-desc">All Shopify style SKUs grouped into this product metafield.</p></div><button className="btn btn-sm" onClick={() => setStyles((current) => [...current, { normalized_sku: "", repspark_product_number: "", match_status: "manual", match_source: "control-plane" }])}><Plus size={14} />Add style</button></div>
+      <div className="spread" style={{ marginBottom: 10 }}><div><h3 className="section-title">RepSpark styles</h3><p className="section-desc">Each RepSpark product number contributes all of its colors to this product&apos;s metafield.</p></div><div className="row" style={{ gap: 6 }}><button className="btn btn-sm" onClick={togglePicker}><Search size={14} />Browse RepSpark styles</button><button className="btn btn-sm" onClick={() => setStyles((current) => [...current, { normalized_sku: "", repspark_product_number: "", match_status: "manual", match_source: "control-plane" }])}><Plus size={14} />Add manually</button></div></div>
+      {pickerOpen && (
+        <div className="card" style={{ marginBottom: 12, padding: 12, background: "var(--surface-2)" }}>
+          <div className="row" style={{ gap: 8, marginBottom: 8 }}>
+            <div className="search-wrap" style={{ flex: 1 }}><Search size={14} /><input className="input" placeholder={brandName ? `Search ${brandName} styles by number or name…` : "Assign a brand first"} value={pickerQuery} onChange={(event) => setPickerQuery(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") loadPicker(pickerQuery); }} disabled={!brandName} /></div>
+            <button className="btn btn-sm" onClick={() => loadPicker(pickerQuery)} disabled={!brandName || pickerLoading}>{pickerLoading ? <LoaderCircle className="spinner" size={14} /> : "Search"}</button>
+          </div>
+          {pickerLoading ? <div className="secondary" style={{ fontSize: 12 }}>Reading RepSpark…</div>
+          : pickerStyles.length === 0 ? <div className="secondary" style={{ fontSize: 12 }}>No RepSpark styles found for {brandName ?? "this brand"}{pickerQuery ? ` matching “${pickerQuery}”` : ""}.</div>
+          : <div className="table-wrap" style={{ maxHeight: 260, overflowY: "auto" }}><table className="data-table"><thead><tr><th>Product #</th><th>Name</th><th>Colors</th><th>Sizes</th><th></th></tr></thead><tbody>
+            {pickerStyles.map((style) => {
+              const already = styles.some((existing) => (existing.repspark_product_number ?? "").toUpperCase() === style.product_number.toUpperCase());
+              return <tr key={style.product_number}>
+                <td className="mono" style={{ fontWeight: 650 }}>{style.product_number}</td>
+                <td style={{ fontSize: 12 }}>{style.product_name ?? "—"}</td>
+                <td style={{ fontSize: 11 }}>{style.colors.length ? style.colors.join(", ") : <span className="muted">none scraped</span>}</td>
+                <td className="mono muted" style={{ fontSize: 11 }}>{style.in_stock_sizes}/{style.size_count} in stock</td>
+                <td style={{ textAlign: "right" }}><button className="btn btn-sm" disabled={already} onClick={() => addPicked(style)}>{already ? "Added" : <><Plus size={13} />Add</>}</button></td>
+              </tr>;
+            })}
+          </tbody></table></div>}
+        </div>
+      )}
       {styles.length === 0 ? <div className="error-box" style={{ marginBottom: 12 }}>No styles are mapped. Add at least one style before marking this product ready.</div> : styles.map((style, index) => <div className="style-row" key={style.id ?? `new-${index}`}>
         <div><label className="label">Normalized Shopify SKU</label><input className="input mono" value={style.normalized_sku} onChange={(event) => patchStyle(index, { normalized_sku: event.target.value.toUpperCase() })} /></div>
         <div><label className="label">RepSpark product number</label><input className="input mono" placeholder="Product number" value={style.repspark_product_number ?? ""} onChange={(event) => patchStyle(index, { repspark_product_number: event.target.value })} /></div>
