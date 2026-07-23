@@ -114,7 +114,23 @@ export function SettingsControl() {
       <div className="card-body stack">
         {readiness ? <>
           <div className="secondary">{readiness.summary.readyEnabledBrands} of {readiness.summary.enabledBrands} enabled RepSpark brands are sync-ready ({readiness.summary.totalBrands} total brands).</div>
-          {(readiness.globalIssues.length > 0 || readiness.brands.some((brand) => brand.sourceEnabled && !brand.ready)) && <div className="notice notice-warning">{[...readiness.globalIssues.map((issue) => issue.message), ...readiness.brands.filter((brand) => brand.sourceEnabled && !brand.ready).slice(0, 5).map((brand) => `${brand.brandName}: ${brand.issues.map((issue) => issue.message).join(", ")}`)].join(" · ")}</div>}
+          {(() => {
+            const notReady = readiness.brands.filter((brand) => brand.sourceEnabled && !brand.ready);
+            if (!readiness.globalIssues.length && !notReady.length) return null;
+            return (
+              <div className="notice notice-warning stack" style={{ gap: 4 }}>
+                {readiness.globalIssues.map((issue, index) => <div key={`global-${index}`}>{issue.message}</div>)}
+                {notReady.map((brand) => (
+                  <div key={brand.brandName}><strong>{brand.brandName}:</strong> {brand.issues.map((issue) => issue.message).join(", ")}</div>
+                ))}
+              </div>
+            );
+          })()}
+          {readiness.brands.some((brand) => brand.sourceEnabled && brand.ready) && (
+            <div className="secondary" style={{ fontSize: 12 }}>
+              <strong>Sync-ready:</strong> {readiness.brands.filter((brand) => brand.sourceEnabled && brand.ready).map((brand) => brand.brandName).join(", ")}
+            </div>
+          )}
         </> : <div className="secondary">Inspecting RepSpark readiness...</div>}
         <div className="row-wrap"><button className="btn btn-primary" onClick={ingestCatalog} disabled={catalogBusy}>{catalogBusy ? <LoaderCircle className="spinner" size={15} /> : <DatabaseZap size={15} />}Run catalog discovery</button><button className="btn" onClick={loadReadiness} disabled={catalogBusy}><RefreshCw size={15} />Refresh readiness</button></div>
       </div>
