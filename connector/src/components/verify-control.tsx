@@ -62,7 +62,7 @@ export function VerifyControl() {
     if (!term.trim()) { setHits([]); return; }
     setSearching(true);
     try {
-      const data = await apiJson<{ mappings: MappingHit[] }>(`/api/mappings?query=${encodeURIComponent(term)}&limit=20`);
+      const data = await apiJson<{ mappings: MappingHit[] }>(`/api/mappings?q=${encodeURIComponent(term)}&limit=20`);
       setHits(data.mappings);
     } catch (error) { toast(error instanceof Error ? error.message : "Search failed", "error"); }
     finally { setSearching(false); }
