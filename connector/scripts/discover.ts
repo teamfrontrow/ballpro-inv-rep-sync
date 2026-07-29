@@ -3,8 +3,8 @@ import { CatalogSourceNotReadyError, DEFAULT_BRAND_ALIASES, ingestCatalog, readB
 // Run catalog discovery from a scheduled task (Coolify cron), matching what the
 // "Run catalog discovery" button does: read the live Shopify catalog, match it
 // to the latest scraped RepSpark data, and rebuild the product mappings. Uses the
-// brands table's Shopify-vendor aliases so vendor names that differ from RepSpark
-// brand names still match. Runs inline and exits when done, so chaining
+// editable Shopify-vendor aliases so one source brand can match one or more
+// Shopify vendors. Runs inline and exits when done, so chaining
 // `npm run discover && npm run sync:scheduled` guarantees discovery completes
 // before the sync is enqueued.
 async function main(): Promise<void> {

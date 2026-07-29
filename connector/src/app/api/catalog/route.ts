@@ -15,8 +15,7 @@ export async function GET() {
 
 export async function POST() {
   try {
-    // Brands-table vendor aliases override the built-in defaults on conflict, so
-    // a brand's configured Shopify vendor drives matching.
+    // Editable vendor aliases override the built-in defaults on conflict.
     const brandAliases = await readBrandVendorAliases();
     const report = await ingestCatalog({ aliases: [...DEFAULT_BRAND_ALIASES, ...brandAliases] });
     return NextResponse.json({ status: "completed", report }, { status: 200 });

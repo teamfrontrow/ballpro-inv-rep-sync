@@ -13,6 +13,8 @@ export const DEFAULT_BRAND_ALIASES: BrandAliasMap = [
   { shopifyVendor: "AndersonOrd", repsparkBrand: "Anderson Ord" },
   { shopifyVendor: "Flag&Anthem", repsparkBrand: "Flag & Anthem" },
   { shopifyVendor: "Holderness&Bourne", repsparkBrand: "Holderness & Bourne" },
+  { shopifyVendor: "Penguin", repsparkBrand: "Perry Ellis International" },
+  { shopifyVendor: "Callaway", repsparkBrand: "Perry Ellis International" },
 ];
 
 interface SourceBrand {

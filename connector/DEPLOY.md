@@ -14,6 +14,14 @@ Deploy `connector/` as one Docker Compose resource in Coolify. The Compose file 
 8. Install the app once using the connector's Shopify connect action. The encrypted offline token is stored in connector Postgres.
 9. Configure a Coolify scheduled task with `npm run sync:scheduled` at the desired interval. It only enqueues work; `connector-worker` performs the sync.
 
+## Brand vendor aliases
+
+Catalog discovery matches Shopify `Vendor` values to RepSpark source brands.
+Configure one or more comma-separated Shopify vendor aliases on the Brands page
+when a source brand serves multiple storefront labels. For example, Perry Ellis
+International uses both `Penguin` and `Callaway`; SKU matching still ensures that
+unrelated Callaway balls, bags, and gloves remain unmatched.
+
 ## RepSpark prerequisites
 
 The connector and RepSpark are separate Coolify resources. They communicate only through Docker's external `coolify` network:

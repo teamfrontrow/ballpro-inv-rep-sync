@@ -45,10 +45,16 @@ export async function persistCatalog(
        VALUES ($1, $2, $3)
        ON CONFLICT (brand_slug) DO UPDATE
          SET brand_name = EXCLUDED.brand_name,
-             shopify_vendor = EXCLUDED.shopify_vendor,
              updated_at = now()
        RETURNING id, brand_name`,
       [sourceBrand.slug, sourceBrand.name, vendorBySource.get(key) ?? sourceBrand.name],
+    );
+    await client.query(
+      `INSERT INTO brand_vendor_aliases (brand_id, shopify_vendor)
+       SELECT $1, $2
+       WHERE nullif(btrim($2), '') IS NOT NULL
+       ON CONFLICT (normalized_vendor) DO NOTHING`,
+      [result.rows[0].id, vendorBySource.get(key) ?? sourceBrand.name],
     );
     brands.set(key, { id: result.rows[0].id, brandName: result.rows[0].brand_name });
   }

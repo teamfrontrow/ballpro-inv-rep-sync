@@ -7,7 +7,7 @@ This system does **not** update Shopify inventory quantities, locations, fulfill
 ## What It Includes
 
 - Shopify product discovery and RepSpark catalog reconciliation.
-- Vendor aliases, normalized style matching, multi-style products, and manual mapping controls.
+- Multi-vendor brand aliases, normalized style matching, multi-style products, and manual mapping controls.
 - Per-brand enablement and display caps such as `500+`.
 - Current and dated future inventory aggregation by color and size.
 - Dry runs, idempotent writes, run history, scheduled jobs, leases, and bounded retry recovery.

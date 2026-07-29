@@ -78,6 +78,30 @@ describe("reconcileCatalog", () => {
     expect(result.metrics[0]).toMatchObject({ brandName: "Rep Brand", shopifyVendor: "SHOP VENDOR" });
   });
 
+  it("maps multiple Shopify vendors to one RepSpark brand without matching unrelated styles", () => {
+    const result = reconcileCatalog(
+      [
+        product("1", "Penguin", ["OGM100"]),
+        product("2", "Callaway", ["CGM211"]),
+        product("3", "Callaway", ["FGB0033"]),
+      ],
+      [
+        { brandName: "Perry Ellis International", productNumber: "OGM100" },
+        { brandName: "Perry Ellis International", productNumber: "CGM211" },
+      ],
+      [
+        { shopifyVendor: "Penguin", repsparkBrand: "Perry Ellis International" },
+        { shopifyVendor: "Callaway", repsparkBrand: "Perry Ellis International" },
+      ],
+    );
+
+    expect(result.products).toMatchObject([
+      { sourceBrandName: "Perry Ellis International", matchStatus: "auto" },
+      { sourceBrandName: "Perry Ellis International", matchStatus: "auto" },
+      { sourceBrandName: "Perry Ellis International", matchStatus: "unmatched" },
+    ]);
+  });
+
   it("counts blank variants without creating blank style mappings", () => {
     const result = reconcileCatalog(
       [product("1", "Acme", [null, " ", "A-ONE"])],
