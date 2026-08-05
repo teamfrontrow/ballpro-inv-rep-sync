@@ -56,6 +56,38 @@ describe("fetchRepSparkInventory", () => {
     expect(fetchCalls[0][0]).not.toContain('pv."last_seen_at"');
   });
 
+  it("reads only the ready brands and reports the blocked one", async () => {
+    const query = vi.fn()
+      .mockResolvedValueOnce({ rows: [
+        { table_name: "brands", column_name: "id" },
+        { table_name: "brands", column_name: "brand_name" },
+        { table_name: "variant_sizes", column_name: "size_code" },
+        { table_name: "scrape_jobs", column_name: "brand_id" },
+        { table_name: "scrape_jobs", column_name: "status" },
+        { table_name: "scrape_runs", column_name: "brand_id" },
+        { table_name: "scrape_runs", column_name: "status" },
+        { table_name: "scrape_runs", column_name: "id" },
+      ] })
+      .mockResolvedValueOnce({ rows: [] })
+      .mockResolvedValueOnce({ rows: [{ brand_name: "Blocked", status: "failed" }] })
+      .mockResolvedValueOnce({ rows: [{ variantId: "1" }] })
+      .mockResolvedValueOnce({ rows: [] });
+    const db = { query } as unknown as Pool;
+
+    const result = await fetchRepSparkInventory([
+      { brandName: "Ready", productNumber: "STYLE-A" },
+      { brandName: "Blocked", productNumber: "STYLE-B" },
+    ], db);
+
+    expect(result.notReady).toEqual([
+      { brandName: "Blocked", reason: "latest RepSpark scrape is not complete (failed)" },
+    ]);
+    // The blocked brand is dropped from the query parameters, so no row of its
+    // can reach the payload builder — while the ready brand still syncs.
+    expect(query.mock.calls[3][1]).toEqual([["ready"], ["STYLE-A"]]);
+    expect(result.current).toHaveLength(1);
+  });
+
   it("fails closed before inventory reads while a target brand scrape is active", async () => {
     const query = vi.fn()
       .mockResolvedValueOnce({ rows: [
@@ -73,11 +105,19 @@ describe("fetchRepSparkInventory", () => {
         { table_name: "scrape_runs", column_name: "status" },
         { table_name: "scrape_runs", column_name: "id" },
       ] })
-      .mockResolvedValueOnce({ rows: [{ brand_name: "Brand" }] });
+      .mockResolvedValueOnce({ rows: [{ brand_name: "Brand" }] })
+      .mockResolvedValueOnce({ rows: [] });
     const db = { query } as unknown as Pool;
-    await expect(fetchRepSparkInventory([{ brandName: "Brand", productNumber: "STYLE" }], db))
-      .rejects.toThrow("RepSpark scrape is active for: Brand");
-    expect(query).toHaveBeenCalledTimes(2);
+
+    const result = await fetchRepSparkInventory([{ brandName: "Brand", productNumber: "STYLE" }], db);
+
+    expect(result.notReady).toEqual([
+      { brandName: "Brand", reason: "a RepSpark scrape is active for this brand" },
+    ]);
+    // Readiness queries only — with every brand blocked there is nothing to read.
+    expect(query).toHaveBeenCalledTimes(3);
+    expect(result.current).toEqual([]);
+    expect(result.future).toEqual([]);
     expect(query.mock.calls[1][0]).toContain("FROM scrape_batches sb");
   });
 
@@ -101,8 +141,13 @@ describe("fetchRepSparkInventory", () => {
       .mockResolvedValueOnce({ rows: [] })
       .mockResolvedValueOnce({ rows: [{ brand_name: "Brand", status: "failed" }] });
     const db = { query } as unknown as Pool;
-    await expect(fetchRepSparkInventory([{ brandName: "Brand", productNumber: "STYLE" }], db))
-      .rejects.toThrow("Latest RepSpark scrape is not complete for: Brand (failed)");
+
+    const result = await fetchRepSparkInventory([{ brandName: "Brand", productNumber: "STYLE" }], db);
+
+    expect(result.notReady).toEqual([
+      { brandName: "Brand", reason: "latest RepSpark scrape is not complete (failed)" },
+    ]);
+    expect(result.current).toEqual([]);
     expect(query).toHaveBeenCalledTimes(3);
     const latestSql = query.mock.calls[2][0] as string;
     expect(latestSql.indexOf('sr."started_at"')).toBeLessThan(latestSql.indexOf('sr."completed_at"'));

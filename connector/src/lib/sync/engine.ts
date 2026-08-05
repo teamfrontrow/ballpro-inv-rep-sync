@@ -196,7 +196,7 @@ function groupInventory(inventory: RepSparkInventory): Map<string, RepSparkInven
   const grouped = new Map<string, RepSparkInventory>();
   const add = <T extends "current" | "future">(kind: T, row: RepSparkInventory[T][number]): void => {
     const key = `${normalizeMatchKey(row.brandName)}\0${normalizeMatchKey(row.productNumber)}`;
-    const value = grouped.get(key) ?? { current: [], future: [] };
+    const value = grouped.get(key) ?? { current: [], future: [], notReady: [] };
     if (kind === "current") value.current.push(row as RepSparkInventory["current"][number]);
     else value.future.push(row as RepSparkInventory["future"][number]);
     grouped.set(key, value);
@@ -207,7 +207,7 @@ function groupInventory(inventory: RepSparkInventory): Map<string, RepSparkInven
 }
 
 function inventoryForStyles(styles: RepSparkStyleKey[], grouped: Map<string, RepSparkInventory>): RepSparkInventory {
-  const result: RepSparkInventory = { current: [], future: [] };
+  const result: RepSparkInventory = { current: [], future: [], notReady: [] };
   for (const style of styles) {
     const rows = grouped.get(`${normalizeMatchKey(style.brandName)}\0${normalizeMatchKey(style.productNumber)}`);
     if (rows) {
@@ -368,6 +368,12 @@ export async function runSyncWithDependencies(
     }
     const inventory = await dependencies.fetchInventory([...uniqueStyles.values()]);
     const groupedInventory = groupInventory(inventory);
+    // A brand whose source is mid-scrape or whose last scrape failed returns no
+    // rows. Its products are skipped — never written from stale data, and never
+    // cleaned up either — while every other brand in the run still syncs.
+    const notReadyByBrand = new Map(
+      inventory.notReady.map((block) => [normalizeMatchKey(block.brandName), block.reason]),
+    );
     const pending: PendingWrite[] = [];
     const stale: MappingRow[] = [];
     const now = dependencies.now();
@@ -382,6 +388,14 @@ export async function runSyncWithDependencies(
         // produce no row at all; only genuinely in-scope-but-unmatched ones do.
         if (mapping.lastSyncedAt) stale.push(mapping);
         else if (!isExcludedMapping(mapping)) items.push({ mappingId, ownerId: mapping.shopifyProductGid, status: "skipped", payloadHash: null, error: "no matched styles for an in-scope product", metafieldId: null });
+        continue;
+      }
+      const blockedReason = notReadyByBrand.get(normalizeMatchKey(mapping.brandName ?? ""));
+      if (blockedReason) {
+        items.push({
+          mappingId, ownerId: mapping.shopifyProductGid, status: "skipped", payloadHash: null,
+          error: `${mapping.brandName}: ${blockedReason}`, metafieldId: null,
+        });
         continue;
       }
       const rows = inventoryForStyles(styles, groupedInventory);
