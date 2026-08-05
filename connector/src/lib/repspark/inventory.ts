@@ -188,14 +188,18 @@ async function repSparkBrandBlocks(
     });
   }
 
-  const notReady = await db.query<{ brand_name: string; status: string | null }>(
+  // error_class comes along so the block reason can name the failure, not just
+  // report one. Without it, "not complete (failed)" sends the reader to the
+  // scraper's database to find out what actually went wrong.
+  const notReady = await db.query<{ brand_name: string; status: string | null; error_class: string | null }>(
     `${requested}
      SELECT b.brand_name,
-            CASE WHEN coalesce(b.enabled, false) THEN latest.status ELSE 'source_disabled' END AS status
+            CASE WHEN coalesce(b.enabled, false) THEN latest.status ELSE 'source_disabled' END AS status,
+            latest.error_class
      FROM requested r
      JOIN brands b ON upper(trim(b.brand_name)) = r.brand_key
      LEFT JOIN LATERAL (
-       SELECT sr.status
+       SELECT sr.status, ${columns.tableColumns.get("scrape_runs")?.has("error_class") ? "sr.error_class" : "NULL::text AS error_class"}
        FROM scrape_runs sr
        WHERE ${brandJoin("scrape_runs", "sr", columns)}
        ORDER BY ${latestRunOrder(columns)}
@@ -209,9 +213,10 @@ async function repSparkBrandBlocks(
   for (const row of notReady.rows) {
     const key = normalizeMatchKey(row.brand_name);
     if (blocks.has(key)) continue;
+    const detail = [row.status ?? "missing", row.error_class].filter(Boolean).join(": ");
     blocks.set(key, {
       brandName: row.brand_name,
-      reason: `latest RepSpark scrape is not complete (${row.status ?? "missing"})`,
+      reason: `latest RepSpark scrape is not complete (${detail})`,
     });
   }
   return [...blocks.values()];
