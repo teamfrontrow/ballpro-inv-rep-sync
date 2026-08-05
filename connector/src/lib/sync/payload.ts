@@ -206,6 +206,18 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
 
   if (issues.length > 0) return { payload: null, json: null, hash: null, issues };
 
+  // Obsolete colorways: RepSpark keeps a discontinued color's size rows around at
+  // zero and never gives it a restock date, so the color renders as a table of
+  // nothing but zeroes. Drop it after the readiness gate above — the source rows
+  // exist and are fresh, they just describe a color that is no longer carried, so
+  // this is a display decision and never a sync failure. A color with any current
+  // stock, or any future quantity inside the horizon, is kept.
+  for (const [key, color] of colors) {
+    const hasQuantity = [...color.sizes.values()].some((size) =>
+      size.current > 0 || [...size.future.values()].some((quantity) => quantity > 0));
+    if (!hasQuantity) colors.delete(key);
+  }
+
   const sizeRepresentatives = new Map<string, MutableSize>();
   for (const color of colors.values()) {
     for (const [key, size] of color.sizes) {

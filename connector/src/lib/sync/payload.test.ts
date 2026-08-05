@@ -198,6 +198,60 @@ describe("buildInventoryPayload", () => {
     expect(result.payload?.colors[0].sizes[0]).toEqual({ size: "M", current: 10 });
   });
 
+  it("drops an obsolete color with no current stock and no future restock", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [
+        current({ size: "M", quantity: 10 }),
+        current({ variantId: "2", color: "Obsolete", size: "M", quantity: 0 }),
+        current({ variantId: "2", color: "Obsolete", size: "XL", quantity: null }),
+      ],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+
+    expect(result.issues).toEqual([]);
+    expect(result.payload?.colors).toEqual([{ color: "Black", sizes: [{ size: "M", current: 10 }] }]);
+    // XL only existed on the dropped color, so it must not leave an empty column.
+    expect(result.payload?.size_order).toEqual(["M"]);
+  });
+
+  it("keeps a zero-current color that still has a future restock", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [current({ variantId: "2", color: "Restocking", quantity: 0 })],
+      future: [future({ variantId: "2", color: "Restocking", quantity: 6 })],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+
+    expect(result.issues).toEqual([]);
+    expect(result.payload?.colors).toEqual([{
+      color: "Restocking",
+      sizes: [{ size: "M", current: 0, future: [{ date: "2026-08-01", qty: 6 }] }],
+    }]);
+  });
+
+  it("publishes an empty color list rather than failing when every color is obsolete", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [current({ quantity: 0 }), current({ variantId: "2", color: "Navy", quantity: 0 })],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+
+    expect(result.issues).toEqual([]);
+    expect(result.payload).toMatchObject({ colors: [], size_order: [], dates: [] });
+  });
+
   it.each(["2/29/2025", "13/1/2026", "2026-02-30", "2026-8-01", "8-1-2026"])(
     "rejects impossible or non-contract date %s",
     (availabilityDate) => {
