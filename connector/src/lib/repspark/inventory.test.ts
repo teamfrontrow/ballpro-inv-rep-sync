@@ -137,15 +137,18 @@ describe("fetchRepSparkInventory", () => {
         { table_name: "scrape_runs", column_name: "id" },
         { table_name: "scrape_runs", column_name: "started_at" },
         { table_name: "scrape_runs", column_name: "completed_at" },
+        { table_name: "scrape_runs", column_name: "error_class" },
       ] })
       .mockResolvedValueOnce({ rows: [] })
-      .mockResolvedValueOnce({ rows: [{ brand_name: "Brand", status: "failed" }] });
+      .mockResolvedValueOnce({ rows: [{ brand_name: "Brand", status: "failed", error_class: "PlaywrightTimeoutError" }] });
     const db = { query } as unknown as Pool;
 
     const result = await fetchRepSparkInventory([{ brandName: "Brand", productNumber: "STYLE" }], db);
 
+    // The reason names the failure so the reader doesn't have to go query the
+    // scraper's database to find out what went wrong.
     expect(result.notReady).toEqual([
-      { brandName: "Brand", reason: "latest RepSpark scrape is not complete (failed)" },
+      { brandName: "Brand", reason: "latest RepSpark scrape is not complete (failed: PlaywrightTimeoutError)" },
     ]);
     expect(result.current).toEqual([]);
     expect(query).toHaveBeenCalledTimes(3);
