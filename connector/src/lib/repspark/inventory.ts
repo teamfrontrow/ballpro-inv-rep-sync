@@ -25,9 +25,18 @@ export interface RepSparkFutureRow extends RepSparkStyleKey {
   sourceUpdatedAt: Date | string | null;
 }
 
+export interface RepSparkBrandBlock {
+  brandName: string;
+  reason: string;
+}
+
 export interface RepSparkInventory {
   current: RepSparkCurrentRow[];
   future: RepSparkFutureRow[];
+  // Brands whose source is not safe to read right now — a scrape is running, or
+  // the latest one did not complete. No rows are returned for them; the caller
+  // skips their products rather than publishing anything stale.
+  notReady: RepSparkBrandBlock[];
 }
 
 interface SourceColumns {
@@ -127,11 +136,19 @@ function latestRunOrder(columns: SourceColumns): string {
   return names.map((name) => `sr.${quoteIdentifier(name)} DESC NULLS LAST`).join(", ");
 }
 
-async function assertRepSparkReady(
+/**
+ * Which of the requested brands must not be read right now, and why.
+ *
+ * Returns rather than throws: one brand mid-scrape used to abort an entire
+ * multi-brand sync, so a single failed scrape held every healthy brand hostage.
+ * Each blocked brand is still fully fail-closed — no rows are fetched for it and
+ * its products are skipped — but the rest of the run proceeds.
+ */
+async function repSparkBrandBlocks(
   db: Queryable,
   columns: SourceColumns,
   brands: string[],
-): Promise<void> {
+): Promise<RepSparkBrandBlock[]> {
   for (const table of ["scrape_jobs", "scrape_runs"]) {
     const tableColumns = columns.tableColumns.get(table);
     if (!tableColumns?.has("status")) throw new Error(`RepSpark readiness requires ${table}.status`);
@@ -163,8 +180,12 @@ async function assertRepSparkReady(
      ${activeBatchBlock}`,
     [brands, ["pending", "queued", "running", "processing"]],
   );
-  if (active.rows.length) {
-    throw new Error(`RepSpark scrape is active for: ${active.rows.map((row) => row.brand_name).join(", ")}`);
+  const blocks = new Map<string, RepSparkBrandBlock>();
+  for (const row of active.rows) {
+    blocks.set(normalizeMatchKey(row.brand_name), {
+      brandName: row.brand_name,
+      reason: "a RepSpark scrape is active for this brand",
+    });
   }
 
   const notReady = await db.query<{ brand_name: string; status: string | null }>(
@@ -185,9 +206,15 @@ async function assertRepSparkReady(
         OR lower(trim(latest.status)) <> ALL ($2::text[])`,
     [brands, ["completed", "complete", "success", "succeeded"]],
   );
-  if (notReady.rows.length) {
-    throw new Error(`Latest RepSpark scrape is not complete for: ${notReady.rows.map((row) => `${row.brand_name} (${row.status ?? "missing"})`).join(", ")}`);
+  for (const row of notReady.rows) {
+    const key = normalizeMatchKey(row.brand_name);
+    if (blocks.has(key)) continue;
+    blocks.set(key, {
+      brandName: row.brand_name,
+      reason: `latest RepSpark scrape is not complete (${row.status ?? "missing"})`,
+    });
   }
+  return [...blocks.values()];
 }
 
 async function fetchInventorySnapshot(
@@ -196,18 +223,25 @@ async function fetchInventorySnapshot(
   assertReady = true,
 ): Promise<RepSparkInventory> {
   const { brands, productNumbers } = keyRows(keys);
-  if (brands.length === 0) return { current: [], future: [] };
+  if (brands.length === 0) return { current: [], future: [], notReady: [] };
   const columns = await sourceColumns(db);
   // The read-only verification view passes assertReady=false so it can show the
   // latest scraped numbers even while a scrape is running or a brand is not yet
   // "ready" — the sync engine keeps the default (fail closed).
-  if (assertReady) await assertRepSparkReady(db, columns, brands);
+  const notReady = assertReady ? await repSparkBrandBlocks(db, columns, brands) : [];
+  // Readiness is decided inside the same repeatable-read snapshot as the rows
+  // below, so a brand cannot pass the gate and then be read from a later state.
+  const blocked = new Set(notReady.map((block) => normalizeMatchKey(block.brandName)));
+  const ready = brands
+    .map((brand, index) => ({ brand, productNumber: productNumbers[index] }))
+    .filter(({ brand }) => !blocked.has(normalizeMatchKey(brand)));
+  if (ready.length === 0) return { current: [], future: [], notReady };
   const sizeColumn = quoteIdentifier(columns.sizeCode);
   const sequence = columns.sizeSequence ? `vs.${quoteIdentifier(columns.sizeSequence)}` : "NULL::integer";
   // Parent timestamps cannot prove that child quantities were refreshed or removed.
   const currentFreshness = childFreshnessExpression(columns, "variant_sizes", "vs");
   const futureFreshness = childFreshnessExpression(columns, "variant_future_inventory", "vfi");
-  const values = [brands, productNumbers];
+  const values = [ready.map((row) => row.brand), ready.map((row) => row.productNumber)];
   const requested = `WITH requested AS (
     SELECT upper(trim(brand_name)) AS brand_key, upper(trim(product_number)) AS product_key
     FROM unnest($1::text[], $2::text[]) AS requested(brand_name, product_number)
@@ -242,7 +276,7 @@ async function fetchInventorySnapshot(
       values,
     ),
   ]);
-  return { current: currentResult.rows, future: futureResult.rows };
+  return { current: currentResult.rows, future: futureResult.rows, notReady };
 }
 
 export async function fetchRepSparkInventory(
@@ -251,7 +285,7 @@ export async function fetchRepSparkInventory(
   options: { assertReady?: boolean } = {},
 ): Promise<RepSparkInventory> {
   const assertReady = options.assertReady ?? true;
-  if (keys.length === 0) return { current: [], future: [] };
+  if (keys.length === 0) return { current: [], future: [], notReady: [] };
   if (typeof db.connect !== "function") return fetchInventorySnapshot(keys, db, assertReady);
 
   const client = await db.connect();
