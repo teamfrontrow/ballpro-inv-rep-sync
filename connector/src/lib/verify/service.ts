@@ -109,7 +109,9 @@ export async function verifyProduct(mappingId: number): Promise<VerifyResult | n
       maxSourceAgeDays: 36_500,
     });
     expected = built.payload;
-    for (const issue of built.issues) sourceIssues.push(`${issue.code}: ${issue.detail}`);
+    // Warnings are styles left out of an otherwise publishable payload. This
+    // view exists to explain what the source holds, so it reports both.
+    for (const issue of [...built.issues, ...built.warnings]) sourceIssues.push(`${issue.code}: ${issue.detail}`);
   }
 
   // Read the live Shopify metafield value.

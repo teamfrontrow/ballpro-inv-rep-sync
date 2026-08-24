@@ -32,7 +32,11 @@ export interface BuiltInventoryPayload {
   payload: InventoryPayload | null;
   json: string | null;
   hash: string | null;
+  // Fatal: non-empty exactly when `payload` is null.
   issues: PayloadIssue[];
+  // Styles dropped from an otherwise publishable payload, so a caller can
+  // record what was left out without failing the product.
+  warnings: PayloadIssue[];
 }
 
 interface MutableSize {
@@ -113,8 +117,6 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
   const future = includeFuture
     ? input.future.filter((row) => requested.has(canonicalStyleKey(row.brandName, row.productNumber)))
     : [];
-  const issues: PayloadIssue[] = [];
-
   const usableCurrent = current.filter((row) => row.variantId && row.color?.trim() && row.size?.trim());
   const usableFuture = future.flatMap((row) => {
     if (!row.variantId || !row.color?.trim() || !row.size?.trim()) return [];
@@ -124,36 +126,77 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     return dateValue >= today && dateValue <= horizon ? [{ row, date }] : [];
   });
 
-  for (const style of input.styles) {
-    const key = canonicalStyleKey(style.brandName, style.productNumber);
-    const hasSourceRows = [...current, ...future]
-      .some((row) => canonicalStyleKey(row.brandName, row.productNumber) === key);
-    const hasUsableRows = usableCurrent
-      .some((row) => canonicalStyleKey(row.brandName, row.productNumber) === key)
-      || usableFuture.some(({ row }) => canonicalStyleKey(row.brandName, row.productNumber) === key);
-    if (!hasSourceRows) {
-      issues.push({ code: "source_missing", detail: `${style.brandName}/${style.productNumber}` });
-    }
-    if (!hasUsableRows) {
-      issues.push({ code: "empty_sizes", detail: `${style.brandName}/${style.productNumber}` });
-    }
-  }
-  const freshnessRows = [...current, ...future].filter((row) => row.variantId);
+  // Every mapped style is judged on its own. A product maps one style per
+  // colorway, so a single colorway RepSpark no longer refreshes — a corporate
+  // make, or one added to Shopify after the scraper's target list was last
+  // built — used to fail its whole product on every sync, permanently hiding
+  // live inventory for every other colorway. Diagnosing per style lets the
+  // healthy ones publish while the unusable one is reported by name.
   const maxAgeDays = input.maxSourceAgeDays ?? 2;
   const freshnessCutoff = now.valueOf() - maxAgeDays * 86_400_000;
-  if (freshnessRows.length === 0 || freshnessRows.some((row) => {
-    const timestamp = row.sourceUpdatedAt ? new Date(row.sourceUpdatedAt).valueOf() : Number.NaN;
-    return !Number.isFinite(timestamp) || timestamp < freshnessCutoff;
-  })) {
-    issues.push({ code: "source_stale", detail: `source timestamp missing or older than ${maxAgeDays} days` });
+  const diagnoses = input.styles.map((style) => {
+    const key = canonicalStyleKey(style.brandName, style.productNumber);
+    const label = `${style.brandName}/${style.productNumber}`;
+    const belongs = (row: { brandName: string; productNumber: string }) =>
+      canonicalStyleKey(row.brandName, row.productNumber) === key;
+    const styleCurrent = current.filter(belongs);
+    const styleFuture = future.filter(belongs);
+    const styleIssues: PayloadIssue[] = [];
+
+    if (styleCurrent.length === 0 && styleFuture.length === 0) {
+      return { key, issues: [{ code: "source_missing" as const, detail: label }] };
+    }
+
+    // Parent rows without a variant cannot carry a child timestamp, so they are
+    // not evidence of freshness either way.
+    const stamped = [...styleCurrent, ...styleFuture]
+      .filter((row) => row.variantId)
+      .map((row) => (row.sourceUpdatedAt ? new Date(row.sourceUpdatedAt).valueOf() : Number.NaN));
+    const undated = stamped.filter((value) => !Number.isFinite(value)).length;
+    const dated = stamped.filter((value) => Number.isFinite(value));
+    if (undated > 0) {
+      styleIssues.push({ code: "source_stale", detail: `${label}: ${undated} source row(s) carry no timestamp` });
+    } else if (dated.length > 0) {
+      const oldest = Math.min(...dated);
+      if (oldest < freshnessCutoff) {
+        const days = Math.floor((now.valueOf() - oldest) / 86_400_000);
+        styleIssues.push({
+          code: "source_stale",
+          detail: `${label}: last refreshed ${new Date(oldest).toISOString().slice(0, 10)}, ${days} day(s) ago (limit ${maxAgeDays})`,
+        });
+      }
+    }
+    if ([...styleCurrent, ...styleFuture].some((row) => row.variantId && !row.color?.trim())) {
+      styleIssues.push({ code: "null_color", detail: `${label}: one or more variants have no color` });
+    }
+    for (const row of styleFuture) {
+      if (row.availabilityDate && !validIsoDate(row.availabilityDate)) {
+        styleIssues.push({ code: "invalid_date", detail: `${label}: ${String(row.availabilityDate)}` });
+      }
+    }
+    if (!usableCurrent.some(belongs) && !usableFuture.some(({ row }) => belongs(row))) {
+      styleIssues.push({ code: "empty_sizes", detail: label });
+    }
+    return { key, issues: styleIssues };
+  });
+
+  const publishable = new Set(diagnoses.filter((entry) => entry.issues.length === 0).map((entry) => entry.key));
+  const issues = diagnoses.flatMap((entry) => entry.issues);
+  if (publishable.size === 0) {
+    return {
+      payload: null, json: null, hash: null, warnings: [],
+      issues: issues.length > 0 ? issues : [{ code: "empty_sizes", detail: "no mapped styles have usable sizes" }],
+    };
   }
-  if ([...current, ...future].some((row) => row.variantId && !row.color?.trim())) {
-    issues.push({ code: "null_color", detail: "one or more variants have no color" });
-  }
+  // Excluded styles are dropped from the payload as well as from the check, so
+  // an unrefreshed colorway can never leak stale quantities into what is
+  // published.
+  const inPayload = (row: { brandName: string; productNumber: string }) =>
+    publishable.has(canonicalStyleKey(row.brandName, row.productNumber));
 
   const colors = new Map<string, { color: string; colorCode?: string; sizes: Map<string, MutableSize> }>();
   const currentDedupe = new Map<string, RepSparkCurrentRow>();
-  for (const row of usableCurrent) {
+  for (const row of usableCurrent.filter(inPayload)) {
     const color = row.color?.trim();
     const size = row.size?.trim();
     if (!color || !size) continue;
@@ -176,13 +219,7 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     colors.set(normalizeMatchKey(color), colorEntry);
   }
   const futureDedupe = new Map<string, RepSparkFutureRow>();
-  for (const row of future) {
-    const date = validIsoDate(row.availabilityDate);
-    if (row.availabilityDate && !date) {
-      issues.push({ code: "invalid_date", detail: String(row.availabilityDate) });
-    }
-  }
-  for (const { row, date } of usableFuture) {
+  for (const { row, date } of usableFuture.filter(({ row }) => inPayload(row))) {
     const color = row.color?.trim();
     const size = row.size?.trim();
     if (!color || !size) continue;
@@ -200,11 +237,14 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     colors.set(colorKey, colorEntry);
   }
 
-  if (colors.size === 0 && !issues.some((issue) => issue.code === "empty_sizes")) {
-    issues.push({ code: "empty_sizes", detail: "one or more mapped styles have no usable sizes" });
+  // Unreachable while a publishable style must have usable rows, but keep the
+  // guard so a future change cannot publish an empty payload.
+  if (colors.size === 0) {
+    return {
+      payload: null, json: null, hash: null, warnings: [],
+      issues: [...issues, { code: "empty_sizes", detail: "no mapped styles have usable sizes" }],
+    };
   }
-
-  if (issues.length > 0) return { payload: null, json: null, hash: null, issues };
 
   // Obsolete colorways: RepSpark keeps a discontinued color's size rows around at
   // zero and never gives it a restock date, so the color renders as a table of
@@ -250,8 +290,11 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
         });
       return { color: color.color, ...(color.colorCode ? { color_code: color.colorCode } : {}), sizes };
     });
-  const styles = [...new Set(input.styles.map((value) => value.productNumber.trim()))]
-    .sort((a, b) => a.localeCompare(b, "en", { numeric: true, sensitivity: "base" }));
+  const styles = [...new Set(
+    input.styles
+      .filter((style) => publishable.has(canonicalStyleKey(style.brandName, style.productNumber)))
+      .map((value) => value.productNumber.trim()),
+  )].sort((a, b) => a.localeCompare(b, "en", { numeric: true, sensitivity: "base" }));
   const payload: InventoryPayload = {
     schema: 1,
     styles,
@@ -262,5 +305,5 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     dates: [...dates].sort(),
     colors: payloadColors,
   };
-  return { payload, json: stableStringify(payload), hash: payloadBusinessHash(payload), issues: [] };
+  return { payload, json: stableStringify(payload), hash: payloadBusinessHash(payload), issues: [], warnings: issues };
 }

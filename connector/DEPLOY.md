@@ -106,3 +106,15 @@ Never commit `.env`, Shopify credentials, the encryption key, or database passwo
 ## First production gate
 
 Use `ballproplusdev.myshopify.com`. Run a dry sync for one fully ready brand, inspect the generated payload and mapping report, then run a write sync. A second run must report unchanged. Production uses a separate connector deployment and database.
+
+## Scrape target list for RepSpark
+
+`GET /api/targets` returns the style numbers the RepSpark scraper must keep
+fresh, grouped by `brand_slug`, derived from this app's live Shopify sync
+(`?brand=<slug>` filters to one brand). The scraper has no Shopify credentials,
+so this endpoint replaces the CSV export it previously depended on.
+
+It is served by `connector-web`, which is already on the `coolify` network, so
+`connector-db` stays on the connector's private network and needs no additional
+role or alias. Authentication is the existing admin Basic-auth middleware: give
+the scraper `CONNECTOR_BASE_URL`, `CONNECTOR_USERNAME` and `CONNECTOR_PASSWORD`.

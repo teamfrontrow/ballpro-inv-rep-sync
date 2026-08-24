@@ -378,6 +378,7 @@ export async function runSyncWithDependencies(
     const stale: MappingRow[] = [];
     const now = dependencies.now();
 
+    const warningsByMapping = new Map<number, string>();
     for (const mapping of mappings) {
       const mappingId = Number(mapping.id);
       const styles = stylesByMapping.get(mappingId) ?? [];
@@ -412,6 +413,15 @@ export async function runSyncWithDependencies(
         });
         continue;
       }
+      // The product still publishes, but some of its styles were left out. Note
+      // which and why on the item, so a colorway silently vanishing from a PDP
+      // is traceable to the style that could not be used.
+      if (built.warnings.length) {
+        warningsByMapping.set(
+          mappingId,
+          `excluded ${built.warnings.length} style issue(s): ${built.warnings.map((issue) => `${issue.code}: ${issue.detail}`).join("; ")}`,
+        );
+      }
       if (mapping.lastSyncedAt && mapping.latestPayloadHash === built.hash) {
         built.payload.synced_at = new Date(mapping.lastSyncedAt).toISOString();
         built.json = stableStringify(built.payload);
@@ -442,6 +452,12 @@ export async function runSyncWithDependencies(
       for (let index = 0; index < stale.length; index += SHOPIFY_BATCH_SIZE) {
         items.push(...await cleanupWithIsolation(shopify, stale.slice(index, index + SHOPIFY_BATCH_SIZE), dependencies.cleanupMode));
       }
+    }
+    // Written and unchanged items have no error of their own, so a warning can
+    // take the column without ever masking a real failure message.
+    for (const item of items) {
+      const warning = warningsByMapping.get(item.mappingId);
+      if (warning && !item.error) item.error = warning;
     }
     await persistResults(runId, items, dependencies.database);
     const failures = items.filter((item) => item.status === "failed");
