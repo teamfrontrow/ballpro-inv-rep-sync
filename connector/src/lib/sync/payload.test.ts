@@ -88,6 +88,135 @@ describe("buildInventoryPayload", () => {
     expect(result.payload).toBeNull();
   });
 
+  it("publishes fresh styles and warns about a stale one instead of failing the product", () => {
+    // The AndersonOrd shape: a Shopify product maps one style per colorway, and
+    // one colorway stopped being re-scraped. Every other colorway is current.
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [
+        { brandName: "Test Brand", productNumber: "FRESH-1" },
+        { brandName: "Test Brand", productNumber: "STALE-1" },
+      ],
+      current: [
+        current({ productNumber: "FRESH-1", color: "Navy" }),
+        current({ productNumber: "STALE-1", variantId: "9", color: "Lavender", sourceUpdatedAt: "2026-07-05T10:00:00.000Z" }),
+      ],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+
+    expect(result.issues).toEqual([]);
+    expect(result.payload).not.toBeNull();
+    // The stale colorway contributes nothing — neither its quantities nor its name.
+    expect(result.payload?.styles).toEqual(["FRESH-1"]);
+    expect(result.payload?.colors.map((color) => color.color)).toEqual(["Navy"]);
+    expect(result.warnings).toHaveLength(1);
+    expect(result.warnings[0].code).toBe("source_stale");
+    expect(result.warnings[0].detail).toContain("STALE-1");
+  });
+
+  it("names the style, its age and the limit in a staleness message", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [
+        { brandName: "Test Brand", productNumber: "FRESH-1" },
+        { brandName: "Test Brand", productNumber: "STALE-1" },
+      ],
+      current: [
+        current({ productNumber: "FRESH-1" }),
+        current({ productNumber: "STALE-1", variantId: "9", sourceUpdatedAt: "2026-07-05T10:00:00.000Z" }),
+      ],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+      maxSourceAgeDays: 2,
+    });
+
+    expect(result.warnings[0].detail).toBe(
+      "Test Brand/STALE-1: last refreshed 2026-07-05, 10 day(s) ago (limit 2)",
+    );
+  });
+
+  it("reports a source row with no timestamp as stale, naming the style", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [
+        { brandName: "Test Brand", productNumber: "FRESH-1" },
+        { brandName: "Test Brand", productNumber: "UNDATED-1" },
+      ],
+      current: [
+        current({ productNumber: "FRESH-1" }),
+        current({ productNumber: "UNDATED-1", variantId: "9", sourceUpdatedAt: null }),
+      ],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+
+    expect(result.payload?.styles).toEqual(["FRESH-1"]);
+    expect(result.warnings[0].detail).toBe("Test Brand/UNDATED-1: 1 source row(s) carry no timestamp");
+  });
+
+  it("still fails the product when every mapped style is unusable", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STALE-1" }],
+      current: [current({ productNumber: "STALE-1", sourceUpdatedAt: "2026-07-05T10:00:00.000Z" })],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+
+    expect(result.payload).toBeNull();
+    expect(result.warnings).toEqual([]);
+    expect(result.issues.map((issue) => issue.code)).toEqual(["source_stale"]);
+  });
+
+  it("keeps a mapped style that RepSpark has no rows for from failing its siblings", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [
+        { brandName: "Test Brand", productNumber: "FRESH-1" },
+        { brandName: "Test Brand", productNumber: "GONE-1" },
+      ],
+      current: [current({ productNumber: "FRESH-1" })],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+
+    expect(result.payload?.styles).toEqual(["FRESH-1"]);
+    expect(result.warnings).toEqual([{ code: "source_missing", detail: "Test Brand/GONE-1" }]);
+  });
+
+  it("confines a malformed future date to its own style", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [
+        { brandName: "Test Brand", productNumber: "FRESH-1" },
+        { brandName: "Test Brand", productNumber: "BAD-DATE-1" },
+      ],
+      current: [
+        current({ productNumber: "FRESH-1" }),
+        current({ productNumber: "BAD-DATE-1", variantId: "9" }),
+      ],
+      future: [future({ productNumber: "BAD-DATE-1", variantId: "9", availabilityDate: "not-a-date" })],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+
+    expect(result.payload?.styles).toEqual(["FRESH-1"]);
+    expect(result.warnings.map((issue) => issue.code)).toEqual(["invalid_date"]);
+    expect(result.warnings[0].detail).toBe("Test Brand/BAD-DATE-1: not-a-date");
+  });
+
   it("omits out-of-horizon dates and empty future arrays", () => {
     const result = buildInventoryPayload({
       brand: "Test Brand",
