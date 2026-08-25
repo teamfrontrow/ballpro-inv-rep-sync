@@ -6,10 +6,11 @@ import { transaction } from "@/lib/db";
 const updateSchema = z.object({
   enabled: z.boolean().optional(),
   maxDisplayCap: z.number().int().min(0).nullable().optional(),
+  maxSourceAgeDays: z.number().int().min(0).nullable().optional(),
   showFutureInventory: z.boolean().optional(),
   shopifyVendors: z.array(z.string().trim().min(1).max(255)).min(1).max(20).optional(),
 }).refine(
-  (value) => value.enabled !== undefined || value.maxDisplayCap !== undefined || value.showFutureInventory !== undefined || value.shopifyVendors !== undefined,
+  (value) => value.enabled !== undefined || value.maxDisplayCap !== undefined || value.maxSourceAgeDays !== undefined || value.showFutureInventory !== undefined || value.shopifyVendors !== undefined,
   "No changes supplied",
 );
 
@@ -30,6 +31,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       values.push(parsed.data.maxDisplayCap);
       assignments.push(`max_display_cap = $${values.length}`);
     }
+    if (parsed.data.maxSourceAgeDays !== undefined) {
+      values.push(parsed.data.maxSourceAgeDays);
+      assignments.push(`max_source_age_days = $${values.length}`);
+    }
     if (parsed.data.showFutureInventory !== undefined) {
       values.push(parsed.data.showFutureInventory);
       assignments.push(`show_future_inventory = $${values.length}`);
@@ -45,7 +50,8 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     const brand = await transaction(async (client) => {
       const result = await client.query(
         `UPDATE brands SET ${assignments.join(", ")} WHERE id = $1
-         RETURNING id, brand_slug, brand_name, shopify_vendor, enabled, max_display_cap, show_future_inventory, updated_at`,
+         RETURNING id, brand_slug, brand_name, shopify_vendor, enabled, max_display_cap,
+                   max_source_age_days, show_future_inventory, updated_at`,
         values,
       );
       if (!result.rows[0]) return null;

@@ -381,6 +381,90 @@ describe("buildInventoryPayload", () => {
     expect(result.payload).toMatchObject({ colors: [], size_order: [], dates: [] });
   });
 
+  it("uses a per-brand source-age window instead of the two-day default", () => {
+    const olderSource = current({ sourceUpdatedAt: "2026-07-10T10:00:00.000Z" });
+    const defaultWindow = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [olderSource], future: [], cap: null, horizonDays: 90, now: NOW,
+    });
+    const feedWindow = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [olderSource], future: [], cap: null, horizonDays: 90, now: NOW,
+      maxSourceAgeDays: 9,
+    });
+
+    expect(defaultWindow.issues.map((issue) => issue.code)).toContain("source_stale");
+    expect(feedWindow.issues).toEqual([]);
+    expect(feedWindow.payload).not.toBeNull();
+  });
+
+  it("treats a source exactly at the age cutoff as fresh, but rejects one millisecond older", () => {
+    const atCutoff = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [current({ sourceUpdatedAt: "2026-07-13T12:00:00.000Z" })],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      maxSourceAgeDays: 2,
+      now: NOW,
+    });
+    const justOlder = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [current({ sourceUpdatedAt: "2026-07-13T11:59:59.999Z" })],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      maxSourceAgeDays: 2,
+      now: NOW,
+    });
+
+    expect(atCutoff.issues).toEqual([]);
+    expect(atCutoff.payload).not.toBeNull();
+    // The detail now names the style and echoes the window in force, which is
+    // what makes a per-brand limit legible in a run log.
+    expect(justOlder.issues).toEqual([
+      {
+        code: "source_stale",
+        detail: "Test Brand/STYLE-1: last refreshed 2026-07-13, 2 day(s) ago (limit 2)",
+      },
+    ]);
+    expect(justOlder.payload).toBeNull();
+  });
+
+  it("requires every current and future source row to be fresh and fails closed on a missing timestamp", () => {
+    const staleFuture = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [current()],
+      future: [future({ sourceUpdatedAt: "2026-07-05T10:00:00.000Z" })],
+      cap: null,
+      horizonDays: 90,
+      maxSourceAgeDays: 9,
+      now: NOW,
+    });
+    const missingTimestamp = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [current({ sourceUpdatedAt: null })],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      maxSourceAgeDays: 365,
+      now: NOW,
+    });
+
+    expect(staleFuture.issues.map((issue) => issue.code)).toEqual(["source_stale"]);
+    expect(staleFuture.payload).toBeNull();
+    expect(missingTimestamp.issues).toEqual([
+      { code: "source_stale", detail: "Test Brand/STYLE-1: 1 source row(s) carry no timestamp" },
+    ]);
+    expect(missingTimestamp.payload).toBeNull();
+  });
+
   it.each(["2/29/2025", "13/1/2026", "2026-02-30", "2026-8-01", "8-1-2026"])(
     "rejects impossible or non-contract date %s",
     (availabilityDate) => {
