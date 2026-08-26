@@ -47,15 +47,30 @@ function aliasLookup(aliases: BrandAliasMap): Map<string, string> {
   return result;
 }
 
-function productStyles(product: ShopifyProduct): { styles: string[]; blankSkuVariants: number } {
-  const styles = new Set<string>();
+function variantColor(variant: ShopifyProduct["variants"]["nodes"][number]): string | null {
+  // normalizeMatchKey upper-cases, so compare against an upper-case literal.
+  const option = variant.selectedOptions.find((entry) => normalizeMatchKey(entry.name) === "COLOR");
+  return option?.value?.trim() || null;
+}
+
+function productStyles(product: ShopifyProduct): { styles: Map<string, string | null>; blankSkuVariants: number } {
+  // Keyed by SKU rather than a bare set: the variant carries the colour, and a
+  // source that cannot see colour needs it. First writer wins, so a duplicated
+  // SKU keeps the colour of the variant Shopify lists first.
+  const styles = new Map<string, string | null>();
   let blankSkuVariants = 0;
   for (const variant of product.variants.nodes) {
     const normalized = normalizeShopifySku(variant.sku);
-    if (normalized) styles.add(normalized);
-    else blankSkuVariants += 1;
+    if (!normalized) {
+      blankSkuVariants += 1;
+      continue;
+    }
+    if (!styles.has(normalized)) styles.set(normalized, variantColor(variant));
   }
-  return { styles: [...styles].sort(), blankSkuVariants };
+  return {
+    styles: new Map([...styles.entries()].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))),
+    blankSkuVariants,
+  };
 }
 
 function productStatus(matched: number, total: number): Pick<ReconciledCatalogProduct, "matchStatus" | "matchSource"> {
@@ -77,12 +92,13 @@ export function reconcileCatalog(
     const vendorKey = normalizeMatchKey(shopifyProduct.vendor);
     const sourceBrand = source.get(vendorKey) ?? source.get(aliasMap.get(vendorKey) ?? "") ?? null;
     const extracted = productStyles(shopifyProduct);
-    const styles = extracted.styles.map((normalizedSku) => {
+    const styles = [...extracted.styles.entries()].map(([normalizedSku, shopifyColor]) => {
       const sourceValues = sourceBrand?.styles.get(normalizedSku);
       const repsparkProductNumber = sourceValues?.size === 1 ? [...sourceValues][0] : null;
       return {
         normalizedSku,
         repsparkProductNumber,
+        shopifyColor,
         matchStatus: repsparkProductNumber ? "auto" as const : "unmatched" as const,
         matchSource: repsparkProductNumber ? "catalog-auto" as const : "catalog-unmatched" as const,
       };

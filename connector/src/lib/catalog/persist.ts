@@ -101,8 +101,8 @@ export async function persistCatalog(
     for (const style of product.styles) {
       await client.query(
         `INSERT INTO product_mapping_styles
-           (product_mapping_id, normalized_sku, repspark_product_number, match_status, match_source)
-         VALUES ($1, $2, $3, $4, $5)
+           (product_mapping_id, normalized_sku, repspark_product_number, match_status, match_source, shopify_color)
+         VALUES ($1, $2, $3, $4, $5, $6)
          ON CONFLICT (product_mapping_id, normalized_sku) DO UPDATE
            SET repspark_product_number = CASE
                  WHEN product_mapping_styles.match_status IN ('manual', 'ignored')
@@ -119,8 +119,13 @@ export async function persistCatalog(
                    THEN product_mapping_styles.match_source
                  ELSE EXCLUDED.match_source
                END,
+               -- Unguarded, unlike the columns above. Those hold operator
+               -- decisions worth protecting from a re-crawl; this is an
+               -- observation of Shopify's current state, so renaming a colour
+               -- in Shopify should reach the storefront on the next catalog run.
+               shopify_color = EXCLUDED.shopify_color,
                updated_at = now()`,
-        [mappingId, style.normalizedSku, style.repsparkProductNumber, style.matchStatus, style.matchSource],
+        [mappingId, style.normalizedSku, style.repsparkProductNumber, style.matchStatus, style.matchSource, style.shopifyColor],
       );
       stylesUpserted += 1;
     }
