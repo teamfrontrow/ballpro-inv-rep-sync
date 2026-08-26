@@ -51,6 +51,62 @@ function fakeDatabase(mappings: ReturnType<typeof mapping>[]) {
   return { statements, database: database as unknown as SyncEngineDependencies["database"] };
 }
 
+describe("runSyncWithDependencies carrying Shopify colours", () => {
+  it("publishes each colourway separately when the source reports no colour", async () => {
+    // One Shopify product, two FootJoy colourways. The source labels both
+    // "Default"; the colour has to survive the mapping row -> parseStyles ->
+    // activeStyles -> payload path or the two collapse into one summed row.
+    const footjoy = {
+      id: 1, shopifyProductGid: "gid://shopify/Product/1", brandId: 1, brandName: "FootJoy",
+      brandEnabled: true, matchStatus: "auto", vendorIgnored: false,
+      maxDisplayCap: null, defaultCap: 500, horizonDays: 90, showFutureInventory: true,
+      lastSyncedAt: null, latestPayloadHash: null,
+      styles: [
+        { productNumber: "33296", matchStatus: "auto", shopifyColor: "White" },
+        { productNumber: "33297", matchStatus: "auto", shopifyColor: "Navy" },
+      ],
+    };
+    const { database } = fakeDatabase([footjoy as unknown as ReturnType<typeof mapping>]);
+    const setInventoryMetafields = vi.fn(async (writes: { ownerId: string }[]) =>
+      writes.map((write) => ({ ownerId: write.ownerId, id: "gid://shopify/Metafield/1" })));
+
+    await runSyncWithDependencies({ kind: "one_time" }, undefined, {
+      database,
+      fetchInventory: async () => ({
+        current: [
+          { brandName: "FootJoy", productNumber: "33296", variantId: "1",
+            color: "Default", size: "M", quantity: 5, sizeSequence: null,
+            sourceUpdatedAt: "2026-07-15T10:00:00.000Z" },
+          { brandName: "FootJoy", productNumber: "33297", variantId: "2",
+            color: "Default", size: "M", quantity: 7, sizeSequence: null,
+            sourceUpdatedAt: "2026-07-15T10:00:00.000Z" },
+        ],
+        future: [],
+        notReady: [],
+      }),
+      createShopifyClient: async () => ({
+        ensureInventoryMetafieldDefinition: async () => undefined,
+        setInventoryMetafields,
+        deleteInventoryMetafields: async () => undefined,
+        tombstoneInventoryMetafields: async () => undefined,
+      }),
+      now: () => NOW,
+      cleanupMode: "delete",
+    } as unknown as SyncEngineDependencies);
+
+    expect(setInventoryMetafields).toHaveBeenCalledTimes(1);
+    // The engine writes the serialised payload, not the object.
+    const write = setInventoryMetafields.mock.calls[0][0][0] as unknown as { value: string };
+    const payload = JSON.parse(write.value) as {
+      colors: Array<{ color: string; color_code?: string; sizes: Array<{ size: string; current: number }> }>;
+    };
+    expect(payload.colors).toEqual([
+      { color: "Navy", color_code: "33297", sizes: [{ size: "M", current: 7 }] },
+      { color: "White", color_code: "33296", sizes: [{ size: "M", current: 5 }] },
+    ]);
+  });
+});
+
 describe("runSyncWithDependencies with a not-ready brand", () => {
   it("skips the blocked brand's products and still writes the healthy brand", async () => {
     const { statements, database } = fakeDatabase([

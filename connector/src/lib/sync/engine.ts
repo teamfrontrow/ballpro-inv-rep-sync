@@ -90,7 +90,11 @@ function parseStyles(value: MappingRow["styles"]): MappingStyleRow[] {
     if (!style || typeof style !== "object") return [];
     const productNumber = String((style as { productNumber?: unknown }).productNumber ?? "").trim();
     const matchStatus = String((style as { matchStatus?: unknown }).matchStatus ?? "");
-    return productNumber ? [{ productNumber, matchStatus }] : [];
+    // Rebuilt field by field, so anything added to the aggregate above has to be
+    // named here too or it is silently dropped on the way to the payload.
+    const rawColor = (style as { shopifyColor?: unknown }).shopifyColor;
+    const shopifyColor = typeof rawColor === "string" && rawColor.trim() ? rawColor.trim() : null;
+    return productNumber ? [{ productNumber, matchStatus, shopifyColor }] : [];
   });
 }
 
