@@ -10,6 +10,8 @@ export interface RepSparkStyleKey {
 export interface RepSparkCurrentRow extends RepSparkStyleKey {
   variantId: string;
   color: string | null;
+  /** Feed brands only; scraped sources have never had a source colour code. */
+  colorCode?: string | null;
   size: string | null;
   quantity: number | string | null;
   sizeSequence: number | string | null;
@@ -19,6 +21,8 @@ export interface RepSparkCurrentRow extends RepSparkStyleKey {
 export interface RepSparkFutureRow extends RepSparkStyleKey {
   variantId: string;
   color: string | null;
+  /** Feed brands only; scraped sources have never had a source colour code. */
+  colorCode?: string | null;
   size: string | null;
   quantity: number | string | null;
   availabilityDate: string | null;
@@ -257,7 +261,8 @@ async function fetchInventorySnapshot(
     db.query<RepSparkCurrentRow>(
       `${requested}
        SELECT b.brand_name AS "brandName", p.product_number AS "productNumber",
-              pv.id::text AS "variantId", pv.color, vs.${sizeColumn} AS size,
+              pv.id::text AS "variantId", pv.color,
+              pv.source_color_code AS "colorCode", vs.${sizeColumn} AS size,
               vs.ats_now AS quantity, ${sequence} AS "sizeSequence",
               ${currentFreshness} AS "sourceUpdatedAt"
        FROM requested r
@@ -270,7 +275,8 @@ async function fetchInventorySnapshot(
     db.query<RepSparkFutureRow>(
       `${requested}
        SELECT b.brand_name AS "brandName", p.product_number AS "productNumber",
-              pv.id::text AS "variantId", pv.color, vfi.size_code AS size,
+              pv.id::text AS "variantId", pv.color,
+              pv.source_color_code AS "colorCode", vfi.size_code AS size,
               vfi.quantity, vfi.availability_date AS "availabilityDate",
               ${futureFreshness} AS "sourceUpdatedAt"
        FROM requested r

@@ -210,6 +210,7 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     }
     currentDedupe.set(dedupeKey, row);
     const colorEntry = colors.get(normalizeMatchKey(color)) ?? { color, sizes: new Map<string, MutableSize>() };
+    colorEntry.colorCode ??= row.colorCode?.trim() || undefined;
     const sizeKey = normalizeMatchKey(size);
     const sizeEntry = colorEntry.sizes.get(sizeKey) ?? { size, sequence: null, current: 0, future: new Map<string, number>() };
     const sequence = Number(row.sizeSequence);
@@ -229,6 +230,7 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     futureDedupe.set(dedupeKey, row);
     const colorKey = normalizeMatchKey(color);
     const colorEntry = colors.get(colorKey) ?? { color, sizes: new Map<string, MutableSize>() };
+    colorEntry.colorCode ??= row.colorCode?.trim() || undefined;
     const sizeKey = normalizeMatchKey(size);
     const sizeEntry = colorEntry.sizes.get(sizeKey) ?? { size, sequence: null, current: 0, future: new Map<string, number>() };
     const previous = duplicate ? finiteQuantity(duplicate.quantity) : 0;
@@ -288,7 +290,11 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
             ...(futureQuantities.length ? { future: futureQuantities } : {}),
           };
         });
-      return { color: color.color, ...(color.colorCode ? { color_code: color.colorCode } : {}), sizes };
+      // An unmapped feed colour carries the raw code in `color` already, so the
+      // code is redundant there and would render as "HA1464 (HA1464)". Emit it
+      // only when a display name actually replaced it.
+      const showCode = Boolean(color.colorCode) && color.colorCode !== color.color;
+      return { color: color.color, ...(showCode ? { color_code: color.colorCode } : {}), sizes };
     });
   const styles = [...new Set(
     input.styles
