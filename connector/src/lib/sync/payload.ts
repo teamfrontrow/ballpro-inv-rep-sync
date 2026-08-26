@@ -9,9 +9,18 @@ const CANONICAL_SIZE_ORDER = [
 ];
 const SIZE_RANK = new Map(CANONICAL_SIZE_ORDER.map((size, index) => [size, index]));
 
+/**
+ * A style, plus the colour Shopify holds for it. `shopifyColor` is only
+ * consulted for sources that cannot report colour themselves — see
+ * SOURCE_COLOR_PLACEHOLDER.
+ */
+export interface PayloadStyle extends RepSparkStyleKey {
+  shopifyColor?: string | null;
+}
+
 export interface BuildInventoryPayloadInput {
   brand: string;
-  styles: RepSparkStyleKey[];
+  styles: PayloadStyle[];
   current: RepSparkCurrentRow[];
   future: RepSparkFutureRow[];
   cap: number | null;
@@ -68,6 +77,19 @@ function validIsoDate(value: string | null): string | null {
 function canonicalStyleKey(brandName: string, productNumber: string): string {
   return `${normalizeMatchKey(brandName)}\0${normalizeMatchKey(productNumber)}`;
 }
+
+/**
+ * What a source writes when it has no colour to report. Must match
+ * `DEFAULT_COLOR_LABEL` in the scraper, which applies it both as a fallback for
+ * a blank colour and — for Acushnet's Hybris site, which exposes no colour field
+ * at all — as the label on every style.
+ *
+ * It matters because colourways are grouped by this string: left alone, every
+ * FootJoy colourway on a product collapses into one row with their quantities
+ * summed. Shopify knows the real colour, so the catalog crawl records it per
+ * style and it is substituted here, before the grouping key is taken.
+ */
+const SOURCE_COLOR_PLACEHOLDER = "DEFAULT";
 
 function compareSizes(a: MutableSize, b: MutableSize): number {
   if (a.sequence !== null || b.sequence !== null) {
@@ -194,10 +216,39 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
   const inPayload = (row: { brandName: string; productNumber: string }) =>
     publishable.has(canonicalStyleKey(row.brandName, row.productNumber));
 
+  // Shopify's colour for each style, used only where the source had none.
+  const shopifyColors = new Map<string, string>();
+  for (const style of input.styles) {
+    const value = style.shopifyColor?.trim();
+    if (value) shopifyColors.set(canonicalStyleKey(style.brandName, style.productNumber), value);
+  }
+  /**
+   * The colour to publish, and the code to show beside it. A source that
+   * reported a real colour is left exactly as it was; only the placeholder is
+   * replaced, and only when Shopify actually has a colour for that style. The
+   * style number becomes the code, because for these sources the style number
+   * IS the colourway identifier (Acushnet's 33296 is one colourway).
+   */
+  const resolveColor = (row: {
+    brandName: string;
+    productNumber: string;
+    color: string | null;
+    colorCode?: string | null;
+  }): { color: string; colorCode?: string } => {
+    const sourceColor = row.color?.trim() ?? "";
+    const sourceCode = row.colorCode?.trim() || undefined;
+    if (normalizeMatchKey(sourceColor) !== SOURCE_COLOR_PLACEHOLDER) {
+      return { color: sourceColor, colorCode: sourceCode };
+    }
+    const mapped = shopifyColors.get(canonicalStyleKey(row.brandName, row.productNumber));
+    if (!mapped) return { color: sourceColor, colorCode: sourceCode };
+    return { color: mapped, colorCode: row.productNumber.trim() || undefined };
+  };
+
   const colors = new Map<string, { color: string; colorCode?: string; sizes: Map<string, MutableSize> }>();
   const currentDedupe = new Map<string, RepSparkCurrentRow>();
   for (const row of usableCurrent.filter(inPayload)) {
-    const color = row.color?.trim();
+    const { color, colorCode } = resolveColor(row);
     const size = row.size?.trim();
     if (!color || !size) continue;
     const dedupeKey = `${row.variantId}\0${normalizeMatchKey(size)}`;
@@ -210,7 +261,7 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     }
     currentDedupe.set(dedupeKey, row);
     const colorEntry = colors.get(normalizeMatchKey(color)) ?? { color, sizes: new Map<string, MutableSize>() };
-    colorEntry.colorCode ??= row.colorCode?.trim() || undefined;
+    colorEntry.colorCode ??= colorCode;
     const sizeKey = normalizeMatchKey(size);
     const sizeEntry = colorEntry.sizes.get(sizeKey) ?? { size, sequence: null, current: 0, future: new Map<string, number>() };
     const sequence = Number(row.sizeSequence);
@@ -221,7 +272,7 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
   }
   const futureDedupe = new Map<string, RepSparkFutureRow>();
   for (const { row, date } of usableFuture.filter(({ row }) => inPayload(row))) {
-    const color = row.color?.trim();
+    const { color, colorCode } = resolveColor(row);
     const size = row.size?.trim();
     if (!color || !size) continue;
     const dedupeKey = `${row.variantId}\0${normalizeMatchKey(size)}\0${date}`;
@@ -230,7 +281,7 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     futureDedupe.set(dedupeKey, row);
     const colorKey = normalizeMatchKey(color);
     const colorEntry = colors.get(colorKey) ?? { color, sizes: new Map<string, MutableSize>() };
-    colorEntry.colorCode ??= row.colorCode?.trim() || undefined;
+    colorEntry.colorCode ??= colorCode;
     const sizeKey = normalizeMatchKey(size);
     const sizeEntry = colorEntry.sizes.get(sizeKey) ?? { size, sequence: null, current: 0, future: new Map<string, number>() };
     const previous = duplicate ? finiteQuantity(duplicate.quantity) : 0;

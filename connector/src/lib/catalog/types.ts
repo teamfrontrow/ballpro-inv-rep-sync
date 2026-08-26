@@ -19,6 +19,14 @@ export type CatalogStyleStatus = "auto" | "unmatched";
 export interface ReconciledCatalogStyle {
   normalizedSku: string;
   repsparkProductNumber: string | null;
+  /**
+   * The Shopify variant's Color option, for sources that cannot see colour.
+   * Acushnet's Hybris site lists each colourway as its own product and exposes
+   * no colour field, so every FootJoy style reaches us labelled "Default".
+   * Shopify does know the colour — this is it, captured against the SKU that
+   * already identifies the colourway. Null when the product has no Color option.
+   */
+  shopifyColor: string | null;
   matchStatus: CatalogStyleStatus;
   matchSource: "catalog-auto" | "catalog-unmatched";
 }

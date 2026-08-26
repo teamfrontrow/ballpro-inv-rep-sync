@@ -1,9 +1,8 @@
 import { connectorDb, repsparkDb } from "@/lib/db";
 import type { InventoryPayload } from "@/lib/domain";
-import type { RepSparkStyleKey } from "@/lib/repspark/inventory";
 import { fetchRepSparkInventory } from "@/lib/repspark/inventory";
 import { createShopifyAdminClient } from "@/lib/shopify/client";
-import { buildInventoryPayload, payloadBusinessHash } from "@/lib/sync/payload";
+import { buildInventoryPayload, payloadBusinessHash, type PayloadStyle } from "@/lib/sync/payload";
 
 export type VerifyVerdict =
   | "in_sync"             // RepSpark-derived payload matches the live Shopify metafield
@@ -60,7 +59,7 @@ interface MappingRow {
   show_future_inventory: boolean | null;
   default_cap: number | null;
   future_horizon_days: number;
-  styles: string[] | null;
+  styles: Array<{ productNumber: string | null; shopifyColor: string | null }> | null;
 }
 
 export async function verifyProduct(mappingId: number): Promise<VerifyResult | null> {
@@ -74,7 +73,10 @@ export async function verifyProduct(mappingId: number): Promise<VerifyResult | n
        LEFT JOIN brands b ON b.id = pm.brand_id
        CROSS JOIN app_settings settings
        LEFT JOIN LATERAL (
-         SELECT json_agg(pms.repspark_product_number) AS styles
+         SELECT json_agg(json_build_object(
+                  'productNumber', pms.repspark_product_number,
+                  'shopifyColor', pms.shopify_color
+                )) AS styles
          FROM product_mapping_styles pms
          WHERE pms.product_mapping_id = pm.id
            AND pms.match_status IN ('auto', 'manual')
@@ -88,7 +90,15 @@ export async function verifyProduct(mappingId: number): Promise<VerifyResult | n
   if (!row) return null;
 
   const cap = row.max_display_cap ?? row.default_cap;
-  const styleNumbers = (row.styles ?? []).map((value) => String(value).trim()).filter(Boolean);
+  // Carry Shopify's colour through as the sync engine does, so this view shows
+  // the colour that is actually published rather than the source's placeholder.
+  const styleRows = (row.styles ?? [])
+    .map((value) => ({
+      productNumber: String(value?.productNumber ?? "").trim(),
+      shopifyColor: value?.shopifyColor ?? null,
+    }))
+    .filter((style) => style.productNumber);
+  const styleNumbers = styleRows.map((style) => style.productNumber);
 
   // Build the expected payload from the LATEST scraped data (assertReady=false so
   // this works mid-scrape), with a relaxed freshness window: this view exists to
@@ -96,7 +106,11 @@ export async function verifyProduct(mappingId: number): Promise<VerifyResult | n
   let expected: InventoryPayload | null = null;
   const sourceIssues: string[] = [];
   if (row.brand_name && styleNumbers.length) {
-    const styleKeys: RepSparkStyleKey[] = styleNumbers.map((productNumber) => ({ brandName: row.brand_name!, productNumber }));
+    const styleKeys: PayloadStyle[] = styleRows.map((style) => ({
+      brandName: row.brand_name!,
+      productNumber: style.productNumber,
+      shopifyColor: style.shopifyColor,
+    }));
     const inventory = await fetchRepSparkInventory(styleKeys, repsparkDb(), { assertReady: false });
     const built = buildInventoryPayload({
       brand: row.brand_name,

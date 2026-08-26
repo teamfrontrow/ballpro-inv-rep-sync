@@ -7,7 +7,7 @@ import {
   type RepSparkInventory,
   type RepSparkStyleKey,
 } from "@/lib/repspark/inventory";
-import { buildInventoryPayload, stableStringify } from "./payload";
+import { buildInventoryPayload, stableStringify, type PayloadStyle } from "./payload";
 import type {
   InventoryMetafieldWrite,
   ShopifyAdminClient,
@@ -19,6 +19,7 @@ const MAX_SOURCE_AGE_DAYS = 2;
 interface MappingStyleRow {
   productNumber: string;
   matchStatus: string;
+  shopifyColor?: string | null;
 }
 
 interface MappingRow extends QueryResultRow {
@@ -106,13 +107,19 @@ export function isExcludedMapping(
   return mapping.vendorIgnored || mapping.matchStatus === "ignored" || !mapping.brandEnabled;
 }
 
-function activeStyles(mapping: MappingRow): RepSparkStyleKey[] {
+function activeStyles(mapping: MappingRow): PayloadStyle[] {
   if (!mapping.brandEnabled || !mapping.brandName || !["auto", "manual", "partial"].includes(mapping.matchStatus)) return [];
-  const styles = new Map<string, RepSparkStyleKey>();
+  const styles = new Map<string, PayloadStyle>();
   for (const style of parseStyles(mapping.styles)) {
     if (!["auto", "manual"].includes(style.matchStatus)) continue;
     const key = normalizeMatchKey(style.productNumber);
-    if (key) styles.set(key, { brandName: mapping.brandName, productNumber: style.productNumber });
+    if (key) {
+      styles.set(key, {
+        brandName: mapping.brandName,
+        productNumber: style.productNumber,
+        shopifyColor: style.shopifyColor ?? null,
+      });
+    }
   }
   return [...styles.values()];
 }
@@ -168,7 +175,8 @@ async function loadMappings(
        LEFT JOIN LATERAL (
          SELECT jsonb_agg(jsonb_build_object(
            'productNumber', pms.repspark_product_number,
-           'matchStatus', pms.match_status
+           'matchStatus', pms.match_status,
+           'shopifyColor', pms.shopify_color
          ) ORDER BY upper(pms.repspark_product_number), pms.id) AS values
          FROM product_mapping_styles pms
          WHERE pms.product_mapping_id = pm.id

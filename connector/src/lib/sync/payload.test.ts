@@ -287,6 +287,86 @@ describe("buildInventoryPayload", () => {
     expect(result.payload?.colors[0].color_code).toBe("SAL486");
   });
 
+  it("keeps colourways apart when the source reports no colour", () => {
+    // Acushnet's Hybris site has no colour field, so every FootJoy style is
+    // labelled "Default". Grouped on that string the colourways merge and their
+    // quantities are summed -- this asserts they stay separate and honest.
+    const result = buildInventoryPayload({
+      brand: "FootJoy",
+      styles: [
+        { brandName: "FootJoy", productNumber: "33296", shopifyColor: "White" },
+        { brandName: "FootJoy", productNumber: "33297", shopifyColor: "Navy" },
+      ],
+      current: [
+        current({ brandName: "FootJoy", productNumber: "33296", variantId: "1", color: "Default", quantity: 5 }),
+        current({ brandName: "FootJoy", productNumber: "33297", variantId: "2", color: "Default", quantity: 7 }),
+      ],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+    expect(result.payload?.colors).toEqual([
+      { color: "Navy", color_code: "33297", sizes: [{ size: "M", current: 7 }] },
+      { color: "White", color_code: "33296", sizes: [{ size: "M", current: 5 }] },
+    ]);
+  });
+
+  it("leaves a source-reported colour alone even when Shopify has one", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1", shopifyColor: "Shopify Navy" }],
+      current: [current({ color: "Source Black" })],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+    expect(result.payload?.colors[0].color).toBe("Source Black");
+    expect(result.payload?.colors[0].color_code).toBeUndefined();
+  });
+
+  it("keeps the placeholder when Shopify has no colour for the style", () => {
+    const result = buildInventoryPayload({
+      brand: "FootJoy",
+      styles: [{ brandName: "FootJoy", productNumber: "33296", shopifyColor: null }],
+      current: [current({ brandName: "FootJoy", productNumber: "33296", color: "Default" })],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+    expect(result.payload?.colors[0].color).toBe("Default");
+    expect(result.payload?.colors[0].color_code).toBeUndefined();
+  });
+
+  it("substitutes the colour regardless of the placeholder's casing", () => {
+    const result = buildInventoryPayload({
+      brand: "FootJoy",
+      styles: [{ brandName: "FootJoy", productNumber: "33296", shopifyColor: "White" }],
+      current: [current({ brandName: "FootJoy", productNumber: "33296", color: " default " })],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+    expect(result.payload?.colors[0].color).toBe("White");
+  });
+
+  it("substitutes on a colourway reached only through future rows", () => {
+    const result = buildInventoryPayload({
+      brand: "FootJoy",
+      styles: [{ brandName: "FootJoy", productNumber: "33296", shopifyColor: "White" }],
+      current: [],
+      future: [future({ brandName: "FootJoy", productNumber: "33296", color: "Default" })],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+    expect(result.payload?.colors[0].color).toBe("White");
+    expect(result.payload?.colors[0].color_code).toBe("33296");
+  });
+
   it("converts strict M/D/YYYY dates to ISO and accepts strict ISO dates", () => {
     const result = buildInventoryPayload({
       brand: "Test Brand",
