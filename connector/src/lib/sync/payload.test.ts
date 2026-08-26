@@ -231,6 +231,62 @@ describe("buildInventoryPayload", () => {
     expect(result.payload?.colors[0].sizes[0]).toEqual({ size: "M", current: 10 });
   });
 
+  it("publishes the source colour code beside a mapped display name", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [current({ color: "Black", colorCode: "BLK010" })],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+    expect(result.payload?.colors[0].color).toBe("Black");
+    expect(result.payload?.colors[0].color_code).toBe("BLK010");
+  });
+
+  it("omits the colour code when no display name replaced it", () => {
+    // An unmapped feed colour arrives with the raw code already in `color`.
+    // Emitting it again would render as "HA1464 (HA1464)".
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [current({ color: "HA1464", colorCode: "HA1464" })],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+    expect(result.payload?.colors[0].color).toBe("HA1464");
+    expect(result.payload?.colors[0].color_code).toBeUndefined();
+  });
+
+  it("omits the colour code for scraped sources, which never carry one", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [current({ color: "Black" })],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+    expect(result.payload?.colors[0].color_code).toBeUndefined();
+  });
+
+  it("takes the colour code from a colourway that has only future rows", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [],
+      future: [future({ color: "Sail", colorCode: "SAL486" })],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+    expect(result.payload?.colors[0].color_code).toBe("SAL486");
+  });
+
   it("converts strict M/D/YYYY dates to ISO and accepts strict ISO dates", () => {
     const result = buildInventoryPayload({
       brand: "Test Brand",
