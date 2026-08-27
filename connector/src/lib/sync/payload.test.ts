@@ -117,7 +117,7 @@ describe("buildInventoryPayload", () => {
     expect(result.warnings[0].detail).toContain("STALE-1");
   });
 
-  it("names the style, its age and the limit in a staleness message", () => {
+  it("names the style, the colourway to blame, its age and the limit in a staleness message", () => {
     const result = buildInventoryPayload({
       brand: "Test Brand",
       styles: [
@@ -136,11 +136,50 @@ describe("buildInventoryPayload", () => {
     });
 
     expect(result.warnings[0].detail).toBe(
-      "Test Brand/STALE-1: last refreshed 2026-07-05, 10 day(s) ago (limit 2)",
+      "Test Brand/STALE-1 (Black): last refreshed 2026-07-05, 10 day(s) ago (limit 2)",
     );
   });
 
-  it("reports a source row with no timestamp as stale, naming the style", () => {
+  it("blames only the colourways carrying the oldest timestamp, capping a long list", () => {
+    // The Holderness & Bourne shape: one colourway the source stopped listing,
+    // every other colourway of the same style refreshed today.
+    const dead = (color: string) =>
+      current({ variantId: color, color, sourceUpdatedAt: "2026-07-05T10:00:00.000Z" });
+    const oneDead = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [current({ color: "Navy" }), current({ variantId: "2", color: "White" }), dead("Belmont")],
+      future: [], cap: null, horizonDays: 90, now: NOW, maxSourceAgeDays: 2,
+    });
+    const manyDead = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: ["Belmont", "Sonoma", "Tudor", "Windsor", "Harbor"].map(dead),
+      future: [], cap: null, horizonDays: 90, now: NOW, maxSourceAgeDays: 2,
+    });
+
+    expect(oneDead.issues[0].detail).toBe(
+      "Test Brand/STYLE-1 (Belmont): last refreshed 2026-07-05, 10 day(s) ago (limit 2)",
+    );
+    expect(manyDead.issues[0].detail).toBe(
+      "Test Brand/STYLE-1 (Belmont, Sonoma, Tudor +2 more): last refreshed 2026-07-05, 10 day(s) ago (limit 2)",
+    );
+  });
+
+  it("falls back to a placeholder when the stale row has no colour at all", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [current({ color: null, sourceUpdatedAt: "2026-07-05T10:00:00.000Z" })],
+      future: [], cap: null, horizonDays: 90, now: NOW, maxSourceAgeDays: 2,
+    });
+
+    expect(result.issues[0].detail).toBe(
+      "Test Brand/STYLE-1 (no color): last refreshed 2026-07-05, 10 day(s) ago (limit 2)",
+    );
+  });
+
+  it("reports a source row with no timestamp as stale, naming the style and colourway", () => {
     const result = buildInventoryPayload({
       brand: "Test Brand",
       styles: [
@@ -158,7 +197,9 @@ describe("buildInventoryPayload", () => {
     });
 
     expect(result.payload?.styles).toEqual(["FRESH-1"]);
-    expect(result.warnings[0].detail).toBe("Test Brand/UNDATED-1: 1 source row(s) carry no timestamp");
+    expect(result.warnings[0].detail).toBe(
+      "Test Brand/UNDATED-1: 1 source row(s) carry no timestamp (Black)",
+    );
   });
 
   it("still fails the product when every mapped style is unusable", () => {
@@ -565,7 +606,7 @@ describe("buildInventoryPayload", () => {
     expect(justOlder.issues).toEqual([
       {
         code: "source_stale",
-        detail: "Test Brand/STYLE-1: last refreshed 2026-07-13, 2 day(s) ago (limit 2)",
+        detail: "Test Brand/STYLE-1 (Black): last refreshed 2026-07-13, 2 day(s) ago (limit 2)",
       },
     ]);
     expect(justOlder.payload).toBeNull();
@@ -596,7 +637,7 @@ describe("buildInventoryPayload", () => {
     expect(staleFuture.issues.map((issue) => issue.code)).toEqual(["source_stale"]);
     expect(staleFuture.payload).toBeNull();
     expect(missingTimestamp.issues).toEqual([
-      { code: "source_stale", detail: "Test Brand/STYLE-1: 1 source row(s) carry no timestamp" },
+      { code: "source_stale", detail: "Test Brand/STYLE-1: 1 source row(s) carry no timestamp (Black)" },
     ]);
     expect(missingTimestamp.payload).toBeNull();
   });

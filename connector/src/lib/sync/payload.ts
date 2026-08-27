@@ -91,6 +91,16 @@ function canonicalStyleKey(brandName: string, productNumber: string): string {
  */
 const SOURCE_COLOR_PLACEHOLDER = "DEFAULT";
 
+/**
+ * The colourways to blame in a staleness message, deduped and capped so one bad
+ * scrape of a 40-colour style cannot turn a run log into a wall of names.
+ */
+function namedColors(rows: { color: string }[], limit = 3): string {
+  const unique = [...new Set(rows.map((row) => row.color))];
+  const shown = unique.slice(0, limit).join(", ");
+  return unique.length > limit ? `${shown} +${unique.length - limit} more` : shown;
+}
+
 function compareSizes(a: MutableSize, b: MutableSize): number {
   if (a.sequence !== null || b.sequence !== null) {
     if (a.sequence === null) return 1;
@@ -171,20 +181,30 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
 
     // Parent rows without a variant cannot carry a child timestamp, so they are
     // not evidence of freshness either way.
+    // The colour travels with the timestamp: a style fails on its oldest row, and
+    // that row is almost always one colourway the source stopped listing while
+    // the rest kept refreshing. Naming it turns a database query into a glance.
     const stamped = [...styleCurrent, ...styleFuture]
       .filter((row) => row.variantId)
-      .map((row) => (row.sourceUpdatedAt ? new Date(row.sourceUpdatedAt).valueOf() : Number.NaN));
-    const undated = stamped.filter((value) => !Number.isFinite(value)).length;
-    const dated = stamped.filter((value) => Number.isFinite(value));
-    if (undated > 0) {
-      styleIssues.push({ code: "source_stale", detail: `${label}: ${undated} source row(s) carry no timestamp` });
+      .map((row) => ({
+        at: row.sourceUpdatedAt ? new Date(row.sourceUpdatedAt).valueOf() : Number.NaN,
+        color: row.color?.trim() || "no color",
+      }));
+    const undated = stamped.filter((row) => !Number.isFinite(row.at));
+    const dated = stamped.filter((row) => Number.isFinite(row.at));
+    if (undated.length > 0) {
+      styleIssues.push({
+        code: "source_stale",
+        detail: `${label}: ${undated.length} source row(s) carry no timestamp (${namedColors(undated)})`,
+      });
     } else if (dated.length > 0) {
-      const oldest = Math.min(...dated);
+      const oldest = Math.min(...dated.map((row) => row.at));
       if (oldest < freshnessCutoff) {
         const days = Math.floor((now.valueOf() - oldest) / 86_400_000);
+        const blame = namedColors(dated.filter((row) => row.at === oldest));
         styleIssues.push({
           code: "source_stale",
-          detail: `${label}: last refreshed ${new Date(oldest).toISOString().slice(0, 10)}, ${days} day(s) ago (limit ${maxAgeDays})`,
+          detail: `${label} (${blame}): last refreshed ${new Date(oldest).toISOString().slice(0, 10)}, ${days} day(s) ago (limit ${maxAgeDays})`,
         });
       }
     }
