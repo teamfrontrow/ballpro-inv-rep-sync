@@ -171,3 +171,43 @@ describe("reconcileCatalog", () => {
     });
   });
 });
+
+describe("letter-prefixed source style numbers", () => {
+  // Flag & Anthem prefixes its RepSpark numbers ("M-SP24OW1978") where Shopify
+  // uses the house "A-" ("A-SP24OW1978"). 715 of its 911 styles are prefixed,
+  // so these had to auto-match rather than be mapped by hand.
+  it("matches a prefixed RepSpark number to its unprefixed Shopify SKU", () => {
+    const result = reconcileCatalog(
+      [colorProduct("10", "Flag & Anthem", [["A-SP24OW1978", "Black"]])],
+      [{ brandName: "Flag & Anthem", productNumber: "M-SP24OW1978" }],
+    );
+    const style = result.products[0].styles[0];
+    expect(style.matchStatus).toBe("auto");
+    // The full source number is kept: inventory is looked up by it verbatim.
+    expect(style.repsparkProductNumber).toBe("M-SP24OW1978");
+    expect(result.products[0].matchStatus).toBe("auto");
+  });
+
+  it("leaves a prefixed style colliding with its bare twin unmatched, not mis-matched", () => {
+    // The one collision in the live catalog. Publishing either candidate would
+    // put another garment's inventory on the page, so reconcile must decline.
+    const result = reconcileCatalog(
+      [colorProduct("11", "Flag & Anthem", [["A-COREHW290", "Navy"]])],
+      [
+        { brandName: "Flag & Anthem", productNumber: "B-COREHW290" },
+        { brandName: "Flag & Anthem", productNumber: "COREHW290" },
+      ],
+    );
+    const style = result.products[0].styles[0];
+    expect(style.matchStatus).toBe("unmatched");
+    expect(style.repsparkProductNumber).toBeNull();
+  });
+
+  it("still treats a two-letter prefix as part of the style number", () => {
+    const result = reconcileCatalog(
+      [colorProduct("12", "Flag & Anthem", [["BA-100", "Navy"]])],
+      [{ brandName: "Flag & Anthem", productNumber: "BA-100" }],
+    );
+    expect(result.products[0].styles[0].matchStatus).toBe("auto");
+  });
+});
