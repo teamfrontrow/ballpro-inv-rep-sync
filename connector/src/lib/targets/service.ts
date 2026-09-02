@@ -43,6 +43,10 @@ export async function readScrapeTargets(
        JOIN brands b ON b.id = pm.brand_id
        LEFT JOIN ignored_vendors iv ON iv.shopify_vendor = pm.shopify_vendor
       WHERE iv.shopify_vendor IS NULL
+        -- Deleted in Shopify. Scraping a style only this product needed keeps a
+        -- style alive in the scrape purely to serve a product that no longer
+        -- exists.
+        AND pm.shopify_absent_since IS NULL
         AND pm.match_status <> 'ignored'
         AND pms.match_status <> 'ignored'
         AND nullif(trim(b.brand_slug), '') IS NOT NULL
