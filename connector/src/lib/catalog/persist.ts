@@ -6,6 +6,8 @@ export interface CatalogPersistCounts {
   brandsUpserted: number;
   productsUpserted: number;
   stylesUpserted: number;
+  /** Mappings whose Shopify product was missing from this crawl. */
+  mappingsMarkedAbsent: number;
 }
 
 interface PersistedBrand {
@@ -70,7 +72,8 @@ export async function persistCatalog(
           brand_id, match_status, match_source)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
        ON CONFLICT (shopify_product_gid) DO UPDATE
-         SET shopify_handle = EXCLUDED.shopify_handle,
+         SET shopify_absent_since = NULL,
+             shopify_handle = EXCLUDED.shopify_handle,
              shopify_vendor = EXCLUDED.shopify_vendor,
              shopify_title = EXCLUDED.shopify_title,
              brand_id = CASE
@@ -138,9 +141,58 @@ export async function persistCatalog(
     );
   }
 
+  /*
+   * Mark every mapping the crawl did not find.
+   *
+   * `readProducts()` is called with no query filter and reconcileCatalog emits
+   * an entry for every product it returns -- unmatched ones included -- so this
+   * list is the whole store. A mapping whose GID is missing from it is a
+   * product that has been deleted in Shopify.
+   *
+   * Without this the table only ever grew: deleted products kept supplying
+   * scrape targets and kept being synced, which is what produces
+   * "metafieldsSet failed ... Owner does not exist" on every run, forever.
+   *
+   * Marked, not deleted: sync_run_items cascades from here, so removing the row
+   * would rewrite what past runs recorded doing to that product.
+   */
+  const seenGids = reconciliation.products.map((product) => product.shopifyProduct.id);
+  const absent = await client.query<{ count: string }>(
+    `SELECT count(*) AS count FROM product_mappings
+      WHERE shopify_absent_since IS NULL AND NOT (shopify_product_gid = ANY($1::text[]))`,
+    [seenGids],
+  );
+  const absentCount = Number(absent.rows[0]?.count ?? 0);
+  const total = await client.query<{ count: string }>("SELECT count(*) AS count FROM product_mappings");
+  const totalCount = Number(total.rows[0]?.count ?? 0);
+
+  /*
+   * A crawl that returned a fraction of the store looks exactly like a store
+   * that lost most of its products. Refuse the sweep rather than mark hundreds
+   * of live products absent and stop syncing them: a bulk operation that
+   * silently truncates is far more likely than a catalog that halved overnight.
+   */
+  let mappingsMarkedAbsent = 0;
+  if (absentCount > 0 && totalCount > 0 && absentCount > Math.max(1, Math.floor(totalCount * 0.25))) {
+    throw new Error(
+      `Catalog crawl would mark ${absentCount} of ${totalCount} product mapping(s) absent from Shopify ` +
+        `(over the 25% guard). The crawl most likely returned a partial list; nothing was marked. ` +
+        `Re-run, and if the store really did shrink that much, clear the flag by hand.`,
+    );
+  }
+  if (absentCount > 0) {
+    const marked = await client.query(
+      `UPDATE product_mappings SET shopify_absent_since = now(), updated_at = now()
+        WHERE shopify_absent_since IS NULL AND NOT (shopify_product_gid = ANY($1::text[]))`,
+      [seenGids],
+    );
+    mappingsMarkedAbsent = marked.rowCount ?? 0;
+  }
+
   return {
     brandsUpserted: brands.size,
     productsUpserted: reconciliation.products.length,
     stylesUpserted,
+    mappingsMarkedAbsent,
   };
 }

@@ -200,6 +200,9 @@ async function loadMappings(
        ) latest ON true
       WHERE ($1::bigint[] IS NULL OR pm.brand_id = ANY ($1::bigint[]))
         AND ($2::text[] IS NULL OR pm.shopify_product_gid = ANY ($2::text[]))
+        -- Deleted in Shopify, per the last catalog crawl. Writing a metafield to
+        -- it is the "Owner does not exist" failure, on every run, forever.
+        AND pm.shopify_absent_since IS NULL
       ORDER BY pm.id`,
     [input.brandIds ?? null, input.productGids ?? null],
   );
