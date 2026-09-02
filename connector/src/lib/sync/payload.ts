@@ -149,9 +149,15 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
   const future = includeFuture
     ? input.future.filter((row) => requested.has(canonicalStyleKey(row.brandName, row.productNumber)))
     : [];
-  const usableCurrent = current.filter((row) => row.variantId && row.color?.trim() && row.size?.trim());
+  // `variantId` is deliberately NOT required. The metafield is product-level and
+  // keyed by colour, so it can carry a colourway whether or not someone has
+  // added a matching Shopify variant. Requiring one made the published
+  // inventory a mirror of hand-maintained variants rather than of what the
+  // supplier actually stocks: a colour nobody had added yet was invisible, and
+  // a variant for a colour the supplier had dropped had nothing to refresh it.
+  const usableCurrent = current.filter((row) => row.color?.trim() && row.size?.trim());
   const usableFuture = future.flatMap((row) => {
-    if (!row.variantId || !row.color?.trim() || !row.size?.trim()) return [];
+    if (!row.color?.trim() || !row.size?.trim()) return [];
     const date = validIsoDate(row.availabilityDate);
     if (!date) return [];
     const dateValue = new Date(`${date}T00:00:00.000Z`);
@@ -176,7 +182,7 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     const styleIssues: PayloadIssue[] = [];
 
     if (styleCurrent.length === 0 && styleFuture.length === 0) {
-      return { key, issues: [{ code: "source_missing" as const, detail: label }] };
+      return { key, issues: [{ code: "source_missing" as const, detail: label }], hasRows: false };
     }
 
     // Parent rows without a variant cannot carry a child timestamp, so they are
@@ -185,7 +191,6 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     // that row is almost always one colourway the source stopped listing while
     // the rest kept refreshing. Naming it turns a database query into a glance.
     const stamped = [...styleCurrent, ...styleFuture]
-      .filter((row) => row.variantId)
       .map((row) => ({
         at: row.sourceUpdatedAt ? new Date(row.sourceUpdatedAt).valueOf() : Number.NaN,
         color: row.color?.trim() || "no color",
@@ -208,7 +213,7 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
         });
       }
     }
-    if ([...styleCurrent, ...styleFuture].some((row) => row.variantId && !row.color?.trim())) {
+    if ([...styleCurrent, ...styleFuture].some((row) => !row.color?.trim())) {
       styleIssues.push({ code: "null_color", detail: `${label}: one or more variants have no color` });
     }
     for (const row of styleFuture) {
@@ -216,18 +221,65 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
         styleIssues.push({ code: "invalid_date", detail: `${label}: ${String(row.availabilityDate)}` });
       }
     }
-    if (!usableCurrent.some(belongs) && !usableFuture.some(({ row }) => belongs(row))) {
+    const hasRows = usableCurrent.some(belongs) || usableFuture.some(({ row }) => belongs(row));
+    if (!hasRows) {
       styleIssues.push({ code: "empty_sizes", detail: label });
     }
-    return { key, issues: styleIssues };
+    return { key, issues: styleIssues, hasRows };
   });
 
-  const publishable = new Set(diagnoses.filter((entry) => entry.issues.length === 0).map((entry) => entry.key));
+  /*
+   * A style publishes when it has usable rows. Nothing else withholds it.
+   *
+   * Every diagnosis above is now advisory: age in particular. Refusing to
+   * publish stale data does not make Shopify correct, it freezes whatever was
+   * published last and leaves it there indefinitely -- which is how a
+   * discontinued style kept showing August quantities on its product page for a
+   * month while every sync "failed" safely. Publishing what the source last
+   * said, and recording that it is old, is both more honest and less dangerous.
+   */
+  const hasData = new Set(
+    diagnoses.filter((entry) => entry.hasRows).map((entry) => entry.key),
+  );
+  const publishable = hasData;
   const issues = diagnoses.flatMap((entry) => entry.issues);
+
+  /*
+   * Nothing anywhere for any mapped style: the supplier no longer lists this
+   * product at all. Publish an EMPTY payload rather than failing.
+   *
+   * Failing leaves the last good metafield in place forever, so the storefront
+   * keeps offering stock from whenever the style was dropped. Blanking says the
+   * true thing -- we have no inventory data for this product -- and it is
+   * reversible the moment the supplier lists it again.
+   *
+   * An unmapped product is different and still fails: no styles mapped is a
+   * configuration problem, and blanking on it would wipe good data because of a
+   * bug in matching.
+   */
   if (publishable.size === 0) {
+    if (input.styles.length === 0) {
+      return {
+        payload: null, json: null, hash: null, warnings: [],
+        issues: issues.length > 0 ? issues : [{ code: "source_missing", detail: "no styles are mapped to this product" }],
+      };
+    }
+    const blank: InventoryPayload = {
+      schema: 1,
+      styles: [],
+      brand: input.brand.trim(),
+      synced_at: now.toISOString(),
+      cap: input.cap,
+      size_order: [],
+      dates: [],
+      colors: [],
+    };
     return {
-      payload: null, json: null, hash: null, warnings: [],
-      issues: issues.length > 0 ? issues : [{ code: "empty_sizes", detail: "no mapped styles have usable sizes" }],
+      payload: blank,
+      json: stableStringify(blank),
+      hash: payloadBusinessHash(blank),
+      issues: [],
+      warnings: issues,
     };
   }
   // Excluded styles are dropped from the payload as well as from the check, so
@@ -271,7 +323,9 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     const { color, colorCode } = resolveColor(row);
     const size = row.size?.trim();
     if (!color || !size) continue;
-    const dedupeKey = `${row.variantId}\0${normalizeMatchKey(size)}`;
+    // Was keyed on variantId, which is now optional; style + colour + size is
+    // what actually identifies one stock line.
+    const dedupeKey = `${canonicalStyleKey(row.brandName, row.productNumber)}\0${normalizeMatchKey(color)}\0${normalizeMatchKey(size)}`;
     const duplicate = currentDedupe.get(dedupeKey);
     if (duplicate) {
       if (finiteQuantity(row.quantity) <= finiteQuantity(duplicate.quantity)) continue;
@@ -295,7 +349,7 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     const { color, colorCode } = resolveColor(row);
     const size = row.size?.trim();
     if (!color || !size) continue;
-    const dedupeKey = `${row.variantId}\0${normalizeMatchKey(size)}\0${date}`;
+    const dedupeKey = `${canonicalStyleKey(row.brandName, row.productNumber)}\0${normalizeMatchKey(color)}\0${normalizeMatchKey(size)}\0${date}`;
     const duplicate = futureDedupe.get(dedupeKey);
     if (duplicate && finiteQuantity(row.quantity) <= finiteQuantity(duplicate.quantity)) continue;
     futureDedupe.set(dedupeKey, row);
