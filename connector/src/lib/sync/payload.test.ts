@@ -69,7 +69,7 @@ describe("buildInventoryPayload", () => {
     });
   });
 
-  it("fails readiness for stale rows, null colors, empty styles, and malformed future dates", () => {
+  it("reports stale rows, null colors and malformed dates as warnings, not failures", () => {
     const result = buildInventoryPayload({
       brand: "Test Brand",
       styles: [
@@ -82,13 +82,18 @@ describe("buildInventoryPayload", () => {
       horizonDays: 90,
       now: NOW,
     });
-    expect(new Set(result.issues.map((issue) => issue.code))).toEqual(
+    // None of these withhold publication any more. The only row here has no
+    // colour and so contributes nothing, leaving no usable data for any mapped
+    // style -- which blanks the metafield rather than failing the product.
+    expect(result.issues).toEqual([]);
+    expect(new Set(result.warnings.map((issue) => issue.code))).toEqual(
       new Set(["source_missing", "source_stale", "null_color", "empty_sizes", "invalid_date"]),
     );
-    expect(result.payload).toBeNull();
+    expect(result.payload).not.toBeNull();
+    expect(result.payload?.colors).toEqual([]);
   });
 
-  it("publishes fresh styles and warns about a stale one instead of failing the product", () => {
+  it("publishes a stale colourway alongside fresh ones, and says it is old", () => {
     // The AndersonOrd shape: a Shopify product maps one style per colorway, and
     // one colorway stopped being re-scraped. Every other colorway is current.
     const result = buildInventoryPayload({
@@ -109,9 +114,14 @@ describe("buildInventoryPayload", () => {
 
     expect(result.issues).toEqual([]);
     expect(result.payload).not.toBeNull();
-    // The stale colorway contributes nothing — neither its quantities nor its name.
-    expect(result.payload?.styles).toEqual(["FRESH-1"]);
-    expect(result.payload?.colors.map((color) => color.color)).toEqual(["Navy"]);
+    /*
+     * Both publish. Withholding the stale colourway did not make Shopify
+     * correct -- it left whatever was published last sitting on the product
+     * page indefinitely. The age is reported as a warning instead, so it is
+     * visible without being suppressed.
+     */
+    expect(result.payload?.styles).toEqual(["FRESH-1", "STALE-1"]);
+    expect(result.payload?.colors.map((color) => color.color)).toEqual(["Lavender", "Navy"]);
     expect(result.warnings).toHaveLength(1);
     expect(result.warnings[0].code).toBe("source_stale");
     expect(result.warnings[0].detail).toContain("STALE-1");
@@ -158,10 +168,10 @@ describe("buildInventoryPayload", () => {
       future: [], cap: null, horizonDays: 90, now: NOW, maxSourceAgeDays: 2,
     });
 
-    expect(oneDead.issues[0].detail).toBe(
+    expect(oneDead.warnings[0].detail).toBe(
       "Test Brand/STYLE-1 (Belmont): last refreshed 2026-07-05, 10 day(s) ago (limit 2)",
     );
-    expect(manyDead.issues[0].detail).toBe(
+    expect(manyDead.warnings[0].detail).toBe(
       "Test Brand/STYLE-1 (Belmont, Sonoma, Tudor +2 more): last refreshed 2026-07-05, 10 day(s) ago (limit 2)",
     );
   });
@@ -174,7 +184,7 @@ describe("buildInventoryPayload", () => {
       future: [], cap: null, horizonDays: 90, now: NOW, maxSourceAgeDays: 2,
     });
 
-    expect(result.issues[0].detail).toBe(
+    expect(result.warnings[0].detail).toBe(
       "Test Brand/STYLE-1 (no color): last refreshed 2026-07-05, 10 day(s) ago (limit 2)",
     );
   });
@@ -196,13 +206,13 @@ describe("buildInventoryPayload", () => {
       now: NOW,
     });
 
-    expect(result.payload?.styles).toEqual(["FRESH-1"]);
+    expect(result.payload?.styles).toEqual(["FRESH-1", "UNDATED-1"]);
     expect(result.warnings[0].detail).toBe(
       "Test Brand/UNDATED-1: 1 source row(s) carry no timestamp (Black)",
     );
   });
 
-  it("still fails the product when every mapped style is unusable", () => {
+  it("publishes a product whose only data is stale, rather than withholding it", () => {
     const result = buildInventoryPayload({
       brand: "Test Brand",
       styles: [{ brandName: "Test Brand", productNumber: "STALE-1" }],
@@ -213,9 +223,64 @@ describe("buildInventoryPayload", () => {
       now: NOW,
     });
 
+    /*
+     * This used to fail the product, which sounds cautious and is not: a failed
+     * sync writes nothing, so the metafield keeps whatever it held from before
+     * the data went stale, and the storefront offers that indefinitely. What we
+     * last heard from the source, marked old, beats a frozen number nobody can
+     * see the age of.
+     */
+    expect(result.payload).not.toBeNull();
+    expect(result.payload?.styles).toEqual(["STALE-1"]);
+    expect(result.issues).toEqual([]);
+    expect(result.warnings.map((issue) => issue.code)).toEqual(["source_stale"]);
+  });
+
+  it("blanks the metafield when the source no longer lists the product at all", () => {
+    /*
+     * The johnnie-O case: the style is live in Shopify and correctly targeted,
+     * but the supplier stopped listing it, so no row is returned for any mapped
+     * style. An empty payload clears the metafield -- the honest statement that
+     * we have no inventory data -- instead of failing and leaving the last
+     * known quantities on sale forever. Reversible: the moment the source lists
+     * it again, the next sync republishes.
+     */
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "DROPPED-1" }],
+      current: [],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+
+    expect(result.payload).not.toBeNull();
+    expect(result.payload?.colors).toEqual([]);
+    expect(result.payload?.styles).toEqual([]);
+    expect(result.json).not.toBeNull();
+    expect(result.issues).toEqual([]);
+    expect(result.warnings.map((issue) => issue.code)).toContain("source_missing");
+  });
+
+  it("still FAILS a product with no styles mapped at all", () => {
+    /*
+     * Distinct from the case above and deliberately still fatal. No mapped
+     * styles is a matching bug, not a supplier decision, and blanking on it
+     * would wipe good inventory because of a fault on our side.
+     */
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [],
+      current: [],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+
     expect(result.payload).toBeNull();
-    expect(result.warnings).toEqual([]);
-    expect(result.issues.map((issue) => issue.code)).toEqual(["source_stale"]);
+    expect(result.issues.map((issue) => issue.code)).toEqual(["source_missing"]);
   });
 
   it("keeps a mapped style that RepSpark has no rows for from failing its siblings", () => {
@@ -253,7 +318,11 @@ describe("buildInventoryPayload", () => {
       now: NOW,
     });
 
-    expect(result.payload?.styles).toEqual(["FRESH-1"]);
+    // The malformed future row is still excluded -- validIsoDate drops it, so no
+    // date reaches the payload -- but it no longer withholds that style's
+    // current stock, which was never in question.
+    expect(result.payload?.styles).toEqual(["BAD-DATE-1", "FRESH-1"]);
+    expect(result.payload?.dates).toEqual([]);
     expect(result.warnings.map((issue) => issue.code)).toEqual(["invalid_date"]);
     expect(result.warnings[0].detail).toBe("Test Brand/BAD-DATE-1: not-a-date");
   });
@@ -572,8 +641,8 @@ describe("buildInventoryPayload", () => {
       maxSourceAgeDays: 9,
     });
 
-    expect(defaultWindow.issues.map((issue) => issue.code)).toContain("source_stale");
-    expect(feedWindow.issues).toEqual([]);
+    expect(defaultWindow.warnings.map((issue) => issue.code)).toContain("source_stale");
+    expect(feedWindow.warnings).toEqual([]);
     expect(feedWindow.payload).not.toBeNull();
   });
 
@@ -599,20 +668,21 @@ describe("buildInventoryPayload", () => {
       now: NOW,
     });
 
-    expect(atCutoff.issues).toEqual([]);
+    expect(atCutoff.warnings).toEqual([]);
     expect(atCutoff.payload).not.toBeNull();
     // The detail now names the style and echoes the window in force, which is
     // what makes a per-brand limit legible in a run log.
-    expect(justOlder.issues).toEqual([
+    expect(justOlder.warnings).toEqual([
       {
         code: "source_stale",
         detail: "Test Brand/STYLE-1 (Black): last refreshed 2026-07-13, 2 day(s) ago (limit 2)",
       },
     ]);
-    expect(justOlder.payload).toBeNull();
+    // Published, not withheld: the age is reported, the data still goes out.
+    expect(justOlder.payload).not.toBeNull();
   });
 
-  it("requires every current and future source row to be fresh and fails closed on a missing timestamp", () => {
+  it("reports an untimestamped row as stale but still publishes it", () => {
     const staleFuture = buildInventoryPayload({
       brand: "Test Brand",
       styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
@@ -634,12 +704,12 @@ describe("buildInventoryPayload", () => {
       now: NOW,
     });
 
-    expect(staleFuture.issues.map((issue) => issue.code)).toEqual(["source_stale"]);
-    expect(staleFuture.payload).toBeNull();
-    expect(missingTimestamp.issues).toEqual([
+    expect(staleFuture.warnings.map((issue) => issue.code)).toEqual(["source_stale"]);
+    expect(staleFuture.payload).not.toBeNull();
+    expect(missingTimestamp.warnings).toEqual([
       { code: "source_stale", detail: "Test Brand/STYLE-1: 1 source row(s) carry no timestamp (Black)" },
     ]);
-    expect(missingTimestamp.payload).toBeNull();
+    expect(missingTimestamp.payload).not.toBeNull();
   });
 
   it.each(["2/29/2025", "13/1/2026", "2026-02-30", "2026-8-01", "8-1-2026"])(
@@ -654,7 +724,7 @@ describe("buildInventoryPayload", () => {
         horizonDays: 90,
         now: NOW,
       });
-      expect(result.issues.map((issue) => issue.code)).toContain("invalid_date");
+      expect(result.warnings.map((issue) => issue.code)).toContain("invalid_date");
     },
   );
 });
