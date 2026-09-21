@@ -436,6 +436,83 @@ describe("buildInventoryPayload", () => {
     expect(result.payload?.colors[0].color_code).toBeUndefined();
   });
 
+  it("labels each colour with its style number when every colourway is its own style", () => {
+    // Sun Day Red / AndersonOrd: RepSpark reports real colours, and each colour
+    // is a separate style. The style number is what users quote, so it is the
+    // code -- exactly as FootJoy already shows "Black (28557)".
+    const result = buildInventoryPayload({
+      brand: "Sun Day Red",
+      styles: [
+        { brandName: "Sun Day Red", productNumber: "L11941", shopifyColor: "Navy Blazer" },
+        { brandName: "Sun Day Red", productNumber: "L11944", shopifyColor: "Sunday Red" },
+      ],
+      current: [
+        current({ brandName: "Sun Day Red", productNumber: "L11941", variantId: "1", color: "Navy Blazer", quantity: 5 }),
+        current({ brandName: "Sun Day Red", productNumber: "L11944", variantId: "2", color: "Sunday Red", quantity: 7 }),
+      ],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+    expect(result.payload?.colors).toEqual([
+      { color: "Navy Blazer", color_code: "L11941", sizes: [{ size: "M", current: 5 }] },
+      { color: "Sunday Red", color_code: "L11944", sizes: [{ size: "M", current: 7 }] },
+    ]);
+  });
+
+  it("never labels a single-style product, whose code would only repeat the SKU", () => {
+    const result = buildInventoryPayload({
+      brand: "Test Brand",
+      styles: [{ brandName: "Test Brand", productNumber: "STYLE-1" }],
+      current: [current({ color: "Black" }), current({ variantId: "2", color: "Navy", quantity: 3 })],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+    expect(result.payload?.colors.map((color) => color.color_code)).toEqual([undefined, undefined]);
+  });
+
+  it("omits style codes when the brand toggle is off", () => {
+    const result = buildInventoryPayload({
+      brand: "Sun Day Red",
+      styles: [
+        { brandName: "Sun Day Red", productNumber: "L11941" },
+        { brandName: "Sun Day Red", productNumber: "L11944" },
+      ],
+      current: [
+        current({ brandName: "Sun Day Red", productNumber: "L11941", variantId: "1", color: "Navy Blazer" }),
+        current({ brandName: "Sun Day Red", productNumber: "L11944", variantId: "2", color: "Sunday Red" }),
+      ],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      showStyleCodes: false,
+      now: NOW,
+    });
+    expect(result.payload?.colors.map((color) => color.color_code)).toEqual([undefined, undefined]);
+  });
+
+  it("keeps a source-supplied colour code over the style number", () => {
+    const result = buildInventoryPayload({
+      brand: "Columbia",
+      styles: [
+        { brandName: "Columbia", productNumber: "1234" },
+        { brandName: "Columbia", productNumber: "5678" },
+      ],
+      current: [
+        current({ brandName: "Columbia", productNumber: "1234", variantId: "1", color: "Black", colorCode: "BLK010" }),
+        current({ brandName: "Columbia", productNumber: "5678", variantId: "2", color: "Sail", colorCode: "SAL486" }),
+      ],
+      future: [],
+      cap: null,
+      horizonDays: 90,
+      now: NOW,
+    });
+    expect(result.payload?.colors.map((color) => color.color_code)).toEqual(["BLK010", "SAL486"]);
+  });
+
   it("keeps the placeholder when Shopify has no colour for the style", () => {
     const result = buildInventoryPayload({
       brand: "FootJoy",

@@ -9,7 +9,7 @@ import { apiJson, EmptyState, useToast } from "@/components/ui";
 type Brand = {
   id: string; brand_slug: string; brand_name: string; shopify_vendor: string; enabled: boolean;
   shopify_vendors: string[];
-  max_display_cap: number | null; max_source_age_days: number | null; show_future_inventory: boolean;
+  max_display_cap: number | null; max_source_age_days: number | null; show_future_inventory: boolean; show_style_codes: boolean;
   product_count: number; ready_count: number; unmatched_count: number;
 };
 
@@ -52,7 +52,7 @@ export function BrandsControl() {
   }, [toast]);
   useEffect(() => { load(); }, [load]);
 
-  async function update(id: string, changes: { enabled?: boolean; maxDisplayCap?: number | null; maxSourceAgeDays?: number | null; showFutureInventory?: boolean; shopifyVendors?: string[] }) {
+  async function update(id: string, changes: { enabled?: boolean; maxDisplayCap?: number | null; maxSourceAgeDays?: number | null; showFutureInventory?: boolean; showStyleCodes?: boolean; shopifyVendors?: string[] }) {
     setSaving(id);
     try {
       const data = await apiJson<{ brand: Partial<Brand> }>(`/api/brands/${id}`, {
@@ -75,7 +75,7 @@ export function BrandsControl() {
       <div className="card">
         {loading ? <div className="empty-state"><LoaderCircle className="spinner muted" size={22} /><div className="empty-desc">Loading brands</div></div>
         : visible.length === 0 ? <EmptyState title="No brands found" description="Change the search term or populate brands through catalog discovery." />
-        : <div className="table-wrap"><table className="data-table"><thead><tr><th>Brand</th><th>Coverage</th><th>Display cap</th><th>Max source age</th><th>Future dates</th><th>Enabled</th><th>Actions</th></tr></thead><tbody>
+        : <div className="table-wrap"><table className="data-table"><thead><tr><th>Brand</th><th>Coverage</th><th>Display cap</th><th>Max source age</th><th>Future dates</th><th>Style codes</th><th>Enabled</th><th>Actions</th></tr></thead><tbody>
           {visible.map((brand) => {
             const readyPercent = brand.product_count ? Math.round((brand.ready_count / brand.product_count) * 100) : 0;
             const sourceAgeInput = sourceAges[brand.id] ?? "";
@@ -97,6 +97,7 @@ export function BrandsControl() {
               <td style={{ width: 170 }}><div className="row"><input className="input" style={{ minWidth: 90 }} type="number" min="0" placeholder="Default" value={caps[brand.id] ?? ""} onChange={(event) => setCaps((current) => ({ ...current, [brand.id]: event.target.value }))} /><button className="icon-btn" title="Save display cap" aria-label={`Save cap for ${brand.brand_name}`} disabled={saving === brand.id} onClick={() => update(brand.id, { maxDisplayCap: caps[brand.id] === "" ? null : Math.max(0, Number.parseInt(caps[brand.id], 10) || 0) })}>{saving === brand.id ? <LoaderCircle className="spinner" size={15} /> : <Save size={15} />}</button></div><div className="field-help">Blank uses global default</div></td>
               <td style={{ width: 170 }}><div className="row"><input id={sourceAgeInputId} className="input" style={{ minWidth: 90 }} type="number" min="0" step="1" inputMode="numeric" placeholder={`Default (${DEFAULT_SOURCE_AGE_DAYS}d)`} value={sourceAgeInput} aria-label={`Maximum source age in days for ${brand.brand_name}`} aria-describedby={sourceAgeHelpId} aria-invalid={!sourceAgeValid} onChange={(event) => setSourceAges((current) => ({ ...current, [brand.id]: event.target.value }))} /><button type="button" className="icon-btn" title={sourceAgeValid ? "Save max source age" : "Enter a whole number of days"} aria-label={`Save max source age for ${brand.brand_name}`} disabled={saving === brand.id || !sourceAgeValid} onClick={() => { if (parsedSourceAge !== undefined) void update(brand.id, { maxSourceAgeDays: parsedSourceAge }); }}>{saving === brand.id ? <LoaderCircle className="spinner" size={15} /> : <Save size={15} />}</button></div><div id={sourceAgeHelpId} className="field-help">Days; blank uses the {DEFAULT_SOURCE_AGE_DAYS}-day default</div></td>
               <td><button className={`toggle ${brand.show_future_inventory ? "on" : ""}`} role="switch" aria-checked={brand.show_future_inventory} aria-label={`${brand.show_future_inventory ? "Hide" : "Show"} future restock dates for ${brand.brand_name}`} disabled={saving === brand.id} onClick={() => update(brand.id, { showFutureInventory: !brand.show_future_inventory })} /><div className="field-help">Off = ATS only</div></td>
+              <td><button className={`toggle ${brand.show_style_codes ? "on" : ""}`} role="switch" aria-checked={brand.show_style_codes} aria-label={`${brand.show_style_codes ? "Hide" : "Show"} style numbers beside colours for ${brand.brand_name}`} disabled={saving === brand.id} onClick={() => update(brand.id, { showStyleCodes: !brand.show_style_codes })} /><div className="field-help">e.g. Navy (L11941)</div></td>
               <td><button className={`toggle ${brand.enabled ? "on" : ""}`} role="switch" aria-checked={brand.enabled} aria-label={`${brand.enabled ? "Disable" : "Enable"} ${brand.brand_name}`} disabled={saving === brand.id} onClick={() => update(brand.id, { enabled: !brand.enabled })} /></td>
               <td><SyncLauncher brandIds={[Number(brand.id)]} compact /></td>
             </tr>;

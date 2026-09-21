@@ -10,12 +10,12 @@ export async function GET() {
       id: string; brand_slug: string; brand_name: string; shopify_vendor: string;
       shopify_vendors: string[];
       enabled: boolean; max_display_cap: number | null; max_source_age_days: number | null;
-      show_future_inventory: boolean;
+      show_future_inventory: boolean; show_style_codes: boolean;
       product_count: number; ready_count: number;
       unmatched_count: number; updated_at: string;
     }>(
       `SELECT b.id, b.brand_slug, b.brand_name, b.shopify_vendor, b.enabled,
-              b.max_display_cap, b.max_source_age_days, b.show_future_inventory, b.updated_at,
+              b.max_display_cap, b.max_source_age_days, b.show_future_inventory, b.show_style_codes, b.updated_at,
               COALESCE(aliases.shopify_vendors, ARRAY[b.shopify_vendor]) AS shopify_vendors,
               COALESCE(metrics.product_count, 0)::int AS product_count,
               COALESCE(metrics.ready_count, 0)::int AS ready_count,

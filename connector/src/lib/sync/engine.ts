@@ -35,6 +35,7 @@ interface MappingRow extends QueryResultRow {
   defaultCap: number | null;
   horizonDays: number;
   showFutureInventory: boolean;
+  showStyleCodes: boolean;
   lastSyncedAt: Date | string | null;
   latestPayloadHash: string | null;
   styles: MappingStyleRow[] | string;
@@ -167,6 +168,7 @@ async function loadMappings(
             b.max_display_cap AS "maxDisplayCap",
             b.max_source_age_days AS "maxSourceAgeDays",
             COALESCE(b.show_future_inventory, true) AS "showFutureInventory",
+            COALESCE(b.show_style_codes, true) AS "showStyleCodes",
             settings.default_cap AS "defaultCap",
             settings.future_horizon_days AS "horizonDays",
             pm.last_synced_at AS "lastSyncedAt",
@@ -421,6 +423,7 @@ export async function runSyncWithDependencies(
         brand: mapping.brandName!, styles, current: rows.current, future: rows.future,
         cap: mapping.maxDisplayCap ?? mapping.defaultCap, horizonDays: mapping.horizonDays,
         showFutureInventory: mapping.showFutureInventory,
+        showStyleCodes: mapping.showStyleCodes,
         now, maxSourceAgeDays: mapping.maxSourceAgeDays ?? MAX_SOURCE_AGE_DAYS,
       });
       if (!built.payload || !built.hash || !built.json) {

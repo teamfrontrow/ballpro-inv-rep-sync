@@ -28,6 +28,9 @@ export interface BuildInventoryPayloadInput {
   // When false, the brand is "ATS only": current availability is published but
   // future restock dates are omitted entirely. Defaults to true when unset.
   showFutureInventory?: boolean;
+  // When false, colours are never labelled with their style number. Defaults
+  // to true; see resolveColor for when a code is actually emitted.
+  showStyleCodes?: boolean;
   now?: Date;
   maxSourceAgeDays?: number;
 }
@@ -294,12 +297,22 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     const value = style.shopifyColor?.trim();
     if (value) shopifyColors.set(canonicalStyleKey(style.brandName, style.productNumber), value);
   }
+  // A product that maps to more than one style is one where each colourway is
+  // its own style (Sun Day Red's L11941/L11942/..., AndersonOrd, Greyson,
+  // FootJoy). There the style number is what users quote for a colour, so it
+  // is shown beside it. A single-style product would only repeat the header
+  // SKU on every colour, so it never gets a code.
+  const styleIsColourway = input.showStyleCodes !== false && publishable.size > 1;
+
   /**
    * The colour to publish, and the code to show beside it. A source that
    * reported a real colour is left exactly as it was; only the placeholder is
    * replaced, and only when Shopify actually has a colour for that style. The
    * style number becomes the code, because for these sources the style number
    * IS the colourway identifier (Acushnet's 33296 is one colourway).
+   *
+   * A source-supplied code (Columbia's BLK010) always wins. Otherwise, when
+   * the product is a set of per-colour styles, the style number is the code.
    */
   const resolveColor = (row: {
     brandName: string;
@@ -308,13 +321,14 @@ export function buildInventoryPayload(input: BuildInventoryPayloadInput): BuiltI
     colorCode?: string | null;
   }): { color: string; colorCode?: string } => {
     const sourceColor = row.color?.trim() ?? "";
-    const sourceCode = row.colorCode?.trim() || undefined;
+    const styleCode = row.productNumber.trim() || undefined;
+    const sourceCode = row.colorCode?.trim() || (styleIsColourway ? styleCode : undefined);
     if (normalizeMatchKey(sourceColor) !== SOURCE_COLOR_PLACEHOLDER) {
       return { color: sourceColor, colorCode: sourceCode };
     }
     const mapped = shopifyColors.get(canonicalStyleKey(row.brandName, row.productNumber));
     if (!mapped) return { color: sourceColor, colorCode: sourceCode };
-    return { color: mapped, colorCode: row.productNumber.trim() || undefined };
+    return { color: mapped, colorCode: styleCode };
   };
 
   const colors = new Map<string, { color: string; colorCode?: string; sizes: Map<string, MutableSize> }>();
