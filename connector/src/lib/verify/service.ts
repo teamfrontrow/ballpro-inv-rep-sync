@@ -57,6 +57,7 @@ interface MappingRow {
   brand_enabled: boolean | null;
   max_display_cap: number | null;
   show_future_inventory: boolean | null;
+  show_style_codes: boolean | null;
   default_cap: number | null;
   future_horizon_days: number;
   styles: Array<{ productNumber: string | null; shopifyColor: string | null }> | null;
@@ -67,6 +68,7 @@ export async function verifyProduct(mappingId: number): Promise<VerifyResult | n
     `SELECT pm.id, pm.shopify_product_gid, pm.shopify_title, pm.shopify_handle, pm.shopify_vendor,
             pm.last_synced_at, b.brand_name, b.enabled AS brand_enabled,
             b.max_display_cap, COALESCE(b.show_future_inventory, true) AS show_future_inventory,
+            COALESCE(b.show_style_codes, true) AS show_style_codes,
             settings.default_cap, settings.future_horizon_days,
             COALESCE(styleagg.styles, '[]'::json) AS styles
        FROM product_mappings pm
@@ -120,6 +122,7 @@ export async function verifyProduct(mappingId: number): Promise<VerifyResult | n
       cap,
       horizonDays: row.future_horizon_days,
       showFutureInventory: row.show_future_inventory ?? true,
+      showStyleCodes: row.show_style_codes ?? true,
       maxSourceAgeDays: 36_500,
     });
     expected = built.payload;

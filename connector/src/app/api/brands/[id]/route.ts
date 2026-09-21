@@ -8,9 +8,10 @@ const updateSchema = z.object({
   maxDisplayCap: z.number().int().min(0).nullable().optional(),
   maxSourceAgeDays: z.number().int().min(0).nullable().optional(),
   showFutureInventory: z.boolean().optional(),
+  showStyleCodes: z.boolean().optional(),
   shopifyVendors: z.array(z.string().trim().min(1).max(255)).min(1).max(20).optional(),
 }).refine(
-  (value) => value.enabled !== undefined || value.maxDisplayCap !== undefined || value.maxSourceAgeDays !== undefined || value.showFutureInventory !== undefined || value.shopifyVendors !== undefined,
+  (value) => value.enabled !== undefined || value.maxDisplayCap !== undefined || value.maxSourceAgeDays !== undefined || value.showFutureInventory !== undefined || value.showStyleCodes !== undefined || value.shopifyVendors !== undefined,
   "No changes supplied",
 );
 
@@ -39,6 +40,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       values.push(parsed.data.showFutureInventory);
       assignments.push(`show_future_inventory = $${values.length}`);
     }
+    if (parsed.data.showStyleCodes !== undefined) {
+      values.push(parsed.data.showStyleCodes);
+      assignments.push(`show_style_codes = $${values.length}`);
+    }
     const shopifyVendors = parsed.data.shopifyVendors
       ? [...new Map(parsed.data.shopifyVendors.map((vendor) => [vendor.trim().toUpperCase(), vendor.trim()])).values()]
       : undefined;
@@ -51,7 +56,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       const result = await client.query(
         `UPDATE brands SET ${assignments.join(", ")} WHERE id = $1
          RETURNING id, brand_slug, brand_name, shopify_vendor, enabled, max_display_cap,
-                   max_source_age_days, show_future_inventory, updated_at`,
+                   max_source_age_days, show_future_inventory, show_style_codes, updated_at`,
         values,
       );
       if (!result.rows[0]) return null;
