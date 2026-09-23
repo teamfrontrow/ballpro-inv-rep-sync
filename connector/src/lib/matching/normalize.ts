@@ -17,8 +17,15 @@
 // "B-COREHW290" against a bare "COREHW290".
 //
 // Deliberately one letter: "BA-100" is a style number, not a prefixed one.
+//
+// Up to two prefixes go, because some Flag & Anthem products were loaded into
+// Shopify with the RepSpark number as the SKU body: "A-M-COREKT2345" for
+// RepSpark's "M-COREKT2345". Stripping one left "M-COREKT2345" on the Shopify
+// side against "COREKT2345" on the RepSpark side, so 13 live products never
+// matched even though RepSpark lists every one. Two is Shopify's "A-" plus the
+// brand's own; the same collision rule above still guards anything this joins.
 export function normalizeShopifySku(value: string | null | undefined): string | null {
-  const normalized = value?.trim().toUpperCase().replace(/^[A-Z]-/, "") ?? "";
+  const normalized = value?.trim().toUpperCase().replace(/^(?:[A-Z]-){1,2}/, "") ?? "";
   return normalized || null;
 }
 

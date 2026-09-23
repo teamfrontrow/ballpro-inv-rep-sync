@@ -14,8 +14,11 @@ describe("normalizeShopifySku", () => {
     ["M-SP24OW1978", "SP24OW1978"],
     ["m-corekt1752", "COREKT1752"],
     ["B-COREHW290", "COREHW290"],
-    // Only the first prefix goes; the rest of the style number is untouched.
-    ["A-B-1234", "B-1234"],
+    // Shopify's "A-" stacked on the brand's own prefix: both go.
+    ["A-M-COREKT2345", "COREKT2345"],
+    ["A-B-1234", "1234"],
+    // No more than two, so a third letter-dash is left as part of the style.
+    ["A-M-X-1234", "X-1234"],
     // A bare style number is already normalized.
     ["COREKT1752", "COREKT1752"],
     // Digits are not a prefix.
@@ -27,6 +30,11 @@ describe("normalizeShopifySku", () => {
   it("maps a prefixed RepSpark number and its Shopify SKU onto one key", () => {
     // The whole point: reconcile runs this over both sides, so these must meet.
     expect(normalizeShopifySku("M-SP24OW1978")).toBe(normalizeShopifySku("A-SP24OW1978"));
+  });
+
+  it("maps a doubly prefixed Shopify SKU onto its prefixed RepSpark number", () => {
+    // Flag & Anthem products whose Shopify SKU embeds the RepSpark number.
+    expect(normalizeShopifySku("A-M-COREKT2345")).toBe(normalizeShopifySku("M-COREKT2345"));
   });
 
   it("collides a prefixed style with its bare twin, which reconcile treats as unmatched", () => {
